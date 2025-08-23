@@ -22,6 +22,7 @@ class GithubToken extends ActiveRecord implements \Stringable
 
     #[Column(type: 'string')]
     public string $value;
+
     public \DateTimeInterface $createdAt;
 
     public function __toString(): string
