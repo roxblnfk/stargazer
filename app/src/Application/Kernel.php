@@ -151,6 +151,7 @@ class Kernel extends \Spiral\Framework\Kernel
 
             // Modules
             \App\Feature\Index\Bootloader::class,
+            \App\Module\Github\Bootloader::class,
         ];
     }
 }
