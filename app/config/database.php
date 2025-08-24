@@ -51,7 +51,7 @@ return [
      */
     'drivers' => [
         'sqlite' => new Config\SQLiteDriverConfig(
-            connection: new Config\SQLite\MemoryConnectionConfig(),
+            connection: new Config\SQLite\FileConnectionConfig('./runtime/database.sqlite'),
             queryCache: env('DB_QUERY_CACHE', true),
             options: [
                 'logQueryParameters' => env('DB_LOG_QUERY_PARAMETERS', false),
