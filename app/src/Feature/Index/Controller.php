@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Feature\Index;
 
-use App\Module\Github\Dto\GithubOrganization;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
 use Spiral\Prototype\Traits\PrototypeTrait;
@@ -27,6 +26,11 @@ final class Controller
     #[Route(route: '/', name: self::ROUTE_INDEX, methods: ['GET'])]
     public function index(GithubService $service): mixed
     {
+        // $repo = new GithubRepository(new GithubOrganization('spiral'), 'framework');
+        //
+        // $stargazers = $service->getStarsCount($repo);
+        // td($stargazers);
+
         return $this->views->render('index:home', [
             'router' => $this->router,
         ]);

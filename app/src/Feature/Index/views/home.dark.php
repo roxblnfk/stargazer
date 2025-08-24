@@ -1,7 +1,7 @@
 <extends:layout title="[[Stargazer]]"/>
 
 <stack:push name="styles">
-    <link rel="stylesheet" href="/styles/welcome.css"/>
+<!--    <link rel="stylesheet" href="/styles/welcome.css"/>-->
 </stack:push>
 
 <define:body>
