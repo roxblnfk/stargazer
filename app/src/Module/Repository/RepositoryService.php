@@ -6,6 +6,7 @@ namespace App\Module\Repository;
 
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
+use App\Module\Github\Result\RepositoryInfo;
 use App\Module\Repository\Exception\RepositoryAlreadyExists;
 use App\Module\Repository\Internal\RepoEntity;
 use App\Module\Repository\Internal\RepoRepository;
@@ -51,5 +52,13 @@ class RepositoryService
 
         # Harvest stars
         // $this->workflowClient->
+    }
+
+    public function getTrackedRepository(GithubRepository $repository): RepositoryInfo
+    {
+        return $this->repoRepository
+            ->active()
+            ->whereFullName($repository)
+            ->findOne()?->info ?? throw new \RuntimeException('Repository is not tracked.');
     }
 }

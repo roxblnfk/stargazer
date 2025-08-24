@@ -60,7 +60,7 @@ final class Controller
     public function info(string $owner, string $name, GithubService $service): mixed
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
-        $repositoryInfo = $service->getRepositoryInfo($repository);
+        $repositoryInfo = $this->repositoryService->getTrackedRepository($repository);
 
         return $this->views->render('repository:info', [
             'repository' => $repositoryInfo,

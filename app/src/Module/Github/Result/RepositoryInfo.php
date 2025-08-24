@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Result;
 
+use JsonSerializable;
 use TypeLang\Mapper\Mapping\MapName;
 
 /**
  * Data Transfer Object for GitHub repository information.
  */
-final class RepositoryInfo
+final class RepositoryInfo implements JsonSerializable, \Stringable
 {
     public function __construct(
         /** @var positive-int */
@@ -131,4 +132,33 @@ final class RepositoryInfo
         #[MapName('default_branch')]
         public readonly string $defaultBranch,
     ) {}
+
+    public static function fromJsonArray(array $info): self
+    {
+        $info['owner'] = Owner::fromJsonArray($info['owner']);
+        isset($info['license']) and $info['license'] = License::fromJsonArray($info['license']);
+        $info['createdAt'] = new \DateTimeImmutable($info['createdAt']);
+        $info['updatedAt'] = new \DateTimeImmutable($info['updatedAt']);
+        $info['pushedAt'] = new \DateTimeImmutable($info['pushedAt']);
+        return new self(...$info);
+    }
+
+    public static function fromJsonString(string $json): self
+    {
+        return self::fromJsonArray(\json_decode($json, true));
+    }
+
+    public function jsonSerialize(): array
+    {
+        $result = (array) $this;
+        $result['createdAt'] = $this->createdAt->format(DATE_ATOM);
+        $result['updatedAt'] = $this->updatedAt->format(DATE_ATOM);
+        $result['pushedAt'] = $this->pushedAt->format(DATE_ATOM);
+        return $result;
+    }
+
+    public function __toString(): string
+    {
+        return \json_encode($this, \JSON_UNESCAPED_UNICODE);
+    }
 }

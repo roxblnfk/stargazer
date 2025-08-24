@@ -9,7 +9,7 @@ use TypeLang\Mapper\Mapping\MapName;
 /**
  * Data Transfer Object for GitHub repository owner information.
  */
-final class Owner
+final class Owner implements \JsonSerializable
 {
     public function __construct(
         /** @var non-empty-string */
@@ -82,4 +82,14 @@ final class Owner
         #[MapName('site_admin')]
         public readonly bool $siteAdmin,
     ) {}
+
+    public static function fromJsonArray(array $info): self
+    {
+        return new self(...$info);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return (array) $this;
+    }
 }

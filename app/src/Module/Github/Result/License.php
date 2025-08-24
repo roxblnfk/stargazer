@@ -9,7 +9,7 @@ use TypeLang\Mapper\Mapping\MapName;
 /**
  * Data Transfer Object for GitHub repository license information.
  */
-final class License
+final class License implements \JsonSerializable
 {
     public function __construct(
         /** @var non-empty-string */
@@ -29,4 +29,14 @@ final class License
         #[MapName('node_id')]
         public readonly string $nodeId,
     ) {}
+
+    public static function fromJsonArray(array $info): self
+    {
+        return new self(...$info);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return (array) $this;
+    }
 }
