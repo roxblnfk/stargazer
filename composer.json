@@ -61,12 +61,9 @@
         }
     },
     "scripts": {
-        "post-create-project-cmd": [
-            "php app.php encrypt:key -m .env",
-            "php app.php configure --quiet",
-            "rr get-binary --quiet",
-            "composer dump-autoload"
-        ],
+        "post-install-cmd": "composer get:binaries",
+        "post-update-cmd": "composer get:binaries",
+        "get:binaries": "dload get --no-interaction -vv",
         "rr:download": "rr get-binary",
         "rr:download-protoc": "rr download-protoc-binary",
         "cs:fix": "php-cs-fixer fix -v",
