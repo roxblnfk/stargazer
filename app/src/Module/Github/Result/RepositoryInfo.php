@@ -25,9 +25,7 @@ final class RepositoryInfo
         /** @var non-empty-string */
         #[MapName('full_name')]
         public readonly string $fullName,
-
         public readonly bool $private,
-
         public readonly Owner $owner,
 
         /** @var non-empty-string */
@@ -36,18 +34,14 @@ final class RepositoryInfo
 
         /** @var string|null */
         public readonly ?string $description,
-
         public readonly bool $fork,
 
         /** @var non-empty-string */
         public readonly string $url,
-
         #[MapName('created_at')]
         public readonly \DateTimeImmutable $createdAt,
-
         #[MapName('updated_at')]
         public readonly \DateTimeImmutable $updatedAt,
-
         #[MapName('pushed_at')]
         public readonly \DateTimeImmutable $pushedAt,
 
@@ -83,22 +77,16 @@ final class RepositoryInfo
 
         /** @var non-empty-string|null */
         public readonly ?string $language,
-
         #[MapName('has_issues')]
         public readonly bool $hasIssues,
-
         #[MapName('has_projects')]
         public readonly bool $hasProjects,
-
         #[MapName('has_downloads')]
         public readonly bool $hasDownloads,
-
         #[MapName('has_wiki')]
         public readonly bool $hasWiki,
-
         #[MapName('has_pages')]
         public readonly bool $hasPages,
-
         #[MapName('has_discussions')]
         public readonly bool $hasDiscussions,
 
@@ -109,23 +97,17 @@ final class RepositoryInfo
         /** @var non-empty-string|null */
         #[MapName('mirror_url')]
         public readonly ?string $mirrorUrl,
-
         public readonly bool $archived,
-
         public readonly bool $disabled,
 
         /** @var int<0, max> */
         #[MapName('open_issues_count')]
         public readonly int $openIssuesCount,
-
         public readonly ?License $license,
-
         #[MapName('allow_forking')]
         public readonly bool $allowForking,
-
         #[MapName('is_template')]
         public readonly bool $isTemplate,
-
         #[MapName('web_commit_signoff_required')]
         public readonly bool $webCommitSignoffRequired,
 

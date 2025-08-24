@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Dto;
 
-final class GithubOrganization implements \Stringable
+final class GithubOwner implements \Stringable
 {
     /**
      * @param non-empty-string $name The organization name, e.g. "spiral"

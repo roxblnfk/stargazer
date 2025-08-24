@@ -79,7 +79,6 @@ final class Owner
         /** @var non-empty-string */
         #[MapName('user_view_type')]
         public readonly string $userViewType,
-
         #[MapName('site_admin')]
         public readonly bool $siteAdmin,
     ) {}
