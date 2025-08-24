@@ -34,6 +34,7 @@ This project has established guidelines that should be followed for all developm
 - **[Translation Guide](docs/guidelines/how-to-translate-readme-docs.md)** - Process for translating documentation using LLMs with multilanguage README pattern. Use when translating project documentation.
 
 ### Frontend Development
+- **[Stempler Template Guidelines](docs/guidelines/how-to-write-stempler-templates.md)** - Comprehensive guide for writing Stempler templates including variable interpolation, control structures, Bootstrap 5 integration, security practices, and component patterns. Follow when creating or modifying any view templates.
 - **Bootstrap 5** - This project uses Bootstrap 5 for frontend styling and components. Always use Bootstrap 5 utility classes, grid system, and components when working with views and templates. Bootstrap CSS and JS are loaded from CDN in the layout files.
 
 ## Domain-Specific Development Guidelines
