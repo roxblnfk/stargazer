@@ -25,6 +25,16 @@ class RepositoryService
     ) {}
 
     /**
+     * @return \Iterator<int, GithubRepository>
+     */
+    public function getTrackedRepositories(): \Iterator
+    {
+        foreach ($this->repoRepository->active()->findAll() as $repo) {
+            yield $repo->toGithubRepository();
+        }
+    }
+
+    /**
      * @throws RepositoryAlreadyExists
      */
     public function registerRepository(GithubRepository $repository): void

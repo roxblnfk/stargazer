@@ -36,43 +36,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td colspan="4" class="text-muted text-center">
-                            <i class="bi bi-inbox"></i> No repositories tracked yet.
-                        </td>
-                    </tr>
-                    <!-- Example row (when repositories are added) -->
-                    <!--
-                    <tr>
-                        <td>
-                            <i class="bi bi-github"></i>
-                            <a href="#" class="text-decoration-none">spiral/framework</a>
-                        </td>
-                        <td>
-                            <span class="badge bg-warning text-dark">
-                                <i class="bi bi-star-fill"></i> 1,234
-                            </span>
-                        </td>
-                        <td>
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i> 2024-01-15
-                            </small>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" title="Refresh">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </button>
-                                <button class="btn btn-outline-info" title="View Details">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-outline-danger" title="Remove">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    -->
+                    @if(empty($repositories))
+                        <tr>
+                            <td colspan="4" class="text-muted text-center">
+                                <i class="bi bi-inbox"></i> No repositories tracked yet.
+                            </td>
+                        </tr>
+                    @else
+                        @foreach($repositories as $repository)
+                            <tr>
+                                <td>
+                                    <i class="bi bi-github"></i>
+                                    <a href="@route(\App\Feature\Repository\Controller::ROUTE_INFO, ['owner' => $repository->owner->name, 'name' => $repository->name])"
+                                       class="text-decoration-none">{{ $repository }}</a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-star"></i> --
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar3"></i> --
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Refresh">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Remove">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

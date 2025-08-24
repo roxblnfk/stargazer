@@ -23,4 +23,11 @@ final class RepoRepository extends BaseRepository
         $clone->select->where(['owner' => $owner, 'name' => $name]);
         return $clone;
     }
+
+    public function active(bool $value = true): static
+    {
+        $clone = clone $this;
+        $clone->select->where(['active' => $value]);
+        return $clone;
+    }
 }

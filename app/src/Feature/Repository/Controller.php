@@ -36,6 +36,7 @@ final class Controller
     {
         return $this->views->render('repository:list', [
             'router' => $this->router,
+            'repositories' => $this->repositoryService->getTrackedRepositories(),
         ]);
     }
 

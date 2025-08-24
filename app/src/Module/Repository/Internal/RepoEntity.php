@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Module\Repository\Internal;
 
+use App\Module\Github\Dto\GithubOwner;
+use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
 use App\Module\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
@@ -33,6 +35,9 @@ class RepoEntity extends ActiveRecord
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $createdAt;
 
+    #[Column(type: 'boolean', default: true, typecast: 'bool')]
+    public bool $active = true;
+
     public static function createFromRepositoryInfo(RepositoryInfo $info): self
     {
         return self::make([
@@ -41,5 +46,13 @@ class RepoEntity extends ActiveRecord
             'name' => $info->name,
             'createdAt' => $info->createdAt,
         ]);
+    }
+
+    public function toGithubRepository(): GithubRepository
+    {
+        return new GithubRepository(
+            owner: new GithubOwner($this->owner),
+            name: $this->name,
+        );
     }
 }
