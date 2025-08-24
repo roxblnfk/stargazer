@@ -17,7 +17,7 @@ class HomeControllerTest extends TestCase
         $response = $this->http->get('/')->assertOk();
 
         $this->assertStringContainsString(
-            'The PHP Framework for future Innovators',
+            'Stargazer',
             \strip_tags((string) $response->getOriginalResponse()->getBody()),
         );
     }
@@ -31,7 +31,7 @@ class HomeControllerTest extends TestCase
         $response = $this->http->withHeader('accept-language', 'ru')->get('/')->assertOk();
 
         $this->assertStringContainsString(
-            'PHP Framework для будущих инноваторов',
+            'Звездочёт',
             \strip_tags((string) $response->getOriginalResponse()->getBody()),
         );
     }

@@ -31,7 +31,8 @@
         "spiral/stempler-bridge": "^3.15",
         "spiral/temporal-bridge": "^3.3",
         "spiral/translator": "^3.15",
-        "spiral/validator": "^1.5"
+        "spiral/validator": "^1.5",
+        "type-lang/mapper": "^0.4.0"
     },
     "require-dev": {
         "spiral/code-style": "^2.2",

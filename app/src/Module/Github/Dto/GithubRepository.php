@@ -18,4 +18,17 @@ final class GithubRepository implements \Stringable
     {
         return "$this->organization/$this->name";
     }
+
+    /**
+     * Create a GithubRepository from a full name string like "organization/repo".
+     *
+     * @param non-empty-string $fullName The full repository name
+     */
+    public static function fromString(string $fullName): self
+    {
+        $parts = explode('/', $fullName, 2);
+        \count($parts) === 2 or throw new \InvalidArgumentException("Invalid repository full name `$fullName`.");
+        return new self(new GithubOrganization($parts[0]), $parts[1]);
+    }
+
 }

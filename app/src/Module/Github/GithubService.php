@@ -8,7 +8,9 @@ use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Dto\GithubStargazer;
 use App\Module\Github\Dto\GithubUser;
 use App\Module\Github\Internal\TokenPool;
+use App\Module\Github\Result\RepositoryInfo;
 use Psr\Http\Client\ClientInterface;
+use TypeLang\Mapper\Mapper;
 
 /**
  * Service for interacting with GitHub API to retrieve repository stargazers.
@@ -21,8 +23,22 @@ final class GithubService
 
     public function __construct(
         TokenPool $tokenPool,
+        private readonly Mapper $mapper,
     ) {
         $this->token = $tokenPool->getToken();
+    }
+
+    /**
+     * Get detailed repository information.
+     */
+    public function getRepositoryInfo(GithubRepository $repository): RepositoryInfo
+    {
+        $client = $this->createClient();
+
+        $response = $client->request('GET', "repos/{$repository}");
+        $data = \json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+        return $this->mapper->denormalize($data, RepositoryInfo::class);
     }
 
     /**
