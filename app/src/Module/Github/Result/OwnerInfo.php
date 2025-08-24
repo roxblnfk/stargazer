@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Result;
 
+use TypeLang\Mapper\Mapping\DiscriminatorMap;
 use TypeLang\Mapper\Mapping\MapName;
 
 /**
  * Data Transfer Object for GitHub repository owner information.
  */
-final class OwnerInfo implements \JsonSerializable
+#[DiscriminatorMap(
+    field: 'type',
+    map: [
+        'User' => UserInfo::class,
+        'Organization' => OrganizationInfo::class,
+    ],
+)]
+abstract class OwnerInfo implements \JsonSerializable
 {
     public function __construct(
         /** @var non-empty-string */
@@ -85,7 +93,9 @@ final class OwnerInfo implements \JsonSerializable
 
     public static function fromJsonArray(array $info): self
     {
-        return new self(...$info);
+        return $info['type'] === 'User'
+            ? $info = new UserInfo(...$info)
+            : $info = new OrganizationInfo(...$info);
     }
 
     public static function fromJsonString(string $json): self

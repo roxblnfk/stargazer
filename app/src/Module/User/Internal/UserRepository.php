@@ -9,7 +9,7 @@ use App\Module\ORM\BaseRepository;
 /**
  * @extends BaseRepository<UserEntity>
  */
-final class RepoRepository extends BaseRepository
+final class UserRepository extends BaseRepository
 {
     public function whereLogin(string|\Stringable $login): static
     {

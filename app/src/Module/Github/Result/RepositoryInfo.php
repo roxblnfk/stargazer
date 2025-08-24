@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Result;
 
-use JsonSerializable;
 use TypeLang\Mapper\Mapping\MapName;
 
 /**
  * Data Transfer Object for GitHub repository information.
  */
-final class RepositoryInfo implements JsonSerializable, \Stringable
+final class RepositoryInfo implements \JsonSerializable, \Stringable
 {
     public function __construct(
         /** @var positive-int */

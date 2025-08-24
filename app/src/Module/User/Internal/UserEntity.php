@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Module\User\Internal;
 
 use App\Module\Github\Dto\GithubOwner;
-use App\Module\Github\Result\OwnerInfo;
+use App\Module\Github\Result\UserInfo;
 use App\Module\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -15,7 +15,7 @@ use Cycle\ORM\Entity\Behavior\UpdatedAt;
 
 #[Entity(
     role: 'user',
-    repository: RepoRepository::class,
+    repository: UserRepository::class,
     table: 'user',
 )]
 #[Index(columns: ['login'])]
@@ -32,8 +32,8 @@ class UserEntity extends ActiveRecord
     #[Column(type: 'string')]
     public string $login;
 
-    #[Column(type: 'json', nullable: true, typecast: [OwnerInfo::class, 'fromJsonString'])]
-    public OwnerInfo $info;
+    #[Column(type: 'json', nullable: true, typecast: [UserInfo::class, 'fromJsonString'])]
+    public UserInfo $info;
 
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $updatedAt;
@@ -41,7 +41,7 @@ class UserEntity extends ActiveRecord
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $createdAt;
 
-    public static function createFromOwnerInfo(OwnerInfo $info): self
+    public static function createFromOwnerInfo(UserInfo $info): self
     {
         return self::make([
             'id' => $info->id,
