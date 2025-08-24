@@ -27,7 +27,7 @@ final class RepositoryInfo implements JsonSerializable, \Stringable
         #[MapName('full_name')]
         public readonly string $fullName,
         public readonly bool $private,
-        public readonly Owner $owner,
+        public readonly OwnerInfo $owner,
 
         /** @var non-empty-string */
         #[MapName('html_url')]
@@ -135,7 +135,7 @@ final class RepositoryInfo implements JsonSerializable, \Stringable
 
     public static function fromJsonArray(array $info): self
     {
-        $info['owner'] = Owner::fromJsonArray($info['owner']);
+        $info['owner'] = OwnerInfo::fromJsonArray($info['owner']);
         isset($info['license']) and $info['license'] = License::fromJsonArray($info['license']);
         $info['createdAt'] = new \DateTimeImmutable($info['createdAt']);
         $info['updatedAt'] = new \DateTimeImmutable($info['updatedAt']);
