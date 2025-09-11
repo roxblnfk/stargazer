@@ -11,6 +11,9 @@ use App\Module\ORM\BaseRepository;
  */
 final class StarRepository extends BaseRepository
 {
+    /**
+     * @return $this
+     */
     public function whereSyncId(string|\Stringable $id): static
     {
         $clone = clone $this;
@@ -24,7 +27,7 @@ final class StarRepository extends BaseRepository
     public function active(bool $value = true): static
     {
         $clone = clone $this;
-        $clone->select->where(['active' => $value]);
+        $clone->select->where('starredAt', $value ? '!=' : '=', null);
         return $clone;
     }
 }
