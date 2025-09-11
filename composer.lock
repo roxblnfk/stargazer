@@ -571,16 +571,16 @@
         },
         {
             "name": "cycle/active-record",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cycle/active-record.git",
-                "reference": "c410f890fce2ab453c909a15bed825924df6afdd"
+                "reference": "50d434df48d0b110ec08f29c1aec642538406be5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cycle/active-record/zipball/c410f890fce2ab453c909a15bed825924df6afdd",
-                "reference": "c410f890fce2ab453c909a15bed825924df6afdd",
+                "url": "https://api.github.com/repos/cycle/active-record/zipball/50d434df48d0b110ec08f29c1aec642538406be5",
+                "reference": "50d434df48d0b110ec08f29c1aec642538406be5",
                 "shasum": ""
             },
             "require": {
@@ -675,7 +675,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-01T07:55:46+00:00"
+            "time": "2025-09-11T11:46:26+00:00"
         },
         {
             "name": "cycle/annotated",
