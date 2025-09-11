@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Module\Github;
 
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Github\Dto\GithubStargazer;
-use App\Module\Github\Dto\GithubUser;
 use App\Module\Github\Internal\TokenPool;
 use App\Module\Github\Result\RepositoryInfo;
+use App\Module\Github\Result\StargazerInfo;
 use Psr\Http\Client\ClientInterface;
 use TypeLang\Mapper\Mapper;
 
@@ -57,7 +56,7 @@ final class GithubService
     }
 
     /**
-     * @return iterable<int, \App\Module\Github\Dto\GithubStargazer>
+     * @return iterable<int, StargazerInfo>
      */
     public function getStargazers(GithubRepository $repository): iterable
     {
@@ -79,11 +78,7 @@ final class GithubService
             $data = \json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
             foreach ($data as $starData) {
-                yield new GithubStargazer(
-                    repository: $repository,
-                    user: new GithubUser($starData['user']['login']),
-                    starredAt: new \DateTimeImmutable($starData['starred_at']),
-                );
+                yield $this->mapper->denormalize($starData, StargazerInfo::class);
             }
 
             $hasMorePages = \count($data) === $perPage;

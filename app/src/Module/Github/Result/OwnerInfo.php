@@ -17,7 +17,7 @@ use TypeLang\Mapper\Mapping\MapName;
         'Organization' => OrganizationInfo::class,
     ],
 )]
-abstract class OwnerInfo implements \JsonSerializable
+abstract class OwnerInfo implements \JsonSerializable, \Stringable
 {
     public function __construct(
         /** @var non-empty-string */
@@ -106,5 +106,10 @@ abstract class OwnerInfo implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return (array) $this;
+    }
+
+    public function __toString(): string
+    {
+        return \json_encode($this, \JSON_UNESCAPED_UNICODE);
     }
 }

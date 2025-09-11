@@ -12,7 +12,7 @@
         "php": ">=8.1",
         "ext-mbstring": "*",
         "ext-sockets": "*",
-        "cycle/active-record": "^0.8.0",
+        "cycle/active-record": "^1.0.0",
         "cycle/entity-behavior-uuid": "^1.2",
         "guzzlehttp/guzzle": "^7.9",
         "internal/dload": "^1.5",

@@ -12,6 +12,7 @@ use Cycle\ORM\Entity\Behavior\Uuid\Uuid7;
 use Ramsey\Uuid\UuidInterface;
 
 #[Entity(
+    role: 'github-token',
     table: 'github_token',
 )]
 #[Uuid7(field: 'uuid', column: 'uuid')]
