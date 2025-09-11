@@ -12,7 +12,6 @@ use App\Module\Repository\Internal\RepoEntity;
 use App\Module\Repository\Internal\RepoRepository;
 use Spiral\Core\Attribute\Singleton;
 use Spiral\Prototype\Traits\PrototypeTrait;
-use Temporal\Client\WorkflowClientInterface;
 
 #[Singleton]
 class RepositoryService
@@ -22,7 +21,6 @@ class RepositoryService
     public function __construct(
         private readonly RepoRepository $repoRepository,
         private readonly GithubService $githubService,
-        private readonly WorkflowClientInterface $workflowClient,
     ) {}
 
     /**
