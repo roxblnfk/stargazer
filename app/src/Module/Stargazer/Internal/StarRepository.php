@@ -30,4 +30,14 @@ final class StarRepository extends BaseRepository
         $clone->select->where('starredAt', $value ? '!=' : '=', null);
         return $clone;
     }
+
+    /**
+     * @return $this
+     */
+    public function whereUserId(int $id): static
+    {
+        $clone = clone $this;
+        $clone->select->where(['userId' => $id]);
+        return $clone;
+    }
 }

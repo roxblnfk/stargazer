@@ -14,5 +14,12 @@ return [
     'Each star helps projects to grow' => 'Каждая звезда помогает проектам расти',
     'Merch as a gift' => 'Мерч в подарок',
     'Get prizes for project support' => 'Получайте призы за поддержку проектов',
+    'Back' => 'Назад',
+    'Points' => 'Баллы',
+    'Tracking repositories' => 'Отслеживаемые репозитории',
+    'Projects for which you can get points' => 'Проекты, за которые вы можете получить баллы',
+    'More' => 'Перейти',
+    'Put a star' => 'Поставить звезду',
+    'Star set' => 'Поставлена звезда',
     'Go!' => 'Поехали!',
 ];

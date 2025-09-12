@@ -17,7 +17,7 @@ final class Controller
 {
     use PrototypeTrait;
 
-    public const ROUTE_INDEX = 'index1';
+    public const ROUTE_INDEX = 'index';
 
     public function __construct(
         private readonly ViewsInterface $views,

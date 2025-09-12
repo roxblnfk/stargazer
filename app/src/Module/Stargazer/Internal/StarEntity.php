@@ -40,7 +40,7 @@ class StarEntity extends ActiveRecord
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $createdAt;
 
-    #[Column(type: 'string', name: 'last_sync_id')]
+    #[Column(type: 'integer', name: 'last_sync_id')]
     public int $lastSyncId;
 
     public static function create(int $userId, int $repoId, int $syncId, \DateTimeInterface $starredAt): self
