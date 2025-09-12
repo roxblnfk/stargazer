@@ -73,7 +73,7 @@
                             <h2 class="cta-title">[[Start now!]]</h2>
                             <p class="cta-subtitle">[[Enter your GitHub username and see which projects you have backed]]</p>
 
-                            <form class="modern-form">
+                            <form class="modern-form" action="@route(\App\Feature\Profile\Controller::ROUTE_INDEX)">
                                 <div class="input-wrapper">
                                     <input type="text"
                                            name="username"
