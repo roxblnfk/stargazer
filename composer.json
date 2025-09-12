@@ -15,7 +15,6 @@
         "cycle/active-record": "^1.0.0",
         "cycle/entity-behavior-uuid": "^1.2",
         "guzzlehttp/guzzle": "^7.9",
-        "internal/dload": "^1.5",
         "spiral-packages/league-event": "^1.0.1",
         "spiral-packages/scheduler": "^2.1",
         "spiral-packages/yii-error-handler-bridge": "^1.1",
@@ -35,6 +34,7 @@
         "type-lang/mapper": "^0.4.0"
     },
     "require-dev": {
+        "internal/dload": "^1.5",
         "spiral/code-style": "^2.2",
         "spiral/testing": "^2.3",
         "vimeo/psalm": "^6.10",
@@ -63,7 +63,7 @@
     "scripts": {
         "post-install-cmd": "composer get:binaries",
         "post-update-cmd": "composer get:binaries",
-        "get:binaries": "dload get --no-interaction -vv",
+        "get:binaries": "dload get --no-interaction -v || \"echo can't dload binaries\"",
         "rr:download": "rr get-binary",
         "rr:download-protoc": "rr download-protoc-binary",
         "cs:fix": "php-cs-fixer fix -v",

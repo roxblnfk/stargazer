@@ -56,24 +56,24 @@ return [
             options: [
                 'logQueryParameters' => env('DB_LOG_QUERY_PARAMETERS', false),
                 'logInterpolatedQueries' => env('DB_LOG_INTERPOLATED_QUERIES', false),
-                'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', false),
+                'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', true),
             ],
         ),
         ...(\extension_loaded('pdo_pgsql') ? [
             'pgsql' => new Config\PostgresDriverConfig(
                 connection: new Config\Postgres\TcpConnectionConfig(
-                    database: env('DB_DATABASE', 'spiral'),
+                    database: env('DB_DATABASE', 'stargazer'),
                     host: env('DB_HOST', '127.0.0.1'),
                     port: (int) env('DB_PORT', 5432),
-                    user: env('DB_USERNAME', 'postgres'),
-                    password: env('DB_PASSWORD', ''),
+                    user: env('DB_USERNAME', 'stargazer'),
+                    password: env('DB_PASSWORD', 'stargazer'),
                 ),
                 schema: env('DB_SCHEMA', 'public'),
                 queryCache: env('DB_QUERY_CACHE', true),
                 options: [
                     'logQueryParameters' => env('DB_LOG_QUERY_PARAMETERS', false),
                     'logInterpolatedQueries' => env('DB_LOG_INTERPOLATED_QUERIES', false),
-                    'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', false),
+                    'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', true),
                 ],
             ),
         ] : []),
@@ -90,7 +90,7 @@ return [
                 options: [
                     'logQueryParameters' => env('DB_LOG_QUERY_PARAMETERS', false),
                     'logInterpolatedQueries' => env('DB_LOG_INTERPOLATED_QUERIES', false),
-                    'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', false),
+                    'withDatetimeMicroseconds' => env('DB_WITH_DATETIME_MICROSECONDS', true),
                 ],
             ),
         ] : []),
