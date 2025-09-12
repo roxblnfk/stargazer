@@ -19,6 +19,11 @@ class UserService
         private readonly UserRepository $repoRepository,
     ) {}
 
+    public function getByUsername(string $username): ?UserEntity
+    {
+        return $this->repoRepository->whereLogin($username)->findOne();
+    }
+
     public function getOrCreate(UserInfo $info): UserEntity
     {
         $found = $this->repoRepository->findByPK($info->id);

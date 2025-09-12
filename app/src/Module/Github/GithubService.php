@@ -8,6 +8,7 @@ use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Internal\TokenPool;
 use App\Module\Github\Result\RepositoryInfo;
 use App\Module\Github\Result\StargazerInfo;
+use App\Module\Github\Result\UserInfo;
 use Psr\Http\Client\ClientInterface;
 use TypeLang\Mapper\Mapper;
 
@@ -84,6 +85,19 @@ final class GithubService
             $hasMorePages = \count($data) === $perPage;
             $page++;
         } while ($hasMorePages);
+    }
+
+    /**
+     * Get detailed user information by username.
+     */
+    public function getUserInfo(string $username): UserInfo
+    {
+        $client = $this->createClient();
+
+        $response = $client->request('GET', "users/{$username}");
+        $data = \json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+        return $this->mapper->denormalize($data, UserInfo::class);
     }
 
     /**

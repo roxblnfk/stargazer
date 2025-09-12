@@ -36,15 +36,14 @@
                     <div class="profile-header">
                         <div class="row align-items-center">
                             <div class="col-md-auto text-center text-md-start">
-                                <img src="https://github.com/lee-to.png" alt="Avatar" class="profile-avatar">
+                                <img src="{{ $user->avatarUrl }}" alt="{{ $user->login }}" class="profile-avatar">
                             </div>
                             <div class="col-md flex-grow-1 text-center text-md-start mt-3 mt-md-0">
-                                <h1 class="profile-name">Lee To</h1>
-                                <p class="profile-username">@lee-to</p>
+                                <h1 class="profile-name">{{ $user->login }}</h1>
                             </div>
                             <div class="col-md-auto">
                                 <div class="stats-card">
-                                    <span class="stats-number">1,247</span>
+                                    <span class="stats-number">{{$points}}</span>
                                     <span class="stats-label">[[Points]]</span>
                                 </div>
                             </div>
@@ -85,15 +84,17 @@
                                     </div>
                                 </div>
 
-                                <!--<div class="star-status starred">
-                                    <i class="bi bi-check-circle"></i>
-                                    [[Star set]]
-                                </div>-->
-
-                                <a href="{{ $repository->htmlUrl }}" class="star-status not-starred">
-                                    <i class="bi bi-star"></i>
-                                    [[Put a star]]
-                                </a>
+                                @if(isset($stars[$repository->id]))
+                                    <div class="star-status starred">
+                                        <i class="bi bi-check-circle"></i>
+                                        [[Star set]]
+                                    </div>
+                                @else
+                                    <a href="{{ $repository->htmlUrl }}" class="star-status not-starred">
+                                        <i class="bi bi-star"></i>
+                                        [[Put a star]]
+                                    </a>
+                                @endif
                             </div>
 
                             @if($repository->homepage)
