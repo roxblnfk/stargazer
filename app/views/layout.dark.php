@@ -25,9 +25,7 @@
 </header>
 
 <main class="flex-grow-1">
-    <div class="container-fluid">
-        <block:body/>
-    </div>
+    <block:body/>
 </main>
 
 <footer class="py-3 text-center">
