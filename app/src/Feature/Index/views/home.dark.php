@@ -21,12 +21,12 @@
 </stack:push>
 
 <define:body>
-    <div class="min-vh-100 cosmic-bg position-relative">
-        <div class="container py-5">
+    <div class="vh-100 cosmic-bg position-relative d-flex align-items-center">
+        <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-xl-7">
                     <!-- Main Card -->
-                    <div class="main-card p-4 p-md-5">
+                    <div class="main-card p-4">
                         <!-- Header with floating stars -->
                         <div class="text-center position-relative">
                             <div class="d-flex justify-content-center align-items-center mb-3">

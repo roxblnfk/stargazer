@@ -19,18 +19,10 @@
         <stack:collect name="styles" level="2"/>
     </block:head>
 </head>
-<body class="d-flex flex-column min-vh-100">
-<header class="py-3">
-    <!-- Header content if needed -->
-</header>
-
-<main class="flex-grow-1">
+<body>
+<main>
     <block:body/>
 </main>
-
-<footer class="py-3 text-center">
-    <!-- Footer content if needed -->
-</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <stack:collect name="scripts" level="1"/>
 </body>
