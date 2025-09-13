@@ -27,12 +27,16 @@ final class ScanRepositoryWorkflow
      * @var true
      */
     private bool $exit = false;
+    private Workflow\Mutex $alive;
 
     #[Workflow\WorkflowInit]
     public function __construct(
         GithubRepository $repository,
         private bool $active = true,
-    ) {}
+    ) {
+        $this->alive = new Workflow\Mutex();
+        $this->alive->tryLock();
+    }
 
     /**
      * @return PromiseInterface<null>
@@ -41,19 +45,20 @@ final class ScanRepositoryWorkflow
     public function handle(GithubRepository $repository, bool $active = true)
     {
         do {
-            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now);
-            yield Workflow::await(fn(): bool => $this->active || $this->now);
+            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now, $this->alive);
+            yield Workflow::await(fn(): bool => $this->active || $this->now, $this->alive);
             $this->now = false;
 
-            if ($this->exit) {
+            if (!$this->alive->isLocked()) {
                 return;
             }
 
             $waits = [
                 $this->updateCommonState($repository),
-                Workflow::async(static function () {
-                    yield WorkflowStub::childWorkflow(SyncStarsWorkflow::class);
+                Workflow::async(static function () use ($repository) {
+                    yield WorkflowStub::childWorkflow(SyncStarsWorkflow::class)->handle($repository);
                 }),
+                $this->alive,
             ];
 
             yield Promise::all($waits);
@@ -96,8 +101,7 @@ final class ScanRepositoryWorkflow
     #[Workflow\SignalMethod]
     public function exit(): void
     {
-        $this->exit = true;
-        $this->now = true;
+        $this->alive->unlock();
     }
 
     private function updateCommonState(GithubRepository $repository): PromiseInterface

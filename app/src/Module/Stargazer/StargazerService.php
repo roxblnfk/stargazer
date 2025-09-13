@@ -24,4 +24,18 @@ final class StargazerService
             \array_map(static fn($star) => $star->repoId, $stars),
         );
     }
+
+    /**
+     * Get chart data for repository stars over time
+     * @return array{labels: string[], data: int[]}
+     */
+    public function getRepositoryStarChartData(int $repoId): array
+    {
+        $chartData = $this->starRepository->getStarCountsByDate($repoId);
+
+        return [
+            'labels' => \array_map(static fn($item) => $item['date'], $chartData),
+            'data' => \array_map(static fn($item) => $item['count'], $chartData),
+        ];
+    }
 }

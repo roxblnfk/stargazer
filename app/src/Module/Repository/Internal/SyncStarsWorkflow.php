@@ -10,6 +10,7 @@ use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Promise;
 use Temporal\Support\Attribute\TaskQueue;
 use Temporal\Support\Factory\ActivityStub;
+use Temporal\Workflow;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
 
@@ -22,29 +23,33 @@ final class SyncStarsWorkflow
     public function handle(GithubRepository $repository)
     {
         $starsCount = 0;
-        $syncId = yield ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
+        $syncId = yield ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 1, startToCloseTimeout: 2)
             ->createSyncState($repository);
 
         try {
             # Grab stars
-            $starsCount = yield ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
-                ->grabStars($syncId, $repository);
+            $starsCount = yield ActivityStub::activity(SyncStarsActivity::class,
+                retryAttempts: 2,
+                startToCloseTimeout: 10
+            )->grabStars($syncId, $repository);
 
             # Sync existing stars
-            yield ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
+            yield ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 2, startToCloseTimeout: 10)
                 ->syncExistingStars($syncId, $repository);
 
             # Sync new stars
-            yield ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
+            yield ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 2, startToCloseTimeout: 10)
                 ->syncStars($syncId, $repository);
         } finally {
             # Complete sync state and cleanup in parallel
-            yield Promise::all([
-                ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
-                    ->completeSyncState($syncId, $starsCount),
-                ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 60 * 5)
-                    ->cleanup($syncId),
-            ]);
+            yield Workflow::asyncDetached(function () use ($syncId, $starsCount) {
+                yield Promise::all([
+                    ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
+                        ->completeSyncState($syncId, $starsCount),
+                    ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 60 * 5)
+                        ->cleanup($syncId),
+                ]);
+            });
         }
     }
 }

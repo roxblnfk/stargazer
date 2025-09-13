@@ -86,6 +86,7 @@ final class SyncStarsActivity
             return ActiveRecord::groupActions(static function () use ($stargazers, $syncId): int {
                 $stars = 0;
                 foreach ($stargazers as $stargazer) {
+                    tr($stargazer);
                     $star = SyncStarEntity::create($syncId, $stargazer);
                     $star->save();
                     ++$stars;
@@ -157,12 +158,18 @@ final class SyncStarsActivity
         # todo get repository from DB by Sync ID
         $repo = $this->repositoryService->getRepository($repository);
 
-        ActiveRecord::groupActions(function () use ($syncId, $repo): void {
-            $stars = SyncStarEntity::query()->where('syncId', $syncId)->fetchAll();
-            foreach ($stars as $star) {
-                $user = $this->userService->getOrCreate($star->info->user);
-                $existing = StarEntity::create($user->id, $repo->id, $syncId, $star->info->starredAt);
-                $existing->saveOrFail();
+        $stars = SyncStarEntity::query()->where('syncId', $syncId)->fetchAll();
+        $existing = [];
+
+        # Create users outside of transaction to avoid long locks
+        foreach ($stars as $star) {
+            $user = $this->userService->getOrCreate($star->info->user);
+            $existing[] = StarEntity::create($user->id, $repo->id, $syncId, $star->info->starredAt);
+        }
+
+        ActiveRecord::groupActions(static function () use ($existing): void {
+            foreach ($existing as $entity) {
+                $entity->saveOrFail();
             }
         });
     }

@@ -6,8 +6,8 @@ namespace App\Feature\Repository;
 
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Github\GithubService;
 use App\Module\Repository\RepositoryService;
+use App\Module\Stargazer\StargazerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Prototype\Traits\PrototypeTrait;
@@ -26,10 +26,12 @@ final class Controller
     public const ROUTE_ACTIVATE = 'repository:activate';
     public const ROUTE_DEACTIVATE = 'repository:deactivate';
     public const ROUTE_TOUCH = 'repository:touch';
+    public const ROUTE_CHART = 'repository:chart';
 
     public function __construct(
         private readonly ViewsInterface $views,
         private readonly RepositoryService $repositoryService,
+        private readonly StargazerService $stargazerService,
     ) {}
 
     #[Route(route: '/repository/list', name: self::ROUTE_LIST, methods: ['GET'])]
@@ -72,5 +74,16 @@ final class Controller
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->deactivateRepository($repository);
+    }
+
+    #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'])]
+    public function chart(string $owner, string $name): ResponseInterface
+    {
+        $repository = new GithubRepository(new GithubOwner($owner), $name);
+        $repositoryInfo = $this->repositoryService->getRepository($repository);
+
+        $chartData = $this->stargazerService->getRepositoryStarChartData($repositoryInfo->id);
+
+        return $this->response->json($chartData);
     }
 }

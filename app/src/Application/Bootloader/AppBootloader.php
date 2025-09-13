@@ -10,6 +10,7 @@ use Spiral\DataGrid\Interceptor\GridInterceptor;
 use Spiral\Domain\GuardInterceptor;
 use Spiral\Interceptors\HandlerInterface;
 use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Runtime\Configuration;
 
 /**
  * @link https://spiral.dev/docs/http-interceptors
@@ -28,6 +29,7 @@ final class AppBootloader extends DomainBootloader
     {
         return [
             Mapper::class => Mapper::class,
+            Configuration::class => new Configuration(),
         ];
     }
 }

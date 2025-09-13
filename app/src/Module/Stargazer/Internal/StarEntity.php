@@ -48,8 +48,8 @@ class StarEntity extends ActiveRecord
         return self::make([
             'userId' => $userId,
             'repoId' => $repoId,
-            'starredAt' => $starredAt,
             'lastSyncId' => $syncId,
+            'starredAt' => $starredAt,
         ]);
     }
 }

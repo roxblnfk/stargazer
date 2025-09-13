@@ -18,7 +18,7 @@ return [
      * @link https://spiral.dev/docs/basics-orm#logging
      */
     'logger' => [
-        'default' => null,
+        'default' => 'database',
         'drivers' => [
             // 'runtime' => 'stdout'
         ],
