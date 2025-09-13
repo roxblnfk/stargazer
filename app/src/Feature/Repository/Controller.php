@@ -25,6 +25,7 @@ final class Controller
     public const ROUTE_INFO = 'repository:info';
     public const ROUTE_ACTIVATE = 'repository:activate';
     public const ROUTE_DEACTIVATE = 'repository:deactivate';
+    public const ROUTE_TOUCH = 'repository:touch';
 
     public function __construct(
         private readonly ViewsInterface $views,
@@ -50,6 +51,13 @@ final class Controller
             'repository' => $repositoryInfo,
             'router' => $this->router,
         ]);
+    }
+
+    #[Route(route: '/repository/touch', name: self::ROUTE_TOUCH, methods: ['POST'])]
+    public function touch(ServerRequestInterface $request): void
+    {
+        $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
+        $this->repositoryService->touchRepository($repository);
     }
 
     #[Route(route: '/repository/activate', name: self::ROUTE_ACTIVATE, methods: ['POST'])]

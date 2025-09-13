@@ -45,6 +45,13 @@ class RepositoryService
         }
     }
 
+    public function getRepository(GithubRepository $repository): RepositoryInfo
+    {
+        return $this->repoRepository
+            ->whereFullName($repository)
+            ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
+    }
+
     public function activateRepository(GithubRepository $repository): void
     {
         $stub = WorkflowStub::workflow(
@@ -57,11 +64,16 @@ class RepositoryService
         $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository])->getResult();
     }
 
-    public function getRepository(GithubRepository $repository): RepositoryInfo
+    public function touchRepository(GithubRepository $repository): void
     {
-        return $this->repoRepository
-            ->whereFullName($repository)
-            ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
+        $stub = WorkflowStub::workflow(
+            $this->workflowClient->withTimeout(10),
+            RepositoryWorkflow::class,
+            workflowId: RepositoryWorkflow::getWorkflowId($repository),
+            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
+            idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
+        );
+        $this->workflowClient->updateWithStart($stub, 'touch', startArgs: [$repository])->getResult();
     }
 
     public function deactivateRepository(GithubRepository $repository): void

@@ -24,11 +24,15 @@ http:
       - .php
       - .htaccess
   pool:
+    num_workers: 4
     debug: ${DEBUG:-false}
     supervisor:
       max_worker_memory: 256
 temporal:
   address: '127.0.0.1:7233'
+  activities:
+    num_workers: 4
+    debug: ${DEBUG:-false}
   cache_size: 100
 
 logs:

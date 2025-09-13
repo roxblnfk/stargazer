@@ -38,6 +38,13 @@
                                 </span>
                             @endif
                         </h2>
+                        <button class="btn btn-outline-primary btn-sm"
+                                title="Refresh"
+                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
+                                hx-vals='{"repository_name": "{{ $repository->fullName }}"}'
+                                hx-swap="none">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         @if($repository->description)

@@ -63,7 +63,12 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="Refresh">
+                                        <button class="btn btn-outline-primary" 
+                                                title="Refresh"
+                                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
+                                                hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                hx-target="closest tr"
+                                                hx-swap="none">
                                             <i class="bi bi-arrow-clockwise"></i>
                                         </button>
                                         <button class="btn btn-outline-success"

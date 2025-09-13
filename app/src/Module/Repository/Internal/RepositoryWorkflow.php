@@ -81,6 +81,13 @@ final class RepositoryWorkflow
         yield $this->syncWorkflow->resume();
     }
 
+    #[Workflow\UpdateMethod('touch')]
+    public function touch()
+    {
+        yield $this->initLock;
+        yield $this->syncWorkflow->touch();
+    }
+
     #[Workflow\SignalMethod]
     public function pause()
     {
