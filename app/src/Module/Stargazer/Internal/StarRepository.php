@@ -75,12 +75,28 @@ final class StarRepository extends BaseRepository
         }
 
         $chartData = [];
+        $totalCount = 0;
+
+        // Add data points for each date with stars
         foreach ($result as $date => $count) {
             $totalCount += $count;
             $chartData[] = [
                 'date' => $date,
                 'count' => $totalCount,
             ];
+        }
+
+        // Extend chart to today if last star is older than today
+        if (!empty($chartData)) {
+            $lastDate = end($chartData)['date'];
+            $today = (new \DateTime())->format('Y-m-d');
+
+            if ($lastDate < $today) {
+                $chartData[] = [
+                    'date' => $today,
+                    'count' => $totalCount,
+                ];
+            }
         }
 
         return $chartData;

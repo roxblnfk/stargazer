@@ -28,7 +28,7 @@
                         pointBackgroundColor: '#007bff',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 4,
+                        pointRadius: 0,
                         pointHoverRadius: 6
                     }]
                 },
@@ -37,8 +37,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: true,
-                            position: 'top'
+                            display: false
                         },
                         tooltip: {
                             mode: 'index',
@@ -68,6 +67,10 @@
                                 text: 'Total Stars'
                             },
                             beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
+                            },
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.1)'
                             }

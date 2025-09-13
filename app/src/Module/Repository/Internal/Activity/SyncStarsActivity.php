@@ -184,10 +184,9 @@ final class SyncStarsActivity
         }
 
         # Batch save
-        ActiveRecord::groupActions(static function () use ($stargazers): void {
-            foreach ($stargazers as $stargazer) {
-                $stargazer->save();
-            }
+        ActiveRecord::groupActions(static function () use ($stargazers, $stars): void {
+            \array_map(static fn(StarEntity $s) => $s->save(), $stargazers);
+            \array_map(static fn(SyncStarEntity $s) => $s->delete(), $stars);
         });
 
         $this->orm->getHeap()->clean();
