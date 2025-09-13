@@ -65,9 +65,6 @@
                                         <button class="btn btn-outline-primary" title="Refresh">
                                             <i class="bi bi-arrow-clockwise"></i>
                                         </button>
-                                        <button class="btn btn-outline-info" title="View Details">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
                                         <button class="btn btn-outline-success"
                                                 title="Reactivate"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_ACTIVATE)"
@@ -76,8 +73,13 @@
                                                 hx-swap="none">
                                             <i class="bi bi-arrow-up-circle"></i>
                                         </button>
-                                        <button class="btn btn-outline-danger" title="Remove">
-                                            <i class="bi bi-trash"></i>
+                                        <button class="btn btn-outline-warning"
+                                                title="Deactivate"
+                                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_DEACTIVATE)"
+                                                hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                hx-target="closest tr"
+                                                hx-swap="none">
+                                            <i class="bi bi-arrow-down-circle"></i>
                                         </button>
                                     </div>
                                 </td>

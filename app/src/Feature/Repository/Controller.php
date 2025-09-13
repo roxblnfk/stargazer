@@ -24,6 +24,7 @@ final class Controller
     public const ROUTE_LIST = 'repository:list';
     public const ROUTE_INFO = 'repository:info';
     public const ROUTE_ACTIVATE = 'repository:activate';
+    public const ROUTE_DEACTIVATE = 'repository:deactivate';
 
     public function __construct(
         private readonly ViewsInterface $views,
@@ -40,7 +41,7 @@ final class Controller
     }
 
     #[Route(route: '/repository/info/<owner>/<name>', name: self::ROUTE_INFO, methods: ['GET'])]
-    public function info(string $owner, string $name, GithubService $service): mixed
+    public function info(string $owner, string $name): mixed
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
         $repositoryInfo = $this->repositoryService->getRepository($repository);
@@ -52,14 +53,16 @@ final class Controller
     }
 
     #[Route(route: '/repository/activate', name: self::ROUTE_ACTIVATE, methods: ['POST'])]
-    public function register(ServerRequestInterface $request): ResponseInterface
+    public function activate(ServerRequestInterface $request): void
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->activateRepository($repository);
+    }
 
-        return $this->response->redirect($this->router->uri(self::ROUTE_INFO, [
-            'owner' => (string) $repository->owner,
-            'name' => $repository->name,
-        ]));
+    #[Route(route: '/repository/deactivate', name: self::ROUTE_DEACTIVATE, methods: ['POST'])]
+    public function deactivate(ServerRequestInterface $request): void
+    {
+        $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
+        $this->repositoryService->deactivateRepository($repository);
     }
 }

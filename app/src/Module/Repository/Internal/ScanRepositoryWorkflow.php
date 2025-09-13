@@ -23,6 +23,10 @@ use Temporal\Workflow\WorkflowMethod;
 final class ScanRepositoryWorkflow
 {
     private bool $now = true;
+    /**
+     * @var true
+     */
+    private bool $exit = false;
 
     #[Workflow\WorkflowInit]
     public function __construct(
@@ -30,6 +34,9 @@ final class ScanRepositoryWorkflow
         private bool $active = true,
     ) {}
 
+    /**
+     * @return PromiseInterface<null>
+     */
     #[WorkflowMethod]
     public function handle(GithubRepository $repository, bool $active = true)
     {
@@ -37,6 +44,10 @@ final class ScanRepositoryWorkflow
             yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now);
             yield Workflow::await(fn(): bool => $this->active || $this->now);
             $this->now = false;
+
+            if ($this->exit) {
+                return;
+            }
 
             $waits = [
                 $this->updateCommonState($repository),
@@ -49,7 +60,7 @@ final class ScanRepositoryWorkflow
         } while (!Workflow::getInfo()->shouldContinueAsNew);
 
         # Continue as new
-        Workflow::continueAsNew(Workflow::getInfo()->type->name, [$repository, $this->active]);
+        yield Workflow::continueAsNew(Workflow::getInfo()->type->name, [$repository, $this->active]);
     }
 
     /**
@@ -76,6 +87,16 @@ final class ScanRepositoryWorkflow
     #[Workflow\SignalMethod]
     public function touch(): void
     {
+        $this->now = true;
+    }
+
+    /**
+     * @return PromiseInterface<null>
+     */
+    #[Workflow\SignalMethod]
+    public function exit(): void
+    {
+        $this->exit = true;
         $this->now = true;
     }
 

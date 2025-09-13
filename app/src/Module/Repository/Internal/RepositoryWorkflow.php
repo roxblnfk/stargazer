@@ -70,7 +70,8 @@ final class RepositoryWorkflow
         });
 
         yield Workflow::await(fn(): bool => $this->exit);
-        $scope->cancel();
+        yield $this->syncWorkflow->exit();
+        yield $scope;
     }
 
     #[Workflow\UpdateMethod('activate')]

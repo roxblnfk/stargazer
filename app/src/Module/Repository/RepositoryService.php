@@ -12,6 +12,7 @@ use Spiral\Core\Attribute\Singleton;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Common\IdReusePolicy;
 use Temporal\Common\WorkflowIdConflictPolicy;
+use Temporal\Exception\Client\WorkflowNotFoundException;
 use Temporal\Support\Factory\WorkflowStub;
 
 #[Singleton]
@@ -50,6 +51,7 @@ class RepositoryService
             $this->workflowClient->withTimeout(10),
             RepositoryWorkflow::class,
             workflowId: RepositoryWorkflow::getWorkflowId($repository),
+            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
             idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
         );
         $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository]);
@@ -60,5 +62,19 @@ class RepositoryService
         return $this->repoRepository
             ->whereFullName($repository)
             ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
+    }
+
+    public function deactivateRepository(GithubRepository $repository): void
+    {
+        $workflowId = RepositoryWorkflow::getWorkflowId($repository);
+
+        try {
+            $stub = $this->workflowClient
+                ->withTimeout(10)
+                ->newRunningWorkflowStub(RepositoryWorkflow::class, $workflowId);
+            $stub->exit();
+        } catch (WorkflowNotFoundException $e) {
+            // Ignore if not found
+        }
     }
 }
