@@ -88,7 +88,7 @@ final class StarRepository extends BaseRepository
 
         // Extend chart to today if last star is older than today
         if (!empty($chartData)) {
-            $lastDate = end($chartData)['date'];
+            $lastDate = \end($chartData)['date'];
             $today = (new \DateTime())->format('Y-m-d');
 
             if ($lastDate < $today) {

@@ -48,22 +48,34 @@
                             <tr>
                                 <td>
                                     <i class="bi bi-github"></i>
-                                    <a href="@route(\App\Feature\Repository\Controller::ROUTE_INFO, ['owner' => $repository->owner->name, 'name' => $repository->name])"
+                                    <a href="@route(\App\Feature\Repository\Controller::ROUTE_INFO, ['owner' => $repository->owner, 'name' => $repository->name])"
                                        class="text-decoration-none">{{ $repository }}</a>
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-star"></i> --
-                                    </span>
+                                    @if($repository->info)
+                                        <span class="badge" style="color: gold; background: transparent;">
+                                            <i class="bi bi-star-fill"></i> {{ number_format($repository->info->stargazersCount) }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-star"></i> --
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar3"></i> --
-                                    </small>
+                                    @if($repository->info)
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3"></i> {{ $repository->info->updatedAt->format('M j, Y') }}
+                                        </small>
+                                    @else
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3"></i> --
+                                        </small>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" 
+                                        <button class="btn btn-outline-primary"
                                                 title="Refresh"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
@@ -87,6 +99,25 @@
                                                 hx-swap="none">
                                             <i class="bi bi-arrow-down-circle"></i>
                                         </button>
+                                        @if($repository->active)
+                                            <button class="btn btn-outline-secondary"
+                                                    title="Hide"
+                                                    hx-post="@route(\App\Feature\Repository\Controller::ROUTE_HIDE)"
+                                                    hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                    hx-target="closest tr"
+                                                    hx-swap="none">
+                                                <i class="bi bi-eye-slash"></i>
+                                            </button>
+                                        @else
+                                            <button class="btn btn-outline-info"
+                                                    title="Show"
+                                                    hx-post="@route(\App\Feature\Repository\Controller::ROUTE_SHOW)"
+                                                    hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                    hx-target="closest tr"
+                                                    hx-swap="none">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

@@ -51,16 +51,4 @@ class RepositoryActivity
             $repo->saveOrFail();
         });
     }
-
-    /**
-     * @return PromiseInterface<null>
-     */
-    public function setActive(GithubRepository $repository): void
-    {
-        ActiveRecord::transact(function () use ($repository): void {
-            $repo = $this->repoRepository->forUpdate()->whereFullName($repository)->findOne();
-            $repo->active = true;
-            $repo->saveOrFail();
-        });
-    }
 }

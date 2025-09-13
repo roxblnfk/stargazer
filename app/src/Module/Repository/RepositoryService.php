@@ -6,6 +6,8 @@ namespace App\Module\Repository;
 
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
+use App\Module\ORM\ActiveRecord;
+use App\Module\Repository\DTO\Repository;
 use App\Module\Repository\Internal\ORM\RepoRepository;
 use App\Module\Repository\Internal\RepositoryWorkflow;
 use Spiral\Core\Attribute\Singleton;
@@ -24,14 +26,14 @@ class RepositoryService
     ) {}
 
     /**
-     * @return \Iterator<int, GithubRepository>
+     * @return \Iterator<int, Repository>
      */
     public function getRepositories(?bool $active = null): \Iterator
     {
         $q = $this->repoRepository;
         $active === null or $q = $q->active($active);
         foreach ($q->findAll() as $repo) {
-            yield $repo->toGithubRepository();
+            yield $repo->toDTO();
         }
     }
 
@@ -88,5 +90,14 @@ class RepositoryService
         } catch (WorkflowNotFoundException $e) {
             // Ignore if not found
         }
+    }
+
+    public function setVisible(GithubRepository $repository, bool $value = true): void
+    {
+        ActiveRecord::transact(function () use ($repository, $value): void {
+            $repo = $this->repoRepository->forUpdate()->whereFullName($repository)->findOne();
+            $repo->active = $value;
+            $repo->saveOrFail();
+        });
     }
 }

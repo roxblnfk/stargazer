@@ -27,6 +27,8 @@ final class Controller
     public const ROUTE_DEACTIVATE = 'repository:deactivate';
     public const ROUTE_TOUCH = 'repository:touch';
     public const ROUTE_CHART = 'repository:chart';
+    public const ROUTE_SHOW = 'repository:show';
+    public const ROUTE_HIDE = 'repository:hide';
 
     public function __construct(
         private readonly ViewsInterface $views,
@@ -74,6 +76,20 @@ final class Controller
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->deactivateRepository($repository);
+    }
+
+    #[Route(route: '/repository/show', name: self::ROUTE_SHOW, methods: ['POST'])]
+    public function show(ServerRequestInterface $request): void
+    {
+        $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
+        $this->repositoryService->setVisible($repository, true);
+    }
+
+    #[Route(route: '/repository/hide', name: self::ROUTE_HIDE, methods: ['POST'])]
+    public function hide(ServerRequestInterface $request): void
+    {
+        $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
+        $this->repositoryService->setVisible($repository, false);
     }
 
     #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'])]

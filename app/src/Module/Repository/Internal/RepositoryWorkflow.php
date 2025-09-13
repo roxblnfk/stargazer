@@ -33,7 +33,7 @@ final class RepositoryWorkflow
     private object $syncWorkflow;
 
     #[Workflow\WorkflowInit]
-    public function __construct(GithubRepository $repository)
+    public function __construct(private GithubRepository $repository)
     {
         # Check the Workflow ID format
         # It's required to guarantee uniqueness of the workflow per repository
@@ -73,6 +73,9 @@ final class RepositoryWorkflow
         yield $scope;
     }
 
+    /**
+     * Activate Repository sync.
+     */
     #[Workflow\UpdateMethod('activate')]
     public function activate()
     {

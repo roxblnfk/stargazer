@@ -8,6 +8,7 @@ use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
 use App\Module\ORM\ActiveRecord;
+use App\Module\Repository\DTO\Repository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Table\Index;
@@ -67,6 +68,20 @@ class RepoEntity extends ActiveRecord
         return new GithubRepository(
             owner: new GithubOwner($this->owner),
             name: $this->name,
+        );
+    }
+
+    public function toDTO(): Repository
+    {
+        return new Repository(
+            id: $this->id,
+            owner: $this->owner,
+            ownerId: $this->ownerId,
+            name: $this->name,
+            active: $this->active,
+            info: $this->info ?? null,
+            updatedAt: $this->updatedAt,
+            createdAt: $this->createdAt,
         );
     }
 }
