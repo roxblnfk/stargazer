@@ -13,7 +13,6 @@ use Temporal\Support\Attribute\TaskQueue;
 use Temporal\Support\Factory\ActivityStub as A;
 use Temporal\Support\Factory\WorkflowStub;
 use Temporal\Workflow;
-use Temporal\Workflow\CancellationScopeInterface;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
 

@@ -23,10 +23,12 @@ use Temporal\Workflow\WorkflowMethod;
 final class ScanRepositoryWorkflow
 {
     private bool $now = true;
+
     /**
      * @var true
      */
     private bool $exit = false;
+
     private Workflow\Mutex $alive;
 
     #[Workflow\WorkflowInit]
@@ -49,19 +51,21 @@ final class ScanRepositoryWorkflow
             yield Workflow::await(fn(): bool => $this->active || $this->now, $this->alive);
             $this->now = false;
 
+            # Exit is here
             if (!$this->alive->isLocked()) {
                 return;
             }
 
+            # Compose tasks
             $waits = [
                 $this->updateCommonState($repository),
                 Workflow::async(static function () use ($repository) {
                     yield WorkflowStub::childWorkflow(SyncStarsWorkflow::class)->handle($repository);
                 }),
-                $this->alive,
             ];
 
-            yield Promise::all($waits);
+            # Wait for all tasks to complete or for exit signal
+            yield Workflow::await(Promise::all($waits), $this->alive);
         } while (!Workflow::getInfo()->shouldContinueAsNew);
 
         # Continue as new

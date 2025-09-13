@@ -9,10 +9,12 @@ use App\Module\Github\GithubService;
 use App\Module\ORM\ActiveRecord;
 use App\Module\Repository\RepositoryService;
 use App\Module\Stargazer\Internal\StarEntity;
+use App\Module\Stargazer\Internal\StarRepository;
 use App\Module\Stargazer\Internal\SyncEntity;
 use App\Module\Stargazer\Internal\SyncStarEntity;
 use App\Module\User\UserService;
 use Cycle\Database\DatabaseInterface;
+use Cycle\ORM\ORMInterface;
 use React\Promise\PromiseInterface;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Activity\ActivityInterface;
@@ -28,6 +30,8 @@ final class SyncStarsActivity
         private readonly RepositoryService $repositoryService,
         private readonly DatabaseInterface $db,
         private readonly UserService $userService,
+        private readonly StarRepository $starRepository,
+        private readonly ORMInterface $orm,
     ) {}
 
     /**
@@ -86,7 +90,6 @@ final class SyncStarsActivity
             return ActiveRecord::groupActions(static function () use ($stargazers, $syncId): int {
                 $stars = 0;
                 foreach ($stargazers as $stargazer) {
-                    tr($stargazer);
                     $star = SyncStarEntity::create($syncId, $stargazer);
                     $star->save();
                     ++$stars;
@@ -138,11 +141,11 @@ final class SyncStarsActivity
             $this->db->execute(
                 <<<SQL
                     DELETE FROM {$syncStarsTable}
-                    WHERE sync_id = ? AND user_id IN (SELECT user_id FROM {$starsTable} WHERE repo_id = ?)
+                    WHERE sync_id = ? AND user_id IN (SELECT user_id FROM {$starsTable} WHERE repo_id = ? AND starred_at IS NOT NULL)
                     SQL,
                 [
-                    $repo->id,
                     $syncId,
+                    $repo->id,
                 ],
             );
         });
@@ -156,21 +159,39 @@ final class SyncStarsActivity
     public function syncStars(int $syncId, GithubRepository $repository): void
     {
         # todo get repository from DB by Sync ID
-        $repo = $this->repositoryService->getRepository($repository);
+        $repoId = $this->repositoryService->getRepository($repository)->id;
 
-        $stars = SyncStarEntity::query()->where('syncId', $syncId)->fetchAll();
-        $existing = [];
-
-        # Create users outside of transaction to avoid long locks
-        foreach ($stars as $star) {
-            $user = $this->userService->getOrCreate($star->info->user);
-            $existing[] = StarEntity::create($user->id, $repo->id, $syncId, $star->info->starredAt);
+        begin:
+        $stars = SyncStarEntity::query()->where(['syncId' => $syncId])->limit(10)->fetchAll();
+        if ($stars === []) {
+            return;
         }
 
-        ActiveRecord::groupActions(static function () use ($existing): void {
-            foreach ($existing as $entity) {
-                $entity->saveOrFail();
+        $stargazers = [];
+        foreach ($stars as $star) {
+            # Persist user outside of transaction
+            $user = $this->userService->getOrCreate($star->info->user);
+
+            # Get or create stargazer entity
+            $existing = $this->starRepository->findByPK(['userId' => $user->id, 'repoId' => $repoId]);
+            if ($existing !== null) {
+                $existing->starredAt = $star->info->starredAt;
+                $existing->lastSyncId = $syncId;
+            }
+
+            $existing ??= StarEntity::create($user->id, $repoId, $syncId, $star->info->starredAt);
+            $stargazers[] = $existing;
+        }
+
+        # Batch save
+        ActiveRecord::groupActions(static function () use ($stargazers): void {
+            foreach ($stargazers as $stargazer) {
+                $stargazer->save();
             }
         });
+
+        $this->orm->getHeap()->clean();
+
+        goto begin;
     }
 }

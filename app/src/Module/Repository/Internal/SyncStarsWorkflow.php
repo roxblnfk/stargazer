@@ -28,9 +28,10 @@ final class SyncStarsWorkflow
 
         try {
             # Grab stars
-            $starsCount = yield ActivityStub::activity(SyncStarsActivity::class,
+            $starsCount = yield ActivityStub::activity(
+                SyncStarsActivity::class,
                 retryAttempts: 2,
-                startToCloseTimeout: 10
+                startToCloseTimeout: 10,
             )->grabStars($syncId, $repository);
 
             # Sync existing stars
@@ -42,11 +43,11 @@ final class SyncStarsWorkflow
                 ->syncStars($syncId, $repository);
         } finally {
             # Complete sync state and cleanup in parallel
-            yield Workflow::asyncDetached(function () use ($syncId, $starsCount) {
+            yield Workflow::asyncDetached(static function () use ($syncId, $starsCount) {
                 yield Promise::all([
-                    ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 10)
+                    ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 3, startToCloseTimeout: 10)
                         ->completeSyncState($syncId, $starsCount),
-                    ActivityStub::activity(SyncStarsActivity::class, startToCloseTimeout: 60 * 5)
+                    ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 10, startToCloseTimeout: 60)
                         ->cleanup($syncId),
                 ]);
             });
