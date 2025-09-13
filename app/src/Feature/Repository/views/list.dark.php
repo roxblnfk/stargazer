@@ -7,8 +7,9 @@
     <div class="container py-4">
         <h1 class="mb-4">[[Repository List]]</h1>
 
-        <form method="POST"
-              action="@route(\App\Feature\Repository\Controller::ROUTE_ACTIVATE)"
+        <form hx-post="@route(\App\Feature\Repository\Controller::ROUTE_ACTIVATE)"
+              hx-on::after-request="if(event.detail.xhr.status === 200) location.reload()"
+              hx-swap="none"
               class="mb-4"
         >
             <div class="input-group">

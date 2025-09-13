@@ -54,7 +54,7 @@ class RepositoryService
             workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
             idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
         );
-        $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository]);
+        $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository])->getResult();
     }
 
     public function getRepository(GithubRepository $repository): RepositoryInfo
