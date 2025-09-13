@@ -9916,29 +9916,29 @@
         },
         {
             "name": "temporal-php/support",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/temporal-php/support.git",
-                "reference": "b9ab40b1a830a1fcf78f992add0443bd6604f472"
+                "reference": "b177152a2add479b0b3e83c1431517db8ce8184d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/temporal-php/support/zipball/b9ab40b1a830a1fcf78f992add0443bd6604f472",
-                "reference": "b9ab40b1a830a1fcf78f992add0443bd6604f472",
+                "url": "https://api.github.com/repos/temporal-php/support/zipball/b177152a2add479b0b3e83c1431517db8ce8184d",
+                "reference": "b177152a2add479b0b3e83c1431517db8ce8184d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
-                "temporal/sdk": "^2.8"
+                "temporal/sdk": "^2.15"
             },
             "require-dev": {
                 "buggregator/trap": "^1.4",
                 "dereuromark/composer-prefer-lowest": "^0.1.10",
-                "pestphp/pest": "^2.34",
-                "pestphp/pest-plugin-arch": "^2.7",
                 "phpunit/phpunit": "^10.5",
-                "vimeo/psalm": "^5.23"
+                "spiral/code-style": "^2.3.0",
+                "ta-tikoma/phpunit-architecture-test": "^0.8.4",
+                "vimeo/psalm": "^6.13"
             },
             "suggest": {
                 "buggregator/trap": "For better debugging and protobuf messages dumping"
@@ -9957,10 +9957,6 @@
                 {
                     "name": "Aleksei Gagarin (roxblnfk)",
                     "homepage": "https://github.com/roxblnfk"
-                },
-                {
-                    "name": "Pavel Buchnev (butschster)",
-                    "homepage": "https://github.com/butschster"
                 }
             ],
             "description": "Helpers that simplify working with the Temporal PHP SDK",
@@ -9970,19 +9966,15 @@
             ],
             "support": {
                 "issues": "https://github.com/temporal-php/support/issues",
-                "source": "https://github.com/temporal-php/support/tree/1.0.0"
+                "source": "https://github.com/temporal-php/support/tree/1.1.0"
             },
             "funding": [
-                {
-                    "url": "https://patreon.com/butschster",
-                    "type": "patreon"
-                },
                 {
                     "url": "https://patreon.com/roxblnfk",
                     "type": "patreon"
                 }
             ],
-            "time": "2024-04-05T20:19:53+00:00"
+            "time": "2025-09-13T09:03:41+00:00"
         },
         {
             "name": "temporal/sdk",

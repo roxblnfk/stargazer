@@ -11,6 +11,7 @@ use App\Module\Repository\Internal\RepositoryWorkflow;
 use Spiral\Core\Attribute\Singleton;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Common\IdReusePolicy;
+use Temporal\Common\WorkflowIdConflictPolicy;
 use Temporal\Support\Factory\WorkflowStub;
 
 #[Singleton]
@@ -43,15 +44,15 @@ class RepositoryService
         }
     }
 
-    public function registerRepository(GithubRepository $repository): void
+    public function activateRepository(GithubRepository $repository): void
     {
         $stub = WorkflowStub::workflow(
-            $this->workflowClient,
+            $this->workflowClient->withTimeout(10),
             RepositoryWorkflow::class,
             workflowId: RepositoryWorkflow::getWorkflowId($repository),
-            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
+            idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
         );
-        $this->workflowClient->start($stub, $repository);
+        $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository]);
     }
 
     public function getRepository(GithubRepository $repository): RepositoryInfo

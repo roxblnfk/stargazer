@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Result;
 
-use Temporal\Client\Schedule\Action\StartWorkflowAction;
 use Temporal\Internal\Marshaller\Meta\Marshal;
-use Temporal\Internal\Marshaller\Meta\MarshalOneOf;
 use Temporal\Internal\Marshaller\Type\ObjectType;
 use TypeLang\Mapper\Mapping\MapName;
 

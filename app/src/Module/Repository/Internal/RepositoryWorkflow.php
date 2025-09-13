@@ -28,7 +28,10 @@ use Temporal\Workflow\WorkflowMethod;
 final class RepositoryWorkflow
 {
     private bool $exit = false;
-    private CancellationScopeInterface $syncStarsScope;
+    private Workflow\Mutex $initLock;
+
+    /** @var ScanRepositoryWorkflow $syncWorkflow */
+    private object $syncWorkflow;
 
     #[Workflow\WorkflowInit]
     public function __construct(GithubRepository $repository)
@@ -40,6 +43,9 @@ final class RepositoryWorkflow
             'InvalidWorkflowId',
             nonRetryable: true,
         );
+
+        $this->initLock = new Workflow\Mutex();
+        $this->initLock->tryLock();
     }
 
     public static function getWorkflowId(GithubRepository $repository): string
@@ -56,12 +62,29 @@ final class RepositoryWorkflow
         # Persist repository with the info
         yield A::activity(RepositoryActivity::class, startToCloseTimeout: 10)->createOrUpdate($repository, $info);
 
-        $this->syncStarsScope = Workflow::async(static function () {
-            yield WorkflowStub::childWorkflow(ScanRepositoryWorkflow::class);
+        $scope = Workflow::async(function () use ($repository) {
+            $this->syncWorkflow = WorkflowStub::childWorkflow(ScanRepositoryWorkflow::class);
+            $this->initLock->unlock();
+
+            yield $this->syncWorkflow->handle($repository, true);
         });
 
         yield Workflow::await(fn(): bool => $this->exit);
-        $this->syncStarsScope->cancel();
+        $scope->cancel();
+    }
+
+    #[Workflow\UpdateMethod('activate')]
+    public function activate()
+    {
+        yield $this->initLock;
+        yield $this->syncWorkflow->resume();
+    }
+
+    #[Workflow\SignalMethod]
+    public function pause()
+    {
+        yield $this->initLock;
+        yield $this->syncWorkflow->pause();
     }
 
     #[Workflow\SignalMethod]

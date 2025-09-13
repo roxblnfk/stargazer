@@ -22,17 +22,21 @@ use Temporal\Workflow\WorkflowMethod;
 #[TaskQueue('stargazer-github')]
 final class ScanRepositoryWorkflow
 {
-    private bool $now = false;
+    private bool $now = true;
 
     #[Workflow\WorkflowInit]
-    public function __construct(GithubRepository $repository, private bool $active = true) {
-    }
+    public function __construct(
+        GithubRepository $repository,
+        private bool $active = true,
+    ) {}
 
     #[WorkflowMethod]
     public function handle(GithubRepository $repository, bool $active = true)
     {
         do {
-            yield Workflow::await(fn(): bool => $this->active);
+            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now);
+            yield Workflow::await(fn(): bool => $this->active || $this->now);
+            $this->now = false;
 
             $waits = [
                 $this->updateCommonState($repository),
@@ -42,25 +46,37 @@ final class ScanRepositoryWorkflow
             ];
 
             yield Promise::all($waits);
-
-            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now);
-            $this->now = false;
         } while (!Workflow::getInfo()->shouldContinueAsNew);
 
         # Continue as new
         Workflow::continueAsNew(Workflow::getInfo()->type->name, [$repository, $this->active]);
     }
 
+    /**
+     * @return PromiseInterface<null>
+     */
     #[Workflow\SignalMethod]
     public function pause(): void
     {
         $this->active = false;
     }
 
+    /**
+     * @return PromiseInterface<null>
+     */
     #[Workflow\SignalMethod]
     public function resume(): void
     {
         $this->active = true;
+    }
+
+    /**
+     * @return PromiseInterface<null>
+     */
+    #[Workflow\SignalMethod]
+    public function touch(): void
+    {
+        $this->now = true;
     }
 
     private function updateCommonState(GithubRepository $repository): PromiseInterface
