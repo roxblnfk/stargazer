@@ -12,6 +12,6 @@ final class PointsService
     public function calculate(array $starred): int
     {
         // TODO implement logic
-        return count($starred);
+        return \count($starred);
     }
 }

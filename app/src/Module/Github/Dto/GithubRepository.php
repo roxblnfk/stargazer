@@ -21,6 +21,9 @@ final class GithubRepository implements \Stringable
      */
     public static function fromString(string $fullName): self
     {
+        \preg_match('/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/', $fullName) or throw new \InvalidArgumentException(
+            "Invalid repository full name format `$fullName`. Expected `owner/name`.",
+        );
         $parts = \explode('/', $fullName, 2);
         \count($parts) === 2 or throw new \InvalidArgumentException("Invalid repository full name `$fullName`.");
         return new self(new GithubOwner($parts[0]), $parts[1]);

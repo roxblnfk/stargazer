@@ -31,7 +31,7 @@ class StarEntity extends ActiveRecord
     #[Column(type: 'bigInteger', name: 'repo_id', primary: true, typecast: 'int')]
     public int $repoId;
 
-    #[Column(type: 'datetime', name: 'starred_at', typecast: 'datetime')]
+    #[Column(type: 'datetime', name: 'starred_at', nullable: true, typecast: 'datetime')]
     public ?\DateTimeInterface $starredAt = null;
 
     #[Column(type: 'datetime', typecast: 'datetime')]
@@ -48,8 +48,8 @@ class StarEntity extends ActiveRecord
         return self::make([
             'userId' => $userId,
             'repoId' => $repoId,
-            'starredAt' => $starredAt,
             'lastSyncId' => $syncId,
+            'starredAt' => $starredAt,
         ]);
     }
 }

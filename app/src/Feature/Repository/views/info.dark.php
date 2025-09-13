@@ -3,6 +3,124 @@
 <stack:push name="styles">
 </stack:push>
 
+<stack:push name="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script>
+        let starsChart;
+
+        function initializeChart() {
+            const chartCanvas = document.getElementById('starsChart');
+            if (!chartCanvas) return;
+
+            const ctx = chartCanvas.getContext('2d');
+            starsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Stars',
+                        data: [],
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#007bff',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#007bff',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Total Stars'
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        function updateChart(data) {
+            if (starsChart && data.labels && data.data) {
+                starsChart.data.labels = data.labels;
+                starsChart.data.datasets[0].data = data.data;
+                starsChart.update('none');
+            }
+        }
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
+
+            // Setup HTMX listeners for data fetcher
+            const dataFetcher = document.getElementById('chartDataFetcher');
+            if (dataFetcher) {
+                dataFetcher.addEventListener('htmx:responseError', function(evt) {
+                    console.error('Chart data loading error:', evt.detail);
+                });
+
+                dataFetcher.addEventListener('htmx:afterRequest', function(evt) {
+                    console.log('HTMX request completed', evt.detail);
+                    if (evt.detail.successful) {
+                        try {
+                            const data = JSON.parse(evt.detail.xhr.responseText);
+                            console.log('Chart data received:', data);
+                            updateChart(data);
+                        } catch (e) {
+                            console.error('Error parsing chart data:', e);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</stack:push>
+
 <define:body>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,6 +156,13 @@
                                 </span>
                             @endif
                         </h2>
+                        <button class="btn btn-outline-primary btn-sm"
+                                title="Refresh"
+                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
+                                hx-vals='{"repository_name": "{{ $repository->fullName }}"}'
+                                hx-swap="none">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         @if($repository->description)
@@ -101,6 +226,24 @@
                             </a>
                         </div>
                         @endif
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-graph-up"></i> [[Stars Over Time]]
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="height: 400px;">
+                            <canvas id="starsChart"></canvas>
+                            <div id="chartDataFetcher"
+                                 hx-get="@route(\App\Feature\Repository\Controller::ROUTE_CHART, ['owner' => $repository->owner->login, 'name' => $repository->name])"
+                                 hx-trigger="load, every 30s"
+                                 hx-swap="none"
+                                 style="display: none;"></div>
+                        </div>
                     </div>
                 </div>
 

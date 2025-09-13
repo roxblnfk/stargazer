@@ -11,7 +11,6 @@ final class StargazerInfo implements \JsonSerializable, \Stringable
     public function __construct(
         #[MapName('starred_at')]
         public readonly \DateTimeImmutable $starredAt,
-
         public readonly UserInfo $user,
     ) {}
 

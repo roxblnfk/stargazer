@@ -4,8 +4,12 @@
 /runtime/
 */runtime/
 
-/rr*
-/protoc-gen-php-grpc*
+/rr
+/rr.exe
+/protoc-gen-php-grpc
+/protoc-gen-php-grpc.exe
+/temporal
+/temporal.exe
 
 /.env
 /*.cache

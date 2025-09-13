@@ -5,31 +5,35 @@ declare(strict_types=1);
 namespace App\Module\Repository;
 
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Github\GithubService;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\Repository\Exception\RepositoryAlreadyExists;
-use App\Module\Repository\Internal\RepoEntity;
-use App\Module\Repository\Internal\RepoRepository;
+use App\Module\ORM\ActiveRecord;
+use App\Module\Repository\DTO\Repository;
+use App\Module\Repository\Internal\ORM\RepoRepository;
+use App\Module\Repository\Internal\RepositoryWorkflow;
 use Spiral\Core\Attribute\Singleton;
-use Spiral\Prototype\Traits\PrototypeTrait;
+use Temporal\Client\WorkflowClientInterface;
+use Temporal\Common\IdReusePolicy;
+use Temporal\Common\WorkflowIdConflictPolicy;
+use Temporal\Exception\Client\WorkflowNotFoundException;
+use Temporal\Support\Factory\WorkflowStub;
 
 #[Singleton]
 class RepositoryService
 {
-    use PrototypeTrait;
-
     public function __construct(
         private readonly RepoRepository $repoRepository,
-        private readonly GithubService $githubService,
+        private readonly WorkflowClientInterface $workflowClient,
     ) {}
 
     /**
-     * @return \Iterator<int, GithubRepository>
+     * @return \Iterator<int, Repository>
      */
-    public function getTrackedRepositories(): \Iterator
+    public function getRepositories(?bool $active = null): \Iterator
     {
-        foreach ($this->repoRepository->active()->findAll() as $repo) {
-            yield $repo->toGithubRepository();
+        $q = $this->repoRepository;
+        $active === null or $q = $q->active($active);
+        foreach ($q->findAll() as $repo) {
+            yield $repo->toDTO();
         }
     }
 
@@ -43,30 +47,57 @@ class RepositoryService
         }
     }
 
-    /**
-     * @throws RepositoryAlreadyExists
-     */
-    public function registerRepository(GithubRepository $repository): void
-    {
-        $found = $this->repoRepository->whereFullName($repository)->findOne();
-        $found === null or throw new RepositoryAlreadyExists($repository);
-
-        # Load info from GitHub
-        $info = $this->githubService->getRepositoryInfo($repository);
-
-        # Create entity
-        $repo = RepoEntity::createFromRepositoryInfo($info);
-        $repo->saveOrFail();
-
-        # Harvest stars
-        // $this->workflowClient->
-    }
-
-    public function getTrackedRepository(GithubRepository $repository): RepositoryInfo
+    public function getRepository(GithubRepository $repository): RepositoryInfo
     {
         return $this->repoRepository
-            ->active()
             ->whereFullName($repository)
-            ->findOne()?->info ?? throw new \RuntimeException('Repository is not tracked.');
+            ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
+    }
+
+    public function activateRepository(GithubRepository $repository): void
+    {
+        $stub = WorkflowStub::workflow(
+            $this->workflowClient->withTimeout(10),
+            RepositoryWorkflow::class,
+            workflowId: RepositoryWorkflow::getWorkflowId($repository),
+            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
+            idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
+        );
+        $this->workflowClient->updateWithStart($stub, 'activate', startArgs: [$repository])->getResult();
+    }
+
+    public function touchRepository(GithubRepository $repository): void
+    {
+        $stub = WorkflowStub::workflow(
+            $this->workflowClient->withTimeout(10),
+            RepositoryWorkflow::class,
+            workflowId: RepositoryWorkflow::getWorkflowId($repository),
+            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
+            idConflictPolicy: WorkflowIdConflictPolicy::UseExisting,
+        );
+        $this->workflowClient->updateWithStart($stub, 'touch', startArgs: [$repository])->getResult();
+    }
+
+    public function deactivateRepository(GithubRepository $repository): void
+    {
+        $workflowId = RepositoryWorkflow::getWorkflowId($repository);
+
+        try {
+            $stub = $this->workflowClient
+                ->withTimeout(10)
+                ->newRunningWorkflowStub(RepositoryWorkflow::class, $workflowId);
+            $stub->exit();
+        } catch (WorkflowNotFoundException $e) {
+            // Ignore if not found
+        }
+    }
+
+    public function setVisible(GithubRepository $repository, bool $value = true): void
+    {
+        ActiveRecord::transact(function () use ($repository, $value): void {
+            $repo = $this->repoRepository->forUpdate()->whereFullName($repository)->findOne();
+            $repo->active = $value;
+            $repo->saveOrFail();
+        });
     }
 }

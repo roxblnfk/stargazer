@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Feature\Profile;
 
-
 use Spiral\Filters\Attribute\Input\Query;
 use Spiral\Filters\Model\Filter;
 use Spiral\Filters\Model\FilterDefinitionInterface;
