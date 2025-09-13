@@ -5,30 +5,30 @@ declare(strict_types=1);
 namespace App\Module\Repository;
 
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Github\GithubService;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\Repository\Exception\RepositoryAlreadyExists;
-use App\Module\Repository\Internal\RepoEntity;
-use App\Module\Repository\Internal\RepoRepository;
+use App\Module\Repository\Internal\ORM\RepoRepository;
+use App\Module\Repository\Internal\RepositoryWorkflow;
 use Spiral\Core\Attribute\Singleton;
-use Spiral\Prototype\Traits\PrototypeTrait;
+use Temporal\Client\WorkflowClientInterface;
+use Temporal\Common\IdReusePolicy;
+use Temporal\Support\Factory\WorkflowStub;
 
 #[Singleton]
 class RepositoryService
 {
-    use PrototypeTrait;
-
     public function __construct(
         private readonly RepoRepository $repoRepository,
-        private readonly GithubService $githubService,
+        private readonly WorkflowClientInterface $workflowClient,
     ) {}
 
     /**
      * @return \Iterator<int, GithubRepository>
      */
-    public function getTrackedRepositories(): \Iterator
+    public function getRepositories(?bool $active = null): \Iterator
     {
-        foreach ($this->repoRepository->active()->findAll() as $repo) {
+        $q = $this->repoRepository;
+        $active === null or $q = $q->active($active);
+        foreach ($q->findAll() as $repo) {
             yield $repo->toGithubRepository();
         }
     }
@@ -43,30 +43,21 @@ class RepositoryService
         }
     }
 
-    /**
-     * @throws RepositoryAlreadyExists
-     */
     public function registerRepository(GithubRepository $repository): void
     {
-        $found = $this->repoRepository->whereFullName($repository)->findOne();
-        $found === null or throw new RepositoryAlreadyExists($repository);
-
-        # Load info from GitHub
-        $info = $this->githubService->getRepositoryInfo($repository);
-
-        # Create entity
-        $repo = RepoEntity::createFromRepositoryInfo($info);
-        $repo->saveOrFail();
-
-        # Harvest stars
-        // $this->workflowClient->
+        $stub = WorkflowStub::workflow(
+            $this->workflowClient,
+            RepositoryWorkflow::class,
+            workflowId: RepositoryWorkflow::getWorkflowId($repository),
+            workflowIdReusePolicy: IdReusePolicy::AllowDuplicate,
+        );
+        $this->workflowClient->start($stub, $repository);
     }
 
-    public function getTrackedRepository(GithubRepository $repository): RepositoryInfo
+    public function getRepository(GithubRepository $repository): RepositoryInfo
     {
         return $this->repoRepository
-            ->active()
             ->whereFullName($repository)
-            ->findOne()?->info ?? throw new \RuntimeException('Repository is not tracked.');
+            ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
     }
 }

@@ -14,6 +14,7 @@
     addParamDefaultToDocblockType="true"
     strictBinaryOperands="true"
     errorBaseline="psalm-baseline.xml"
+    ensureOverrideAttribute="false"
 >
     <projectFiles>
         <directory name="app/src"/>

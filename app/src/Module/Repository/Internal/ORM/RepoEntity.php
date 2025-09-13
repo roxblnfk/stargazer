@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal;
+namespace App\Module\Repository\Internal\ORM;
 
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
@@ -40,7 +40,7 @@ class RepoEntity extends ActiveRecord
     public string $name;
 
     #[Column(type: 'boolean', default: true, typecast: 'bool')]
-    public bool $active = true;
+    public bool $active = false;
 
     #[Column(type: 'json', nullable: true, typecast: [RepositoryInfo::class, 'fromJsonString'])]
     public RepositoryInfo $info;

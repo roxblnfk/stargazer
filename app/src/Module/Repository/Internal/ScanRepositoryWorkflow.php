@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Repository\Internal;
+
+use App\Module\Github\Dto\GithubRepository;
+use App\Module\Github\Result\RepositoryInfo;
+use App\Module\Repository\Internal\Activity\RepositoryActivity;
+use React\Promise\PromiseInterface;
+use Spiral\TemporalBridge\Attribute\AssignWorker;
+use Temporal\Promise;
+use Temporal\Support\Attribute\TaskQueue;
+use Temporal\Support\Factory\ActivityStub as A;
+use Temporal\Support\Factory\WorkflowStub;
+use Temporal\Workflow;
+use Temporal\Workflow\WorkflowInterface;
+use Temporal\Workflow\WorkflowMethod;
+
+#[WorkflowInterface]
+#[AssignWorker('stargazer-github')]
+#[TaskQueue('stargazer-github')]
+final class ScanRepositoryWorkflow
+{
+    private bool $now = false;
+
+    #[Workflow\WorkflowInit]
+    public function __construct(GithubRepository $repository, private bool $active = true) {
+    }
+
+    #[WorkflowMethod]
+    public function handle(GithubRepository $repository, bool $active = true)
+    {
+        do {
+            yield Workflow::await(fn(): bool => $this->active);
+
+            $waits = [
+                $this->updateCommonState($repository),
+                Workflow::async(static function () {
+                    yield WorkflowStub::childWorkflow(SyncStarsWorkflow::class);
+                }),
+            ];
+
+            yield Promise::all($waits);
+
+            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now);
+            $this->now = false;
+        } while (!Workflow::getInfo()->shouldContinueAsNew);
+
+        # Continue as new
+        Workflow::continueAsNew(Workflow::getInfo()->type->name, [$repository, $this->active]);
+    }
+
+    #[Workflow\SignalMethod]
+    public function pause(): void
+    {
+        $this->active = false;
+    }
+
+    #[Workflow\SignalMethod]
+    public function resume(): void
+    {
+        $this->active = true;
+    }
+
+    private function updateCommonState(GithubRepository $repository): PromiseInterface
+    {
+        return A::activity(RepositoryActivity::class, retryAttempts: 1, startToCloseTimeout: 10)
+            ->getGithubInfo($repository)
+            ->then(
+                # Persist repository with the info
+                static fn(RepositoryInfo $info) => A::activity(RepositoryActivity::class, startToCloseTimeout: 10)
+                    ->createOrUpdate($repository, $info),
+            );
+    }
+}

@@ -19,9 +19,9 @@ final class StargazerService
     {
         $stars = $this->starRepository->whereUserId($userId)->active()->findAll();
 
-        return array_combine(
-            array_map(static fn($star) => $star->repoId, $stars),
-            array_map(static fn($star) => $star->repoId, $stars)
+        return \array_combine(
+            \array_map(static fn($star) => $star->repoId, $stars),
+            \array_map(static fn($star) => $star->repoId, $stars),
         );
     }
 }

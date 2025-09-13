@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Result;
 
+use Temporal\Client\Schedule\Action\StartWorkflowAction;
+use Temporal\Internal\Marshaller\Meta\Marshal;
+use Temporal\Internal\Marshaller\Meta\MarshalOneOf;
+use Temporal\Internal\Marshaller\Type\ObjectType;
 use TypeLang\Mapper\Mapping\MapName;
 
 /**
@@ -26,6 +30,7 @@ final class RepositoryInfo implements \JsonSerializable, \Stringable
         #[MapName('full_name')]
         public readonly string $fullName,
         public readonly bool $private,
+        #[Marshal('owner', ObjectType::class, UserInfo::class)]
         public readonly OwnerInfo $owner,
 
         /** @var non-empty-string */

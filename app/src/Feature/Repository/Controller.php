@@ -7,7 +7,6 @@ namespace App\Feature\Repository;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
-use App\Module\Repository\Exception\RepositoryAlreadyExists;
 use App\Module\Repository\RepositoryService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,7 +35,7 @@ final class Controller
     {
         return $this->views->render('repository:list', [
             'router' => $this->router,
-            'repositories' => $this->repositoryService->getTrackedRepositories(),
+            'repositories' => $this->repositoryService->getRepositories(),
         ]);
     }
 
@@ -44,11 +43,7 @@ final class Controller
     public function add(ServerRequestInterface $request): ResponseInterface
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
-        try {
-            $this->repositoryService->registerRepository($repository);
-        } catch (RepositoryAlreadyExists) {
-            // Go to redirect
-        }
+        $this->repositoryService->registerRepository($repository);
 
         return $this->response->redirect($this->router->uri(self::ROUTE_INFO, [
             'owner' => (string) $repository->owner,
@@ -60,7 +55,7 @@ final class Controller
     public function info(string $owner, string $name, GithubService $service): mixed
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
-        $repositoryInfo = $this->repositoryService->getTrackedRepository($repository);
+        $repositoryInfo = $this->repositoryService->getRepository($repository);
 
         return $this->views->render('repository:info', [
             'repository' => $repositoryInfo,
