@@ -3,6 +3,9 @@
 <stack:push name="styles">
 </stack:push>
 
+<stack:push name="scripts">
+</stack:push>
+
 <define:body>
     <div class="container py-4">
         <h1 class="mb-4">[[Repository List]]</h1>
@@ -99,25 +102,22 @@
                                                 hx-swap="none">
                                             <i class="bi bi-arrow-down-circle"></i>
                                         </button>
-                                        @if($repository->active)
-                                            <button class="btn btn-outline-secondary"
-                                                    title="Hide"
-                                                    hx-post="@route(\App\Feature\Repository\Controller::ROUTE_HIDE)"
-                                                    hx-vals='{"repository_name": "{{ $repository }}"}'
-                                                    hx-target="closest tr"
-                                                    hx-swap="none">
-                                                <i class="bi bi-eye-slash"></i>
-                                            </button>
-                                        @else
-                                            <button class="btn btn-outline-info"
-                                                    title="Show"
-                                                    hx-post="@route(\App\Feature\Repository\Controller::ROUTE_SHOW)"
-                                                    hx-vals='{"repository_name": "{{ $repository }}"}'
-                                                    hx-target="closest tr"
-                                                    hx-swap="none">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        @endif
+                                        <button class="btn btn-outline-secondary hide-btn @if(!$repository->active) d-none @endif"
+                                                title="Hide"
+                                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_HIDE)"
+                                                hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                hx-swap="none"
+                                                hx-on::after-request="if(JSON.parse(event.detail.xhr.response).visible === false) { this.classList.add('d-none'); this.parentElement.querySelector('.show-btn').classList.remove('d-none'); }">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info show-btn @if($repository->active) d-none @endif"
+                                                title="Show"
+                                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_SHOW)"
+                                                hx-vals='{"repository_name": "{{ $repository }}"}'
+                                                hx-swap="none"
+                                                hx-on::after-request="if(JSON.parse(event.detail.xhr.response).visible === true) { this.classList.add('d-none'); this.parentElement.querySelector('.hide-btn').classList.remove('d-none'); }">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

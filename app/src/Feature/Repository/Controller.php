@@ -79,17 +79,21 @@ final class Controller
     }
 
     #[Route(route: '/repository/show', name: self::ROUTE_SHOW, methods: ['POST'])]
-    public function show(ServerRequestInterface $request): void
+    public function show(ServerRequestInterface $request): array
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->setVisible($repository, true);
+
+        return ['visible' => true];
     }
 
     #[Route(route: '/repository/hide', name: self::ROUTE_HIDE, methods: ['POST'])]
-    public function hide(ServerRequestInterface $request): void
+    public function hide(ServerRequestInterface $request): array
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->setVisible($repository, false);
+
+        return ['visible' => false];
     }
 
     #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'])]
