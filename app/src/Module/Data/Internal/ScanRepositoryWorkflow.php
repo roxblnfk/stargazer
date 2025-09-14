@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal;
+namespace App\Module\Data\Internal;
 
+use App\Module\Data\Internal\Activity\RepositoryActivity;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\Repository\Internal\Activity\RepositoryActivity;
 use React\Promise\PromiseInterface;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Promise;

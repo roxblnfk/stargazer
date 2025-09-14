@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Stargazer\Internal;
+namespace App\Module\Data\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;

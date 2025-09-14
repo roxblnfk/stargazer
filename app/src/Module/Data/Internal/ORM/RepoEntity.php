@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal\ORM;
+namespace App\Module\Data\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
+use App\Module\Data\DTO\Repository;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\Repository\DTO\Repository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Table\Index;

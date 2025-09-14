@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal\ORM;
+namespace App\Module\Data\Internal\ORM;
 
 use App\Application\ORM\BaseRepository;
 

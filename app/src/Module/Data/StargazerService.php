@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Stargazer;
+namespace App\Module\Data;
 
-use App\Module\Stargazer\Internal\StarRepository;
+use App\Module\Data\Internal\ORM\StarRepository;
 
 final class StargazerService
 {

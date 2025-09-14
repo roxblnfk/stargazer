@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Feature\Profile;
 
+use App\Module\Data\RepositoryService;
+use App\Module\Data\StargazerService;
 use App\Module\Github\Exception\GitHubUserNotFoundException;
-use App\Module\Repository\RepositoryService;
-use App\Module\Stargazer\StargazerService;
 use Spiral\Prototype\Traits\PrototypeTrait;
 use Spiral\Router\Annotation\Route;
 use Spiral\Views\ViewsInterface;

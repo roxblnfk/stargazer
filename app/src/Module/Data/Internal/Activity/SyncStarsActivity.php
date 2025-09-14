@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal\Activity;
+namespace App\Module\Data\Internal\Activity;
 
 use App\Application\ORM\ActiveRecord;
+use App\Module\Data\Internal\ORM\StarEntity;
+use App\Module\Data\Internal\ORM\StarRepository;
+use App\Module\Data\Internal\ORM\SyncEntity;
+use App\Module\Data\Internal\ORM\SyncStarEntity;
+use App\Module\Data\RepositoryService;
+use App\Module\Data\UserService;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
-use App\Module\Repository\RepositoryService;
-use App\Module\Stargazer\Internal\StarEntity;
-use App\Module\Stargazer\Internal\StarRepository;
-use App\Module\Stargazer\Internal\SyncEntity;
-use App\Module\Stargazer\Internal\SyncStarEntity;
-use App\Module\User\UserService;
 use Cycle\Database\DatabaseInterface;
 use Cycle\ORM\ORMInterface;
 use React\Promise\PromiseInterface;

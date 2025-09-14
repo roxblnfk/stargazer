@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository\Internal;
+namespace App\Module\Data\Internal;
 
+use App\Module\Data\Internal\Activity\RepositoryActivity;
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Repository\Internal\Activity\RepositoryActivity;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Exception\Failure\ApplicationFailure;
 use Temporal\Support\Attribute\RetryPolicy;

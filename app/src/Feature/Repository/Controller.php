@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Feature\Repository;
 
+use App\Module\Data\RepositoryService;
+use App\Module\Data\StargazerService;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
-use App\Module\Repository\RepositoryService;
-use App\Module\Stargazer\StargazerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Prototype\Traits\PrototypeTrait;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Repository;
+namespace App\Module\Data;
 
 use App\Application\ORM\ActiveRecord;
+use App\Module\Data\DTO\Repository;
+use App\Module\Data\Internal\ORM\RepoRepository;
+use App\Module\Data\Internal\RepositoryWorkflow;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\Repository\DTO\Repository;
-use App\Module\Repository\Internal\ORM\RepoRepository;
-use App\Module\Repository\Internal\RepositoryWorkflow;
 use Spiral\Core\Attribute\Singleton;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Common\IdReusePolicy;
