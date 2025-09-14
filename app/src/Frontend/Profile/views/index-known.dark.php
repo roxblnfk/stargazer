@@ -25,7 +25,7 @@
 <define:body>
     <div class="min-vh-100 cosmic-bg position-relative">
         <div class="container py-4">
-            <a href="@route(\App\Feature\Index\Controller::ROUTE_INDEX)" class="back-btn">
+            <a href="@route(\App\Frontend\Index\Controller::ROUTE_INDEX)" class="back-btn">
                 <i class="bi bi-arrow-left"></i>
                 [[Back]]
             </a>

@@ -36,7 +36,7 @@ final class Controller
         private readonly StargazerService $stargazerService,
     ) {}
 
-    #[Route(route: '/repository/list', name: self::ROUTE_LIST, methods: ['GET'])]
+    #[Route(route: '/repository/list', name: self::ROUTE_LIST, methods: ['GET'], group: 'backend')]
     public function list(): mixed
     {
         return $this->views->render('repository:list', [
@@ -45,7 +45,7 @@ final class Controller
         ]);
     }
 
-    #[Route(route: '/repository/info/<owner>/<name>', name: self::ROUTE_INFO, methods: ['GET'])]
+    #[Route(route: '/repository/info/<owner>/<name>', name: self::ROUTE_INFO, methods: ['GET'], group: 'backend')]
     public function info(string $owner, string $name): mixed
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
@@ -57,28 +57,28 @@ final class Controller
         ]);
     }
 
-    #[Route(route: '/repository/touch', name: self::ROUTE_TOUCH, methods: ['POST'])]
+    #[Route(route: '/repository/touch', name: self::ROUTE_TOUCH, methods: ['POST'], group: 'backend')]
     public function touch(ServerRequestInterface $request): void
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->touchRepository($repository);
     }
 
-    #[Route(route: '/repository/activate', name: self::ROUTE_ACTIVATE, methods: ['POST'])]
+    #[Route(route: '/repository/activate', name: self::ROUTE_ACTIVATE, methods: ['POST'], group: 'backend')]
     public function activate(ServerRequestInterface $request): void
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->activateRepository($repository);
     }
 
-    #[Route(route: '/repository/deactivate', name: self::ROUTE_DEACTIVATE, methods: ['POST'])]
+    #[Route(route: '/repository/deactivate', name: self::ROUTE_DEACTIVATE, methods: ['POST'], group: 'backend')]
     public function deactivate(ServerRequestInterface $request): void
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
         $this->repositoryService->deactivateRepository($repository);
     }
 
-    #[Route(route: '/repository/show', name: self::ROUTE_SHOW, methods: ['POST'])]
+    #[Route(route: '/repository/show', name: self::ROUTE_SHOW, methods: ['POST'], group: 'backend')]
     public function show(ServerRequestInterface $request): array
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
@@ -87,7 +87,7 @@ final class Controller
         return ['visible' => true];
     }
 
-    #[Route(route: '/repository/hide', name: self::ROUTE_HIDE, methods: ['POST'])]
+    #[Route(route: '/repository/hide', name: self::ROUTE_HIDE, methods: ['POST'], group: 'backend')]
     public function hide(ServerRequestInterface $request): array
     {
         $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
@@ -96,7 +96,7 @@ final class Controller
         return ['visible' => false];
     }
 
-    #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'])]
+    #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'], group: 'backend')]
     public function chart(string $owner, string $name): ResponseInterface
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);

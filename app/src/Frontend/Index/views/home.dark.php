@@ -41,7 +41,7 @@
                             </p>
                         </div>
 
-                        <!-- Modern Feature Cards -->
+                        <!-- Modern Frontend Cards -->
                         <div class="feature-grid">
                             <div class="feature-card">
                                 <div class="feature-icon">
@@ -73,7 +73,7 @@
                             <h2 class="cta-title">[[Start now!]]</h2>
                             <p class="cta-subtitle">[[Enter your GitHub username and see which projects you have backed]]</p>
 
-                            <form class="modern-form" action="@route(\App\Feature\Profile\Controller::ROUTE_INDEX)">
+                            <form class="modern-form" action="@route(\App\Frontend\Profile\Controller::ROUTE_INDEX)">
                                 <div class="input-wrapper">
                                     <input type="text"
                                            name="username"

@@ -19,8 +19,8 @@ use Spiral\Views\ViewsInterface;
  */
 final class Controller
 {
-    public const ROUTE_AUTH = 'backend:home:auth';
-    public const ROUTE_INDEX = 'backend:home:index';
+    public const ROUTE_AUTH = 'home:auth';
+    public const ROUTE_INDEX = 'home:index';
 
     public function __construct(
         private readonly ResponseWrapper $response,
@@ -29,7 +29,7 @@ final class Controller
         private readonly RouterInterface $router,
     ) {}
 
-    #[Route(route: '/backend/auth', name: self::ROUTE_AUTH, methods: ['GET'])]
+    #[Route(route: '/auth', name: self::ROUTE_AUTH, methods: ['GET'], group: 'backend')]
     public function auth(AuthContextInterface $auth, TokenRequest $form): ResponseInterface
     {
         $token = $this->tokenStorage->load($form->token);
@@ -41,7 +41,7 @@ final class Controller
         return $this->response->redirect($this->router->uri(self::ROUTE_INDEX));
     }
 
-    #[Route(route: '/backend/index', name: self::ROUTE_INDEX, methods: ['GET'])]
+    #[Route(route: '/index', name: self::ROUTE_INDEX, methods: ['GET'], group: 'backend')]
     public function index(StatsService $stats): mixed
     {
         return $this->views->render('backend-home:index', [
