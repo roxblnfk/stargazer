@@ -7,6 +7,7 @@ namespace App\Module\Data\Internal\ORM;
 use App\Application\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Table\Index;
 use Cycle\ORM\Entity\Behavior\CreatedAt;
 use Cycle\ORM\Entity\Behavior\UpdatedAt;
 
@@ -17,6 +18,7 @@ use Cycle\ORM\Entity\Behavior\UpdatedAt;
 )]
 #[CreatedAt(field: 'createdAt', column: 'created_at')]
 #[UpdatedAt(field: 'updatedAt', column: 'updated_at')]
+#[Index(['starred_at'])]
 class StarEntity extends ActiveRecord
 {
     /**

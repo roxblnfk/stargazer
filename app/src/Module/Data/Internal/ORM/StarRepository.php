@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Data\Internal\ORM;
 
 use App\Application\ORM\BaseRepository;
+use Cycle\Database\Injection\Fragment;
 
 /**
  * @extends BaseRepository<StarEntity>
@@ -57,44 +58,39 @@ final class StarRepository extends BaseRepository
      */
     public function getStarCountsByDate(int $repoId): array
     {
-        $clone = $this
+        $query = $this
             ->whereRepoId($repoId)
-            ->active();
+            ->select
+            ->buildQuery()
+            ->groupBy(new Fragment('DATE(starred_at)'))
+            // Summarize the count of stars per day
+            ->columns(new Fragment('DATE(starred_at) AS date'), new Fragment('COUNT(*) AS count'))
+            ->orderBy('date', 'ASC');
 
-        $clone->select->orderBy('starredAt', 'ASC');
-        $stars = $clone->findAll();
-        $result = [];
-        $totalCount = 0;
+        $chartData = $query->fetchAll();
 
-        foreach ($stars as $star) {
-            $date = $star->starredAt->format('Y-m-d');
-            if (!isset($result[$date])) {
-                $result[$date] = 0;
+        // Summarize cumulative counts
+        $previous = null;
+        foreach ($chartData as &$data) {
+            if ($previous === null) {
+                $previous = $data;
+                continue;
             }
-            $result[$date]++;
-        }
 
-        $chartData = [];
-        $totalCount = 0;
-
-        // Add data points for each date with stars
-        foreach ($result as $date => $count) {
-            $totalCount += $count;
-            $chartData[] = [
-                'date' => $date,
-                'count' => $totalCount,
-            ];
+            $data['count'] += $previous['count'];
+            $previous = $data;
         }
 
         // Extend chart to today if last star is older than today
-        if (!empty($chartData)) {
-            $lastDate = \end($chartData)['date'];
+        if ($chartData !== []) {
+            $last = \end($chartData);
+            $lastDate = $last['date'];
             $today = (new \DateTime())->format('Y-m-d');
 
             if ($lastDate < $today) {
                 $chartData[] = [
                     'date' => $today,
-                    'count' => $totalCount,
+                    'count' => $last['count'],
                 ];
             }
         }
