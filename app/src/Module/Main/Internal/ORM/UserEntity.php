@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Main\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
-use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubUser;
 use App\Module\Github\Result\UserInfo;
 use App\Module\Main\DTO\User;

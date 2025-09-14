@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Router;
 
 use App\Application\Router\Middleware\LocaleSelector;
+use Spiral\Auth\Middleware\AuthMiddleware;
 use Spiral\Bootloader\Http\RoutesBootloader as BaseRoutesBootloader;
 use Spiral\Cookies\Middleware\CookiesMiddleware;
 use Spiral\Csrf\Middleware\CsrfMiddleware;
@@ -47,6 +48,7 @@ final class RoutesBootloader extends BaseRoutesBootloader
                 SessionMiddleware::class,
                 CsrfMiddleware::class,
                 ValidationHandlerMiddleware::class,
+                AuthMiddleware::class,
             ],
         ];
     }

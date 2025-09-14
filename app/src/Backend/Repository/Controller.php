@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Repository;
+namespace App\Backend\Repository;
 
-use App\Module\Main\RepositoryService;
-use App\Module\Main\StargazerService;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
+use App\Module\Main\RepositoryService;
+use App\Module\Main\StargazerService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Prototype\Traits\PrototypeTrait;

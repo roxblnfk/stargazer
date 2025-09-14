@@ -13,14 +13,14 @@ class OrmDefaultCd34ad250775abacfb0466ae1af6ef9c extends Migration
     public function up(): void
     {
         $this->table('stargazer')
-        ->addIndex(['starred_at'], ['name' => 'stargazer_index_starred_at_68c655e1d96e8', 'unique' => false])
-        ->update();
+            ->addIndex(['starred_at'], ['name' => 'stargazer_index_starred_at_68c655e1d96e8', 'unique' => false])
+            ->update();
     }
 
     public function down(): void
     {
         $this->table('stargazer')
-        ->dropIndex(['starred_at'])
-        ->update();
+            ->dropIndex(['starred_at'])
+            ->update();
     }
 }

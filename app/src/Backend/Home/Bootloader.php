@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Repository;
+namespace App\Backend\Home;
 
 use Spiral\Boot\Bootloader\Bootloader as SpiralBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
@@ -18,6 +18,6 @@ final class Bootloader extends SpiralBootloader
 
     public function boot(ViewsBootloader $views): void
     {
-        $views->addDirectory('repository', __DIR__ . '/views');
+        $views->addDirectory('backend-home', __DIR__ . '/views');
     }
 }

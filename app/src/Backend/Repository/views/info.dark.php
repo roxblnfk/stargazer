@@ -127,7 +127,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="@route(\App\Feature\Repository\Controller::ROUTE_LIST)" class="text-decoration-none">
+                        <a href="@route(\App\Backend\Repository\Controller::ROUTE_LIST)" class="text-decoration-none">
                             <i class="bi bi-list"></i> [[Repository List]]
                         </a>
                     </li>
@@ -158,7 +158,7 @@
                         </h2>
                         <button class="btn btn-outline-primary btn-sm"
                                 title="Refresh"
-                                hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
+                                hx-post="@route(\App\Backend\Repository\Controller::ROUTE_TOUCH)"
                                 hx-vals='{"repository_name": "{{ $repository->fullName }}"}'
                                 hx-swap="none">
                             <i class="bi bi-arrow-clockwise"></i>
@@ -239,7 +239,7 @@
                         <div style="height: 400px;">
                             <canvas id="starsChart"></canvas>
                             <div id="chartDataFetcher"
-                                 hx-get="@route(\App\Feature\Repository\Controller::ROUTE_CHART, ['owner' => $repository->owner->login, 'name' => $repository->name])"
+                                 hx-get="@route(\App\Backend\Repository\Controller::ROUTE_CHART, ['owner' => $repository->owner->login, 'name' => $repository->name])"
                                  hx-trigger="load, every 30s"
                                  hx-swap="none"
                                  style="display: none;"></div>

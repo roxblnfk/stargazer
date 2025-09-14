@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Profile;
+namespace App\Frontend\Profile;
 
-use App\Feature\Profile\Form\ProfileRequest;
+use App\Frontend\Profile\Form\TokenRequest;
 use App\Module\Github\Dto\GithubUser;
 use App\Module\Main\DTO\UnknownUser;
 use App\Module\Main\RepositoryService;
@@ -29,7 +29,7 @@ final class Controller
     ) {}
 
     #[Route(route: '/profile', name: self::ROUTE_INDEX, methods: ['GET'])]
-    public function index(ProfileRequest $input): mixed
+    public function index(TokenRequest $input): mixed
     {
         $username = new GithubUser($input->username);
         $user = $this->userService->getByUsername($username);

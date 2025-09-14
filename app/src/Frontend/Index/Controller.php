@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Index;
+namespace App\Frontend\Index;
 
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;

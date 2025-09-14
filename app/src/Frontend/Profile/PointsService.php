@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Profile;
+namespace App\Frontend\Profile;
 
 final class PointsService
 {

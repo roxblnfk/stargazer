@@ -37,4 +37,9 @@ return [
     'Deactivate' => 'Деактивировать',
     'Hide' => 'Скрыть',
     'Show' => 'Показать',
+
+    // Admin Dashboard
+    'Admin Dashboard' => 'Панель администратора',
+    'Total Stars' => 'Всего звезд',
+    'Repositories' => 'Репозитории',
 ];

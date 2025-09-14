@@ -75,6 +75,10 @@ class Kernel extends \Spiral\Framework\Kernel
             Framework\Security\FiltersBootloader::class,
             Framework\Security\GuardBootloader::class,
 
+            // Auth
+            Framework\Auth\HttpAuthBootloader::class,
+            \Spiral\Cycle\Bootloader\AuthTokensBootloader::class,
+
             // HTTP extensions
             HttpBootloader::class,
             Framework\Http\RouterBootloader::class,
@@ -149,11 +153,17 @@ class Kernel extends \Spiral\Framework\Kernel
             // Application domain
             Bootloader\AppBootloader::class,
 
+            // Backend
+            \App\Backend\Home\Bootloader::class,
+            \App\Backend\Repository\Bootloader::class,
+
+            // Frontend
+            \App\Frontend\Bootloader::class,
+
             // Modules
-            \App\Feature\Index\Bootloader::class,
-            \App\Feature\Repository\Bootloader::class,
-            \App\Feature\Profile\Bootloader::class,
+            \App\Frontend\Index\Bootloader::class,
             \App\Module\Github\Bootloader::class,
+            \App\Module\Actor\Bootloader::class,
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Index;
+namespace App\Backend\Repository;
 
 use Spiral\Boot\Bootloader\Bootloader as SpiralBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
@@ -18,6 +18,6 @@ final class Bootloader extends SpiralBootloader
 
     public function boot(ViewsBootloader $views): void
     {
-        $views->addDirectory('index', __DIR__ . '/views');
+        $views->addDirectory('repository', __DIR__ . '/views');
     }
 }

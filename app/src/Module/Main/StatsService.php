@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Main;
+
+use App\Module\Main\DTO\Dashboard;
+use App\Module\Main\Internal\ORM\RepoEntity;
+use App\Module\Main\Internal\ORM\StarEntity;
+use App\Module\Main\Internal\ORM\UserEntity;
+use Spiral\Core\Attribute\Singleton;
+use Spiral\Prototype\Traits\PrototypeTrait;
+
+#[Singleton]
+class StatsService
+{
+    use PrototypeTrait;
+
+    public function __construct(
+    ) {}
+
+    public function dashboard(): Dashboard
+    {
+        return new Dashboard(
+            countRepositories: RepoEntity::query()->count(),
+            countUsers: UserEntity::query()->count(),
+            countStars: StarEntity::query()->count(),
+        );
+    }
+}
