@@ -158,7 +158,7 @@ class Kernel extends \Spiral\Framework\Kernel
             \App\Backend\Repository\Bootloader::class,
 
             // Frontend
-            \App\Frontend\Bootloader::class,
+            \App\Frontend\Profile\Bootloader::class,
 
             // Modules
             \App\Frontend\Index\Bootloader::class,

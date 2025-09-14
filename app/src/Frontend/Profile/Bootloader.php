@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Frontend;
+namespace App\Frontend\Profile;
 
 use Spiral\Boot\Bootloader\Bootloader as SpiralBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;

@@ -19,8 +19,8 @@
         <stack:collect name="styles" level="2"/>
     </block:head>
 </head>
-<body>
-<main>
+<body class="d-flex flex-column min-vh-100">
+<main class="flex-grow-1">
     <block:body/>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
