@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Module\Stargazer\Internal;
 
+use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Result\StargazerInfo;
-use App\Module\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 

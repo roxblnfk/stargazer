@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dec130cc52030837311302aed8e89501",
+    "content-hash": "f12eec93eecf179a9e8c331bb81a7dd3",
     "packages": [
         {
             "name": "alexkart/curl-builder",
@@ -571,23 +571,24 @@
         },
         {
             "name": "cycle/active-record",
-            "version": "v1.0.2",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cycle/active-record.git",
-                "reference": "50d434df48d0b110ec08f29c1aec642538406be5"
+                "reference": "e07044877d4d8b5992087d2c26c9a343ae8ca990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cycle/active-record/zipball/50d434df48d0b110ec08f29c1aec642538406be5",
-                "reference": "50d434df48d0b110ec08f29c1aec642538406be5",
+                "url": "https://api.github.com/repos/cycle/active-record/zipball/e07044877d4d8b5992087d2c26c9a343ae8ca990",
+                "reference": "e07044877d4d8b5992087d2c26c9a343ae8ca990",
                 "shasum": ""
             },
             "require": {
                 "cycle/database": "^2.11",
                 "cycle/orm": "^2.7",
                 "php": ">=8.1",
-                "psr/container": "^2.0"
+                "psr/container": "^2.0",
+                "yiisoft/injector": "^1.2"
             },
             "require-dev": {
                 "buggregator/trap": "^1.5",
@@ -675,7 +676,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-11T11:46:26+00:00"
+            "time": "2025-09-14T05:11:02+00:00"
         },
         {
             "name": "cycle/annotated",

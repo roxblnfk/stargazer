@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\ORM;
+namespace App\Application\ORM;
 
 use Cycle\ORM\Select\Repository;
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @link https://spiral.dev/docs/basics-orm#orm
  */
 
-use App\Module\ORM\UuidTypecast;
+use App\Application\ORM\UuidTypecast;
 use Cycle\ORM\Parser\Typecast;
 use Cycle\ORM\SchemaInterface;
 

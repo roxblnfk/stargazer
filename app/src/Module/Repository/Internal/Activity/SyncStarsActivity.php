@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Module\Repository\Internal\Activity;
 
+use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
-use App\Module\ORM\ActiveRecord;
 use App\Module\Repository\RepositoryService;
 use App\Module\Stargazer\Internal\StarEntity;
 use App\Module\Stargazer\Internal\StarRepository;
@@ -68,7 +68,7 @@ final class SyncStarsActivity
     public function cleanup(int $syncId): void
     {
         # Cleanup
-        $this->db->delete(StarEntity::getTableName(), [
+        $this->db->delete(StarEntity::tableName(), [
             'sync_id' => $syncId,
         ]);
     }
@@ -112,8 +112,8 @@ final class SyncStarsActivity
 
         ActiveRecord::transact(function () use ($repo, $syncId): void {
             # Sync stars to main storage
-            $starsTable = StarEntity::getTableName();
-            $syncStarsTable = SyncStarEntity::getTableName();
+            $starsTable = StarEntity::tableName();
+            $syncStarsTable = SyncStarEntity::tableName();
 
             # Update status of existing stars
             $this->db->execute(

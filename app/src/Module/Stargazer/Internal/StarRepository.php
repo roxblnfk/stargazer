@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Stargazer\Internal;
 
-use App\Module\ORM\BaseRepository;
+use App\Application\ORM\BaseRepository;
 
 /**
  * @extends BaseRepository<StarEntity>

@@ -13,7 +13,16 @@ use Psr\Http\Client\ClientInterface;
 use TypeLang\Mapper\Mapper;
 
 /**
- * Service for interacting with GitHub API to retrieve repository stargazers.
+ * GitHub API service providing comprehensive repository and stargazer data access.
+ *
+ * This service handles all GitHub API v3 interactions for the GitHub Stars Analytics
+ * Application, focusing on repository management and stargazer data collection for
+ * promotional events and community engagement activities.
+ *
+ * Rate limiting strategy:
+ * GitHub API allows 5,000 requests per hour per authenticated token. This service
+ * leverages the TokenPool system to rotate between multiple tokens, enabling
+ * high-volume data collection for large repositories without hitting rate limits.
  */
 final class GithubService
 {

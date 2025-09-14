@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Module\Repository\Internal\ORM;
 
+use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\ORM\ActiveRecord;
 use App\Module\Repository\DTO\Repository;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;

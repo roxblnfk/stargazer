@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Module\User\Internal;
 
+use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Result\UserInfo;
-use App\Module\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Table\Index;

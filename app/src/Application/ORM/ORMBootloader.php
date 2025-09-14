@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\ORM;
+namespace App\Application\ORM;
 
 use Cycle\ActiveRecord\Bridge\Spiral\Bootloader\ActiveRecordBootloader;
 use Spiral\Boot\Bootloader\Bootloader;

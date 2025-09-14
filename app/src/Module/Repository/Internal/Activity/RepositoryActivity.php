@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Module\Repository\Internal\Activity;
 
+use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
 use App\Module\Github\Result\RepositoryInfo;
-use App\Module\ORM\ActiveRecord;
 use App\Module\Repository\Internal\ORM\RepoEntity;
 use App\Module\Repository\Internal\ORM\RepoRepository;
 use React\Promise\PromiseInterface;

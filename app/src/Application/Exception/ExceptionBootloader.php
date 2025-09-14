@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Bootloader;
+namespace App\Application\Exception;
 
 use App\Application\Exception\Renderer\ViewRenderer;
 use Spiral\Boot\AbstractKernel;
@@ -22,7 +22,7 @@ use Spiral\Http\Middleware\ErrorHandlerMiddleware\SuppressErrorsInterface;
  *
  * @link https://spiral.dev/docs/basics-errors
  */
-final class ExceptionHandlerBootloader extends Bootloader
+final class ExceptionBootloader extends Bootloader
 {
     protected const BINDINGS = [
         SuppressErrorsInterface::class => EnvSuppressErrors::class,
