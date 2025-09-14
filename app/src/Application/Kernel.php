@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-use App\Module\ORM\ORMBootloader;
+use App\Application\ORM\ORMBootloader;
 use Spiral\Boot\Bootloader\CoreBootloader;
 use Spiral\Bootloader as Framework;
 use Spiral\Bootloader\Http\HttpBootloader;
@@ -56,7 +56,7 @@ class Kernel extends \Spiral\Framework\Kernel
             // Logging and exceptions handling
             MonologBootloader::class,
             YiiErrorHandlerBootloader::class,
-            Bootloader\ExceptionHandlerBootloader::class,
+            Exception\ExceptionBootloader::class,
 
             // Application specific logs
             Bootloader\LoggingBootloader::class,

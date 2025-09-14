@@ -218,15 +218,167 @@ This guide establishes standards for writing Stempler templates in the GitHub St
 @endif
 ```
 
-## Internationalization
+## Internationalization (i18n)
 
-### Translation Keys
+The GitHub Stars project uses Spiral Framework's built-in internationalization system. All user-facing text must be translatable using the `[[key]]` syntax.
+
+### Translation System Overview
+- Translation files are stored in `app/locale/` directory
+- Russian translations: `app/locale/ru/messages.en.php`
+- The system uses English keys and Russian values
+- Framework automatically detects user locale and applies appropriate translations
+
+### Translation Key Syntax
 ```php
-<!-- Use [[key]] syntax for translation keys -->
+<!-- Basic translation -->
 <h1>[[Repository Information]]</h1>
 <span>[[Created]]:</span>
 <button>[[Add Repository]]</button>
+
+<!-- With HTML entities (automatically handled) -->
+<p>[[We support open projects & community]]</p>
+
+<!-- Translation keys should be descriptive and use English -->
+[[Tracking repositories]]
+[[Projects for which you can get points]]
+[[Put a star]]
+[[Star set]]
 ```
+
+### Translation Key Naming Conventions
+- Use clear, descriptive English phrases as keys
+- Use title case for headings: `[[Repository Information]]`
+- Use sentence case for descriptions: `[[Projects for which you can get points]]`
+- Keep keys concise but meaningful: `[[More]]` instead of `[[Click here for more information]]`
+- Use consistent terminology across the application
+
+### Adding New Translations
+
+**CRITICAL**: Every time you add translatable text to templates, you MUST add the corresponding translation to the locale file.
+
+#### Step 1: Use Translation Brackets in Template
+```php
+<div class="first-time-banner">
+    <span class="first-time-text">[[First time?]]</span>
+</div>
+```
+
+#### Step 2: Add Translation to Locale File
+Add the entry to `app/locale/ru/messages.en.php`:
+```php
+return [
+    // ... existing translations
+    'First time?' => 'Первый раз?',
+];
+```
+
+### Common Translation Patterns
+
+#### UI Elements
+```php
+<!-- Buttons -->
+<button>[[Save]]</button>           → 'Save' => 'Сохранить'
+<button>[[Cancel]]</button>         → 'Cancel' => 'Отменить'
+<button>[[Delete]]</button>         → 'Delete' => 'Удалить'
+
+<!-- Navigation -->
+<a href="#">[[Back]]</a>            → 'Back' => 'Назад'
+<a href="#">[[Home]]</a>            → 'Home' => 'Главная'
+<a href="#">[[Profile]]</a>         → 'Profile' => 'Профиль'
+
+<!-- Status messages -->
+[[Success]]                         → 'Success' => 'Успешно'
+[[Error]]                          → 'Error' => 'Ошибка'
+[[Loading]]                        → 'Loading' => 'Загрузка'
+```
+
+#### GitHub-Specific Terms
+```php
+[[Repository]]                      → 'Repository' => 'Репозиторий'
+[[Stargazer]]                      → 'Stargazer' => 'Звездочёт'
+[[Stars]]                          → 'Stars' => 'Звезды'
+[[Forks]]                          → 'Forks' => 'Форки'
+[[Issues]]                         → 'Issues' => 'Проблемы'
+[[Pull Requests]]                  → 'Pull Requests' => 'Pull Request-ы'
+```
+
+#### Form Labels and Placeholders
+```php
+<label>[[Username]]</label>         → 'Username' => 'Имя пользователя'
+<input placeholder="[[Enter username]]"> → 'Enter username' => 'Введите имя пользователя'
+```
+
+### Complex Translation Cases
+
+#### Interpolation with Variables
+For dynamic content, keep the translation key simple and handle formatting in the controller:
+```php
+<!-- Template -->
+<p>[[User has X stars]]</p>
+
+<!-- Controller prepares the translated string with variable -->
+$translator->trans('User has X stars', ['X' => $starCount])
+```
+
+#### Pluralization
+Handle pluralization logic in the controller, not in templates:
+```php
+<!-- Template -->
+<span>[[Star count]]</span>
+
+<!-- Controller handles plural forms -->
+$starText = $count === 1 ? $translator->trans('star') : $translator->trans('stars');
+```
+
+#### Long Descriptions
+For multi-sentence text, use descriptive keys:
+```php
+[[Enter your GitHub username and see which projects you have backed]]
+[[We create an open source code and really count on your stars!]]
+```
+
+### Translation File Structure
+Keep the translation file organized and sorted:
+```php
+<?php
+declare(strict_types=1);
+
+return [
+    // Navigation
+    'Back' => 'Назад',
+    'Home' => 'Главная',
+
+    // GitHub terms
+    'Repository' => 'Репозиторий',
+    'Stargazer' => 'Звездочёт',
+    'Stars' => 'Звезды',
+
+    // UI elements
+    'Loading' => 'Загрузка',
+    'Save' => 'Сохранить',
+
+    // Messages
+    'Welcome message' => 'Добро пожаловать!',
+];
+```
+
+### Best Practices for AI Development
+
+When working on this codebase:
+
+1. **Always use translation brackets** for any user-visible text
+2. **Immediately add translations** to `app/locale/ru/messages.en.php` when adding new text
+3. **Check existing translations** before creating new keys - reuse existing keys when possible
+4. **Use meaningful English keys** that describe the content, not the location
+5. **Test in both languages** if possible to ensure proper layout with different text lengths
+
+### Testing Translations
+- Russian text is typically longer than English - ensure UI accommodates this
+- Test with both short and long translations
+- Verify special characters display correctly
+- Check text alignment and spacing with translated content
+
+This i18n approach ensures the GitHub Stars application provides a seamless experience for both English and Russian users while maintaining code quality and consistency.
 
 ## Security Best Practices
 

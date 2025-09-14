@@ -20,7 +20,7 @@
                     type="text"
                     class="form-control"
                     name="repository_name"
-                    placeholder="owner/repository"
+                    placeholder="[[owner/repository]]"
                     required
                 >
                 <button class="btn btn-primary" type="submit">
@@ -33,17 +33,17 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th><i class="bi bi-folder2-open"></i> Repository</th>
-                        <th><i class="bi bi-star"></i> Stars</th>
-                        <th><i class="bi bi-clock"></i> Last Updated</th>
-                        <th><i class="bi bi-gear"></i> Actions</th>
+                        <th><i class="bi bi-folder2-open"></i> [[Repository]]</th>
+                        <th><i class="bi bi-star"></i> [[Stars]]</th>
+                        <th><i class="bi bi-clock"></i> [[Last Updated]]</th>
+                        <th><i class="bi bi-gear"></i> [[Actions]]</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if(empty($repositories))
                         <tr>
                             <td colspan="4" class="text-muted text-center">
-                                <i class="bi bi-inbox"></i> No repositories tracked yet.
+                                <i class="bi bi-inbox"></i> [[No repositories tracked yet.]]
                             </td>
                         </tr>
                     @else
@@ -79,7 +79,7 @@
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <button class="btn btn-outline-primary"
-                                                title="Refresh"
+                                                title="[[Refresh]]"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_TOUCH)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
                                                 hx-target="closest tr"
@@ -87,7 +87,7 @@
                                             <i class="bi bi-arrow-clockwise"></i>
                                         </button>
                                         <button class="btn btn-outline-success"
-                                                title="Reactivate"
+                                                title="[[Reactivate]]"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_ACTIVATE)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
                                                 hx-target="closest tr"
@@ -95,7 +95,7 @@
                                             <i class="bi bi-arrow-up-circle"></i>
                                         </button>
                                         <button class="btn btn-outline-warning"
-                                                title="Deactivate"
+                                                title="[[Deactivate]]"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_DEACTIVATE)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
                                                 hx-target="closest tr"
@@ -103,7 +103,7 @@
                                             <i class="bi bi-arrow-down-circle"></i>
                                         </button>
                                         <button class="btn btn-outline-secondary hide-btn @if(!$repository->active) d-none @endif"
-                                                title="Hide"
+                                                title="[[Hide]]"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_HIDE)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
                                                 hx-swap="none"
@@ -111,7 +111,7 @@
                                             <i class="bi bi-eye-slash"></i>
                                         </button>
                                         <button class="btn btn-outline-info show-btn @if($repository->active) d-none @endif"
-                                                title="Show"
+                                                title="[[Show]]"
                                                 hx-post="@route(\App\Feature\Repository\Controller::ROUTE_SHOW)"
                                                 hx-vals='{"repository_name": "{{ $repository }}"}'
                                                 hx-swap="none"

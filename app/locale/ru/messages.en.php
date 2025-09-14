@@ -22,4 +22,19 @@ return [
     'Put a star' => 'Поставить звезду',
     'Star set' => 'Поставлена звезда',
     'Go!' => 'Поехали!',
+    'First time?' => 'Первый раз?',
+
+    // Repository list page
+    'Add' => 'Добавить',
+    'owner/repository' => 'владелец/репозиторий',
+    'Repository' => 'Репозиторий',
+    'Stars' => 'Звезды',
+    'Last Updated' => 'Последнее обновление',
+    'Actions' => 'Действия',
+    'No repositories tracked yet.' => 'Пока нет отслеживаемых репозиториев.',
+    'Refresh' => 'Обновить',
+    'Reactivate' => 'Активировать',
+    'Deactivate' => 'Деактивировать',
+    'Hide' => 'Скрыть',
+    'Show' => 'Показать',
 ];

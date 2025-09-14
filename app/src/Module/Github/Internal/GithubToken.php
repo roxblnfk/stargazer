@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Internal;
 
-use App\Module\ORM\ActiveRecord;
+use App\Application\ORM\ActiveRecord;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\ORM\Entity\Behavior\CreatedAt;

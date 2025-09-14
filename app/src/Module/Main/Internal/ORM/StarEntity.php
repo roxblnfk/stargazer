@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Main\Internal\ORM;
+
+use App\Application\ORM\ActiveRecord;
+use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Table\Index;
+use Cycle\ORM\Entity\Behavior\CreatedAt;
+use Cycle\ORM\Entity\Behavior\UpdatedAt;
+
+#[Entity(
+    role: 'star',
+    repository: StarRepository::class,
+    table: 'stargazer',
+)]
+#[CreatedAt(field: 'createdAt', column: 'created_at')]
+#[UpdatedAt(field: 'updatedAt', column: 'updated_at')]
+#[Index(['starred_at'])]
+class StarEntity extends ActiveRecord
+{
+    /**
+     * User Identifier on GitHub
+     */
+    #[Column(type: 'bigInteger', name: 'user_id', primary: true, typecast: 'int')]
+    public int $userId;
+
+    /**
+     * Repository Identifier on GitHub
+     */
+    #[Column(type: 'bigInteger', name: 'repo_id', primary: true, typecast: 'int')]
+    public int $repoId;
+
+    #[Column(type: 'datetime', name: 'starred_at', nullable: true, typecast: 'datetime')]
+    public ?\DateTimeInterface $starredAt = null;
+
+    #[Column(type: 'datetime', typecast: 'datetime')]
+    public \DateTimeInterface $updatedAt;
+
+    #[Column(type: 'datetime', typecast: 'datetime')]
+    public \DateTimeInterface $createdAt;
+
+    #[Column(type: 'integer', name: 'last_sync_id')]
+    public int $lastSyncId;
+
+    public static function create(int $userId, int $repoId, int $syncId, \DateTimeInterface $starredAt): self
+    {
+        return self::make([
+            'userId' => $userId,
+            'repoId' => $repoId,
+            'lastSyncId' => $syncId,
+            'starredAt' => $starredAt,
+        ]);
+    }
+}
