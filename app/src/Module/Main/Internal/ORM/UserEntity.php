@@ -6,7 +6,9 @@ namespace App\Module\Main\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubOwner;
+use App\Module\Github\Dto\GithubUser;
 use App\Module\Github\Result\UserInfo;
+use App\Module\Main\DTO\User;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Table\Index;
@@ -29,10 +31,11 @@ class UserEntity extends ActiveRecord
     #[Column(type: 'bigInteger', primary: true, typecast: 'int')]
     public int $id;
 
+    /** @var non-empty-string */
     #[Column(type: 'string')]
     public string $login;
 
-    #[Column(type: 'json', nullable: true, typecast: [UserInfo::class, 'fromJsonString'])]
+    #[Column(type: 'json', typecast: [UserInfo::class, 'fromJsonString'])]
     public UserInfo $info;
 
     #[Column(type: 'datetime', typecast: 'datetime')]
@@ -50,10 +53,14 @@ class UserEntity extends ActiveRecord
         ]);
     }
 
-    public function toGithubOwner(): GithubOwner
+    public function toDTO(): User
     {
-        return new GithubOwner(
-            name: $this->login,
+        return new User(
+            id: $this->id,
+            login: new GithubUser($this->login),
+            info: $this->info,
+            updatedAt: $this->updatedAt,
+            createdAt: $this->createdAt,
         );
     }
 }

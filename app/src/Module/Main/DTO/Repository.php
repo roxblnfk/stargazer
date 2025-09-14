@@ -4,28 +4,32 @@ declare(strict_types=1);
 
 namespace App\Module\Main\DTO;
 
+use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
 
-final class Repository
+final class Repository implements \Stringable
 {
+    public readonly string $owner;
+    public readonly string $name;
+
     public function __construct(
         public readonly int $id,
-        public readonly string $owner,
         public readonly int $ownerId,
-        public readonly string $name,
+        public readonly GithubRepository $fullName,
         public readonly bool $active,
         public readonly ?RepositoryInfo $info,
         public readonly \DateTimeInterface $updatedAt,
         public readonly \DateTimeInterface $createdAt,
-    ) {}
-
-    public function getFullName(): string
-    {
-        return "{$this->owner}/{$this->name}";
+    ) {
+        $this->owner = $fullName->owner->name;
+        $this->name = $fullName->name;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function __toString(): string
     {
-        return $this->getFullName();
+        return (string) $this->fullName;
     }
 }

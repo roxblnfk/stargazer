@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Module\Main\Internal\Activity;
 
 use App\Application\ORM\ActiveRecord;
+use App\Module\Github\Result\UserInfo;
 use App\Module\Main\Internal\ORM\StarEntity;
 use App\Module\Main\Internal\ORM\StarRepository;
 use App\Module\Main\Internal\ORM\SyncEntity;
 use App\Module\Main\Internal\ORM\SyncStarEntity;
+use App\Module\Main\Internal\ORM\UserEntity;
 use App\Module\Main\RepositoryService;
 use App\Module\Main\UserService;
 use App\Module\Github\Dto\GithubRepository;
@@ -170,7 +172,7 @@ final class SyncStarsActivity
         $stargazers = [];
         foreach ($stars as $star) {
             # Persist user outside of transaction
-            $user = $this->userService->getOrCreate($star->info->user);
+            $user = $this->getOrCreateUser($star->info->user);
 
             # Get or create stargazer entity
             $existing = $this->starRepository->findByPK(['userId' => $user->id, 'repoId' => $repoId]);
@@ -192,5 +194,17 @@ final class SyncStarsActivity
         $this->orm->getHeap()->clean();
 
         goto begin;
+    }
+
+    private function getOrCreateUser(UserInfo $info): UserEntity
+    {
+        $found = UserEntity::getRepository()->findByPK($info->id);
+        if ($found !== null) {
+            return $found;
+        }
+
+        $user = UserEntity::createFromOwnerInfo($info);
+        $user->saveOrFail();
+        return $user;
     }
 }

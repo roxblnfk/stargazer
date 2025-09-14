@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Module\Main;
 
-use App\Module\Main\Internal\ORM\UserEntity;
+use App\Module\Github\Dto\GithubUser;
+use App\Module\Main\DTO\UnknownUser;
+use App\Module\Main\DTO\User;
 use App\Module\Main\Internal\ORM\UserRepository;
-use App\Module\Github\Result\UserInfo;
 use Spiral\Core\Attribute\Singleton;
 use Spiral\Prototype\Traits\PrototypeTrait;
 
@@ -16,23 +17,11 @@ class UserService
     use PrototypeTrait;
 
     public function __construct(
-        private readonly UserRepository $repoRepository,
+        private readonly UserRepository $userRepository,
     ) {}
 
-    public function getByUsername(string $username): ?UserEntity
+    public function getByUsername(GithubUser $user): UnknownUser|User
     {
-        return $this->repoRepository->whereLogin($username)->findOne();
-    }
-
-    public function getOrCreate(UserInfo $info): UserEntity
-    {
-        $found = $this->repoRepository->findByPK($info->id);
-        if ($found !== null) {
-            return $found;
-        }
-
-        $user = UserEntity::createFromOwnerInfo($info);
-        $user->saveOrFail();
-        return $user;
+        return $this->userRepository->whereLogin($user)->findOne()?->toDTO() ?? new UnknownUser($user);
     }
 }

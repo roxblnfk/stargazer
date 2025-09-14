@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feature\Profile;
+namespace App\Feature\Profile\Form;
 
 use Spiral\Filters\Attribute\Input\Query;
 use Spiral\Filters\Model\Filter;

@@ -13,6 +13,9 @@ final class GithubUser implements \Stringable
         public readonly string $name,
     ) {}
 
+    /**
+     * @return non-empty-string
+     */
     public function __toString(): string
     {
         return "$this->name";

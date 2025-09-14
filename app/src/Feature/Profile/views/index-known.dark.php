@@ -36,7 +36,7 @@
                     <div class="profile-header">
                         <div class="row align-items-center">
                             <div class="col-md-auto text-center text-md-start">
-                                <img src="{{ $user->avatarUrl }}" alt="{{ $user->login }}" class="profile-avatar">
+                                <img src="{{ $user->info->avatarUrl }}" alt="{{ $user->login }}" class="profile-avatar">
                             </div>
                             <div class="col-md flex-grow-1 text-center text-md-start mt-3 mt-md-0">
                                 <h1 class="profile-name">{{ $user->login }}</h1>

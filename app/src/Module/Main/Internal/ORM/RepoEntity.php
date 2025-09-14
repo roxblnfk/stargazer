@@ -37,13 +37,14 @@ class RepoEntity extends ActiveRecord
     #[Column(type: 'bigInteger', typecast: 'int')]
     public int $ownerId;
 
+    /** @var non-empty-string */
     #[Column(type: 'string')]
     public string $name;
 
     #[Column(type: 'boolean', default: true, typecast: 'bool')]
     public bool $active = false;
 
-    #[Column(type: 'json', nullable: true, typecast: [RepositoryInfo::class, 'fromJsonString'])]
+    #[Column(type: 'json', typecast: [RepositoryInfo::class, 'fromJsonString'])]
     public RepositoryInfo $info;
 
     #[Column(type: 'datetime', typecast: 'datetime')]
@@ -63,23 +64,17 @@ class RepoEntity extends ActiveRecord
         ]);
     }
 
-    public function toGithubRepository(): GithubRepository
-    {
-        return new GithubRepository(
-            owner: new GithubOwner($this->owner),
-            name: $this->name,
-        );
-    }
-
     public function toDTO(): Repository
     {
         return new Repository(
             id: $this->id,
-            owner: $this->owner,
             ownerId: $this->ownerId,
-            name: $this->name,
+            fullName: new GithubRepository(
+                owner: new GithubOwner($this->owner),
+                name: $this->name,
+            ),
             active: $this->active,
-            info: $this->info ?? null,
+            info: $this->info,
             updatedAt: $this->updatedAt,
             createdAt: $this->createdAt,
         );
