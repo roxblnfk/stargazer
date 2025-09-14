@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\DTO;
+namespace App\Module\Main\DTO;
 
 use App\Module\Github\Result\RepositoryInfo;
 

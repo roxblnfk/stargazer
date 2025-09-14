@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data;
+namespace App\Module\Main;
 
 use App\Application\ORM\ActiveRecord;
-use App\Module\Data\DTO\Repository;
-use App\Module\Data\Internal\ORM\RepoRepository;
-use App\Module\Data\Internal\RepositoryWorkflow;
+use App\Module\Main\DTO\Repository;
+use App\Module\Main\Internal\ORM\RepoRepository;
+use App\Module\Main\Internal\RepositoryWorkflow;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
 use Spiral\Core\Attribute\Singleton;

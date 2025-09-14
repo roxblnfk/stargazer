@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal;
+namespace App\Module\Main\Internal;
 
-use App\Module\Data\Internal\Activity\RepositoryActivity;
+use App\Module\Main\Internal\Activity\RepositoryActivity;
 use App\Module\Github\Dto\GithubRepository;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Exception\Failure\ApplicationFailure;
@@ -33,7 +33,7 @@ final class RepositoryWorkflow
     private object $syncWorkflow;
 
     #[Workflow\WorkflowInit]
-    public function __construct(private GithubRepository $repository)
+    public function __construct(GithubRepository $repository)
     {
         # Check the Workflow ID format
         # It's required to guarantee uniqueness of the workflow per repository

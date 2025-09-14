@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal;
+namespace App\Module\Main\Internal;
 
-use App\Module\Data\Internal\Activity\SyncStarsActivity;
+use App\Module\Main\Internal\Activity\SyncStarsActivity;
 use App\Module\Github\Dto\GithubRepository;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
 use Temporal\Promise;

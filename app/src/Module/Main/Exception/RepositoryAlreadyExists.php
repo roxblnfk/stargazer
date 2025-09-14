@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Exception;
+namespace App\Module\Main\Exception;
 
 use App\Module\Github\Dto\GithubRepository;
 

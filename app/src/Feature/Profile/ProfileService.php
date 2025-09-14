@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Feature\Profile;
 
-use App\Module\Data\UserService;
+use App\Module\Main\UserService;
 use App\Module\Github\Exception\GitHubUserNotFoundException;
 use App\Module\Github\GithubService;
 use App\Module\Github\Result\UserInfo;

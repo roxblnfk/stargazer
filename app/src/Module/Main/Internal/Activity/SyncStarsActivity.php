@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal\Activity;
+namespace App\Module\Main\Internal\Activity;
 
 use App\Application\ORM\ActiveRecord;
-use App\Module\Data\Internal\ORM\StarEntity;
-use App\Module\Data\Internal\ORM\StarRepository;
-use App\Module\Data\Internal\ORM\SyncEntity;
-use App\Module\Data\Internal\ORM\SyncStarEntity;
-use App\Module\Data\RepositoryService;
-use App\Module\Data\UserService;
+use App\Module\Main\Internal\ORM\StarEntity;
+use App\Module\Main\Internal\ORM\StarRepository;
+use App\Module\Main\Internal\ORM\SyncEntity;
+use App\Module\Main\Internal\ORM\SyncStarEntity;
+use App\Module\Main\RepositoryService;
+use App\Module\Main\UserService;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
 use Cycle\Database\DatabaseInterface;

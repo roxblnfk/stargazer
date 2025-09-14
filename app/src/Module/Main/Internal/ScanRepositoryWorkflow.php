@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal;
+namespace App\Module\Main\Internal;
 
-use App\Module\Data\Internal\Activity\RepositoryActivity;
+use App\Module\Main\Internal\Activity\RepositoryActivity;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Result\RepositoryInfo;
 use React\Promise\PromiseInterface;

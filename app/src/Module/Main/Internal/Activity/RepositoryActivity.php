@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal\Activity;
+namespace App\Module\Main\Internal\Activity;
 
 use App\Application\ORM\ActiveRecord;
-use App\Module\Data\Internal\ORM\RepoEntity;
-use App\Module\Data\Internal\ORM\RepoRepository;
+use App\Module\Main\Internal\ORM\RepoEntity;
+use App\Module\Main\Internal\ORM\RepoRepository;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
 use App\Module\Github\Result\RepositoryInfo;

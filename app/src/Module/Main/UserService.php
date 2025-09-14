@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data;
+namespace App\Module\Main;
 
-use App\Module\Data\Internal\ORM\UserEntity;
-use App\Module\Data\Internal\ORM\UserRepository;
+use App\Module\Main\Internal\ORM\UserEntity;
+use App\Module\Main\Internal\ORM\UserRepository;
 use App\Module\Github\Result\UserInfo;
 use Spiral\Core\Attribute\Singleton;
 use Spiral\Prototype\Traits\PrototypeTrait;

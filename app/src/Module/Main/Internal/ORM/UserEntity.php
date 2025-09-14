@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Data\Internal\ORM;
+namespace App\Module\Main\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
 use App\Module\Github\Dto\GithubOwner;
