@@ -64,6 +64,7 @@ return [
     'Start Date' => 'Дата начала',
     'End Date' => 'Дата окончания',
     'Campaign Period' => 'Период кампании',
+    'Campaign Phase' => 'Фаза кампании',
     'Campaign Duration' => 'Длительность кампании',
 
     // Campaign Status

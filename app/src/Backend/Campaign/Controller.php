@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Backend\Campaign;
 
 use App\Module\Campaign\CampaignService;
-use Psr\Http\Message\ServerRequestInterface;
+use App\Module\Campaign\Form\CreateCampaign;
+use App\Module\Campaign\Form\UpdateCampaign;
+use Psr\Http\Message\ResponseInterface;
+use Ramsey\Uuid\Uuid;
+use Spiral\Http\ResponseWrapper;
 use Spiral\Router\Annotation\Route;
+use Spiral\Router\RouterInterface;
 use Spiral\Views\ViewsInterface;
 
 final class Controller
@@ -22,7 +27,9 @@ final class Controller
 
     public function __construct(
         private readonly ViewsInterface $views,
+        private readonly RouterInterface $router,
         private readonly CampaignService $campaignService,
+        private readonly ResponseWrapper $response,
     ) {}
 
     #[Route(route: '/campaign/list', name: self::ROUTE_LIST, methods: ['GET'], group: 'backend')]
@@ -36,6 +43,7 @@ final class Controller
     #[Route(route: '/campaign/info/<uuid>', name: self::ROUTE_INFO, methods: ['GET'], group: 'backend')]
     public function info(string $uuid): mixed
     {
+        $uuid = Uuid::fromString($uuid);
         $campaign = $this->campaignService->getCampaign($uuid);
 
         return $this->views->render('campaign:info', [
@@ -52,19 +60,17 @@ final class Controller
     }
 
     #[Route(route: '/campaign/store', name: self::ROUTE_STORE, methods: ['POST'], group: 'backend')]
-    public function store(ServerRequestInterface $request): mixed
+    public function store(CreateCampaign $form): ResponseInterface
     {
-        $data = $request->getParsedBody();
-        $campaign = $this->campaignService->createCampaign($data);
+        $campaign = $this->campaignService->createCampaign($form);
 
-        return $this->views->render('campaign:info', [
-            'campaign' => $campaign,
-        ]);
+        return $this->response->redirect($this->router->uri(self::ROUTE_INFO, ['uuid' => $campaign->uuid]));
     }
 
     #[Route(route: '/campaign/edit/<uuid>', name: self::ROUTE_EDIT, methods: ['GET'], group: 'backend')]
     public function edit(string $uuid): mixed
     {
+        $uuid = Uuid::fromString($uuid);
         $campaign = $this->campaignService->getCampaign($uuid);
 
         return $this->views->render('campaign:form', [
@@ -72,30 +78,29 @@ final class Controller
         ]);
     }
 
-    #[Route(route: '/campaign/update/<uuid>', name: self::ROUTE_UPDATE, methods: ['POST'], group: 'backend')]
-    public function update(string $uuid, ServerRequestInterface $request): mixed
+    #[Route(route: '/campaign/update', name: self::ROUTE_UPDATE, methods: ['POST'], group: 'backend')]
+    public function update(UpdateCampaign $form): mixed
     {
-        $data = $request->getParsedBody();
-        $campaign = $this->campaignService->updateCampaign($uuid, $data);
+        $campaign = $this->campaignService->updateCampaign($form);
 
-        return $this->views->render('campaign:info', [
-            'campaign' => $campaign,
-        ]);
+        return $this->response->redirect($this->router->uri(self::ROUTE_INFO, ['uuid' => $campaign->uuid]));
     }
 
     #[Route(route: '/campaign/delete/<uuid>', name: self::ROUTE_DELETE, methods: ['POST'], group: 'backend')]
-    public function delete(string $uuid): array
+    public function delete(string $uuid): ResponseInterface
     {
+        $uuid = Uuid::fromString($uuid);
         $this->campaignService->deleteCampaign($uuid);
 
-        return ['deleted' => true];
+        return $this->response->redirect($this->router->uri(self::ROUTE_LIST));
     }
 
     #[Route(route: '/campaign/toggle-visibility/<uuid>', name: self::ROUTE_TOGGLE_VISIBILITY, methods: ['POST'], group: 'backend')]
-    public function toggleVisibility(string $uuid): array
+    public function toggleVisibility(string $uuid): ResponseInterface
     {
+        $uuid = Uuid::fromString($uuid);
         $visible = $this->campaignService->toggleVisibility($uuid);
 
-        return ['visible' => $visible];
+        return $this->response->redirect($this->router->uri(self::ROUTE_INFO, ['uuid' => $uuid]));
     }
 }

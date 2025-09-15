@@ -25,16 +25,10 @@
                    class="btn btn-warning">
                     <i class="bi bi-pencil"></i> [[Edit]]
                 </a>
-                <button class="btn btn-outline-success"
-                        title="{{ $campaign->visible ? '[[Hide Campaign]]' : '[[Show Campaign]]' }}"
-                        hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_TOGGLE_VISIBILITY, ['uuid' => $campaign->uuid])"
-                        hx-on::after-request="location.reload()">
-                    <i class="bi bi-{{ $campaign->visible ? 'eye-slash' : 'eye' }}"></i>
-                    {{ $campaign->visible ? '[[Hide]]' : '[[Show]]' }}
-                </button>
                 <button class="btn btn-outline-danger"
-                        hx-delete="@route(\App\Backend\Campaign\Controller::ROUTE_DELETE, ['uuid' => $campaign->uuid])"
+                        hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_DELETE, ['uuid' => $campaign->uuid])"
                         hx-confirm="[[Are you sure you want to delete this campaign?]]"
+                        hx-swap="none"
                         hx-on::after-request="if(event.detail.xhr.status === 200) window.location.href = '@route(\App\Backend\Campaign\Controller::ROUTE_LIST)'">
                     <i class="bi bi-trash"></i> [[Delete]]
                 </button>
@@ -54,10 +48,6 @@
                         </h2>
                     </div>
                     <div class="card-body">
-                        @if($campaign->description)
-                            <p class="text-muted mb-3">{{ $campaign->description }}</p>
-                        @endif
-
                         <!-- Stats Row -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
@@ -76,35 +66,22 @@
                             </div>
                         </div>
 
-                        <!-- Period Information -->
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-calendar-event text-info me-2"></i>
-                                    <div>
-                                        <strong>[[Started]]:</strong><br>
-                                        <small class="text-muted">{{ $campaign->startedAt->format('Y-m-d H:i') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-calendar-check text-warning me-2"></i>
-                                    <div>
-                                        <strong>[[Finished]]:</strong><br>
-                                        <small class="text-muted">
-                                            @if($campaign->finishedAt)
-                                                {{ $campaign->finishedAt->format('Y-m-d H:i') }}
-                                            @else
-                                                [[Ongoing]]
-                                            @endif
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
+
+                @if($campaign->description)
+                <!-- Campaign Description Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-info-circle"></i> [[Description]]
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="markdown-content" id="campaign-description">{{ $campaign->description }}</div>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Campaign Duration Card -->
                 <div class="card mb-4">
@@ -201,6 +178,18 @@
                             <small class="text-muted">
                                 <i class="bi bi-calendar-check"></i>
                                 {{ $campaign->updatedAt->format('Y-m-d H:i:s') }}
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <strong>[[Campaign Phase]]:</strong><br>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-range"></i>
+                                {{ $campaign->startedAt->format('Y-m-d H:i') }}
+                                @if($campaign->finishedAt)
+                                    — {{ $campaign->finishedAt->format('Y-m-d H:i') }}
+                                @else
+                                    — [[Ongoing]]
+                                @endif
                             </small>
                         </div>
                     </div>

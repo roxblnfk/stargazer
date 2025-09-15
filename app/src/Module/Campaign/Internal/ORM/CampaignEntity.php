@@ -34,12 +34,15 @@ class CampaignEntity extends ActiveRecord
     #[Column(type: 'string')]
     public string $title;
 
-    /** @var non-empty-string */
+    /**
+     * A long public description of the campaign that can include
+     * markdown and is shown on the public campaign page.
+     */
     #[Column(type: 'text')]
     public string $description;
 
-    #[Column(type: 'boolean', default: true)]
-    public bool $visible = true;
+    #[Column(type: 'boolean', default: false)]
+    public bool $visible = false;
 
     /**
      * Start time of active campaign. This time stars will be harvested actively.
@@ -56,18 +59,31 @@ class CampaignEntity extends ActiveRecord
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $createdAt;
 
+    #[Column(type: 'bigInteger', name: 'count_users', default: 0, typecast: 'int')]
+    public int $countUsers = 0;
+
+    #[Column(type: 'bigInteger', name: 'count_repos', default: 0, typecast: 'int')]
+    public int $countRepositories = 0;
+
     #[HasMany(target: CampaignRepoEntity::class, innerKey: 'uuid', outerKey: 'campaignUuid')]
     public array $repositories = [];
 
     #[HasMany(target: CampaignUserEntity::class, innerKey: 'uuid', outerKey: 'campaignUuid')]
     public array $members = [];
 
-    public static function create(\DateTimeInterface $startedAt): self
-    {
+    public static function create(
+        string $title,
+        string $description,
+        \DateTimeInterface $startedAt,
+        ?\DateTimeImmutable $finishedAt,
+    ): self {
         $uuid = Uuid::uuid7();
         return self::make([
             'uuid' => $uuid,
+            'title' => $title,
+            'description' => $description,
             'startedAt' => $startedAt,
+            'finishedAt' => $finishedAt,
         ]);
     }
 
@@ -80,8 +96,8 @@ class CampaignEntity extends ActiveRecord
             visible: $this->visible,
             startedAt: $this->startedAt,
             finishedAt: $this->finishedAt,
-            repositoryCount: \count($this->repositories),
-            memberCount: \count($this->members),
+            repositoryCount: $this->countUsers,
+            memberCount: $this->countRepositories,
             updatedAt: $this->updatedAt,
             createdAt: $this->createdAt,
         );

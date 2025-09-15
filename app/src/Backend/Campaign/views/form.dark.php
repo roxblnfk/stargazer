@@ -41,7 +41,11 @@
                     </div>
                     <div class="card-body">
                         <form method="POST"
-                              action="@route(isset($campaign) ? \App\Backend\Campaign\Controller::ROUTE_UPDATE : \App\Backend\Campaign\Controller::ROUTE_STORE, isset($campaign) ? ['uuid' => $campaign->uuid] : [])">
+                              action="@route(isset($campaign) ? \App\Backend\Campaign\Controller::ROUTE_UPDATE : \App\Backend\Campaign\Controller::ROUTE_STORE)">
+
+                            @if(isset($campaign))
+                                <input type="hidden" name="uuid" value="{{ $campaign->uuid }}">
+                            @endif
 
                             <!-- Title Field -->
                             <div class="mb-3">
@@ -67,31 +71,32 @@
                                 <textarea class="form-control"
                                           id="description"
                                           name="description"
-                                          rows="4"
-                                          maxlength="1000"
+                                          rows="8"
                                           placeholder="[[Describe the purpose and goals of this campaign]]">{{ $campaign->description ?? '' }}</textarea>
                                 <div class="form-text">
                                     [[Detailed description helps users understand campaign goals]]
                                 </div>
                             </div>
 
-                            <!-- Visibility Toggle -->
-                            <div class="mb-4">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           id="visible"
-                                           name="visible"
-                                           value="1"
-                                           {{ ($campaign->visible ?? true) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="visible">
-                                        <strong>[[Visible to users]]</strong>
-                                    </label>
-                                    <div class="form-text">
-                                        [[Hidden campaigns are not visible to regular users]]
+                            @if(isset($campaign))
+                                <!-- Visibility Toggle -->
+                                <div class="mb-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               id="visible"
+                                               name="visible"
+                                               value="1"
+                                               {{ ($campaign->visible ?? true) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="visible">
+                                            <strong>[[Visible to users]]</strong>
+                                        </label>
+                                        <div class="form-text">
+                                            [[Hidden campaigns are not visible to regular users]]
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <!-- Date Range Section -->
                             <div class="card mb-4">

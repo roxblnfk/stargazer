@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Campaign\Form;
+
+use Ramsey\Uuid\UuidInterface;
+use Spiral\Filters\Attribute\Input\Post;
+use Spiral\Filters\Attribute\Setter;
+use Spiral\Validator\FilterDefinition;
+
+final class UpdateCampaign extends CreateCampaign
+{
+    #[Post]
+    public UuidInterface $uuid;
+
+    #[Post]
+    #[Setter(filter: 'boolval')]
+    public bool $visible = false;
+
+    public function filterDefinition(): FilterDefinition
+    {
+        $parentDefinition = parent::filterDefinition();
+
+        return new FilterDefinition(
+            \array_merge(
+                $parentDefinition->validationRules(),
+                [
+                    'visible' => [
+                        // HTML checkbox sends "1" or nothing, so we need to handle string to bool conversion
+                        'boolean',
+                    ],
+                    'startedAt' => [
+                        'required',
+                        'datetime::valid',
+                        // No 'datetime::future' for update - allow past dates
+                    ],
+                ],
+            ),
+            $parentDefinition->mappingSchema(),
+        );
+    }
+}

@@ -48,9 +48,6 @@
                                        class="text-decoration-none fw-bold">
                                         {{ $campaign->title }}
                                     </a>
-                                    @if($campaign->description)
-                                        <br><small class="text-muted">{{ mb_strlen($campaign->description) > 80 ? mb_substr($campaign->description, 0, 80) . '...' : $campaign->description }}</small>
-                                    @endif
                             </td>
                             <td>
                                 <small class="text-muted">
@@ -80,28 +77,6 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_INFO, ['uuid' => $campaign->uuid])"
-                                       class="btn btn-outline-primary" title="[[View Details]]">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_EDIT, ['uuid' => $campaign->uuid])"
-                                       class="btn btn-outline-warning" title="[[Edit]]">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button class="btn btn-outline-success"
-                                            title="{{ $campaign->visible ? '[[Hide]]' : '[[Show]]' }}"
-                                            hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_TOGGLE_VISIBILITY, ['uuid' => $campaign->uuid])"
-                                            hx-target="closest td"
-                                            hx-swap="innerHTML"
-                                            hx-on::after-request="location.reload()">
-                                        <i class="bi bi-{{ $campaign->visible ? 'eye-slash' : 'eye' }}"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger" title="[[Delete]]"
-                                            hx-delete="@route(\App\Backend\Campaign\Controller::ROUTE_DELETE, ['uuid' => $campaign->uuid])"
-                                            hx-confirm="[[Are you sure you want to delete this campaign?]]"
-                                            hx-target="closest tr" hx-swap="outerHTML">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
                                 </div>
                             </td>
                         </tr>

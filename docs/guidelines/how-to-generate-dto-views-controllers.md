@@ -54,6 +54,10 @@ app/src/Backend/Campaign/
 │   ├── list.dark.php                # List view template
 │   ├── info.dark.php                # Detail view template
 │   └── form.dark.php                # Edit form (if requested)
+
+app/src/Module/Campaign/Form/         # Form validators (if form needed)
+├── CreateCampaign.php               # Create form filter
+└── UpdateCampaign.php               # Update form filter
 ```
 
 ## Controller Generation Standards
@@ -69,6 +73,8 @@ namespace App\Backend\Campaign;
 
 use App\Module\Campaign\DTO\Campaign;
 use App\Module\Campaign\CampaignService;
+use App\Module\Campaign\Form\CreateCampaign;
+use App\Module\Campaign\Form\UpdateCampaign;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Prototype\Traits\PrototypeTrait;
@@ -162,6 +168,707 @@ public function toggleVisibility(string $uuid): array
 - No need to use `ResponseInterface` or `$this->response->json()`
 - Spiral automatically sets appropriate headers (`Content-Type: application/json`)
 - Perfect for HTMX endpoints and chart data
+
+## Form Filter Generation Standards
+
+When generating edit forms, you MUST create corresponding Spiral Filter classes for input validation. Filters provide automatic request validation, data sanitization, and type safety.
+
+### Create Filter Structure
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Campaign\Form;
+
+use Spiral\Filters\Attribute\Input\Post;
+use Spiral\Filters\Attribute\Setter;
+use Spiral\Filters\Model\Filter;
+use Spiral\Filters\Model\HasFilterDefinition;
+use Spiral\Validator\FilterDefinition;
+
+class CreateCampaign extends Filter implements HasFilterDefinition
+{
+    #[Post]
+    #[Setter(filter: 'trim')]
+    public string $title = '';
+
+    #[Post]
+    #[Setter(filter: 'trim')]
+    public string $description = '';
+
+    #[Post(key: 'started_at')]
+    public ?\DateTimeImmutable $startedAt = null;
+
+    #[Post(key: 'finished_at')]
+    public ?\DateTimeImmutable $finishedAt = null;
+
+    public function filterDefinition(): FilterDefinition
+    {
+        return new FilterDefinition([
+            'title' => [
+                'required',
+                'string',
+                ['string::shorter', 255],
+            ],
+            'description' => [
+                'string',
+                ['string::shorter', 64000],
+            ],
+            'startedAt' => [
+                'required',
+                'datetime::valid',
+                ['datetime::future', 'orNow' => false],
+            ],
+            'finishedAt' => [
+                'datetime::valid',
+            ],
+        ]);
+    }
+}
+```
+
+### Update Filter Structure (with inheritance)
+
+**Best Practice**: Inherit Update filter from Create filter to avoid code duplication:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Campaign\Form;
+
+use Ramsey\Uuid\UuidInterface;
+use Spiral\Filters\Attribute\Input\Post;
+use Spiral\Filters\Attribute\Setter;
+use Spiral\Validator\FilterDefinition;
+
+final class UpdateCampaign extends CreateCampaign
+{
+    #[Post]
+    public UuidInterface $uuid;
+
+    #[Post]
+    #[Setter(filter: 'boolval')]
+    public bool $visible = false;
+
+    public function filterDefinition(): FilterDefinition
+    {
+        $parentDefinition = parent::filterDefinition();
+
+        return new FilterDefinition(
+            \array_merge(
+                $parentDefinition->validationRules(),
+                [
+                    'visible' => [
+                        // HTML checkbox sends "1" or nothing, so we need to handle string to bool conversion
+                        'boolean',
+                    ],
+                    'startedAt' => [
+                        'required',
+                        'datetime::valid',
+                        // No 'datetime::future' for update - allow past dates
+                    ],
+                ],
+            ),
+            $parentDefinition->mappingSchema(),
+        );
+    }
+}
+```
+
+### Inheritance Advantages:
+1. **Avoid duplication** - all fields and their processing are inherited
+2. **Easy maintenance** - changes in base filter are automatically applied
+3. **Override only differences** - only different validation rules need to be defined
+4. **Clear relationship** - explicitly shows that Update extends Create
+
+### Important Implementation Details:
+
+#### 1. Create Filter must NOT be final
+```php
+// CORRECT: allows inheritance
+class CreateCampaign extends Filter implements HasFilterDefinition
+
+// INCORRECT: prevents inheritance
+final class CreateCampaign extends Filter implements HasFilterDefinition
+```
+
+#### 2. Use validationRules() and mappingSchema() methods
+```php
+// CORRECT: get parent validation schema and mapping
+$parentDefinition = parent::filterDefinition();
+return new FilterDefinition(
+    \array_merge($parentDefinition->validationRules(), [...]),
+    $parentDefinition->mappingSchema(),
+);
+
+// INCORRECT: toArray() does not exist
+$parentRules = parent::filterDefinition()->toArray();
+```
+
+#### 3. array_merge is more readable than spread operator
+```php
+// RECOMMENDED: clear merge sequence
+return new FilterDefinition(
+    \array_merge(
+        ['uuid' => 'uuid'],           // New rules
+        $parentRules,                 // Inherited rules
+        ['startedAt' => [...]],       // Overridden rules
+    ),
+);
+
+// Less readable: order may be unclear
+return new FilterDefinition([
+    'uuid' => ['required', 'uuid'],
+    ...$parentRules,
+    'startedAt' => [...],
+]);
+```
+
+### Field Type to Validation Mapping
+
+Map DTO properties to appropriate Spiral validation rules based on the official documentation:
+
+#### Basic Validation Rules
+- `required` / `notEmpty` - Value cannot be empty
+- `boolean` - Validates boolean value
+- `integer` - Validates integer type
+- `numeric` - Validates numeric value
+- `string` - Validates string type
+- `array` - Validates array type
+- `email` - Validates email format
+- `url` - Validates URL format
+
+#### String Fields
+```php
+// Required string with max length
+'title' => ['required', 'string', ['string::shorter', 255]]
+
+// Optional string with max length
+'description' => ['string', ['string::shorter', 1000]]
+
+// String with exact length
+'code' => ['required', 'string', ['string::length', 6]]
+
+// String with length range
+'username' => ['required', 'string', ['string::range', 3, 20]]
+
+// String with min length
+'password' => ['required', 'string', ['string::longer', 8]]
+
+// String with regex pattern
+'phone' => ['string', ['string::regexp', '/^\+\d{10,15}$/']]
+
+// Email validation
+'email' => ['required', 'string', 'email']
+
+// URL validation
+'website' => ['string', 'url']
+```
+
+#### Boolean Fields
+```php
+// Required boolean
+'active' => ['required', 'boolean']
+
+// Optional boolean (checkbox behavior)
+'visible' => ['boolean']  // Defaults handled in property initialization
+```
+
+#### Date/Time Fields
+
+**Use `\DateTimeImmutable` type** - Spiral automatically converts form input strings to DateTimeImmutable objects:
+
+```php
+// Basic datetime validation
+#[Post(key: 'started_at')]
+public ?\DateTimeImmutable $startedAt = null;
+
+// Validation rules
+'startedAt' => ['required', 'datetime::valid']
+
+// Future date only
+'eventDate' => ['required', 'datetime::valid', ['datetime::future', 'orNow' => false]]
+
+// Past date only
+'birthDate' => ['datetime::valid', ['datetime::past', 'orNow' => false]]
+
+// Date format validation
+'customDate' => [['datetime::format', 'format' => 'Y-m-d']]
+
+// Date before another field
+'startDate' => ['datetime::valid']
+'endDate' => ['datetime::valid', ['datetime::after', 'field' => 'startDate']]
+
+// Date range with parameters
+'deadline' => ['datetime::valid', ['datetime::future', 'orNow' => true, 'useMicroSeconds' => false]]
+```
+
+#### Numeric Fields
+```php
+// Basic integer validation
+'count' => ['required', 'integer']
+
+// Integer with minimum value
+'quantity' => ['required', 'integer', ['number::higher', 0]]
+
+// Integer with maximum value
+'maxItems' => ['integer', ['number::lower', 100]]
+
+// Integer within range
+'rating' => ['required', 'integer', ['number::range', 1, 5]]
+
+// Numeric (float/decimal)
+'price' => ['required', 'numeric', ['number::higher', 0]]
+
+// Percentage (0-100)
+'percentage' => ['numeric', ['number::range', 0, 100]]
+```
+
+#### UUID Fields
+
+**Use `\Ramsey\Uuid\UuidInterface` type** - Spiral has built-in UUID support:
+
+```php
+// UUID field (typically for IDs)
+#[Post]
+public ?\Ramsey\Uuid\UuidInterface $parentId = null;
+
+// Validation rules
+'parentId' => ['uuid']  // Validates UUID format
+
+// Required UUID
+'categoryId' => ['required', 'uuid']
+```
+
+#### Enum Fields
+
+**Use PHP 8.1+ Enums** - Spiral automatically handles enum conversion:
+
+```php
+// Define enum
+enum CampaignStatus: string
+{
+    case Draft = 'draft';
+    case Published = 'published';
+    case Archived = 'archived';
+}
+
+// Use in filter
+#[Post]
+public ?CampaignStatus $status = null;
+
+// Validation rules
+'status' => [
+    'required',
+    ['array::expectedValues', ['draft', 'published', 'archived']]
+]
+
+// Or using enum values
+'status' => [
+    'required',
+    ['array::expectedValues', array_column(CampaignStatus::cases(), 'value')]
+]
+```
+
+#### Array Fields
+```php
+// Basic array validation
+'tags' => ['array']
+
+// Array with size limits
+'items' => ['array', ['array::shorter', 10]]  // Max 10 items
+'categories' => ['array', ['array::longer', 1]]   // Min 1 item
+'options' => ['array', ['array::range', 2, 5]]    // 2-5 items
+'selections' => ['array', ['array::count', 3]]    // Exactly 3 items
+
+// Array with expected values
+'status' => ['required', 'string', ['array::expectedValues', ['draft', 'published', 'archived']]]
+
+// Validate as numeric indexed array
+'list' => ['array', 'array::isList']
+
+// Validate as associative array
+'config' => ['array', 'array::isAssoc']
+```
+
+#### UUID/ID Fields
+- Never include in create filters (auto-generated)
+- Never include in update filters (immutable)
+
+#### Read-only Fields
+- Audit fields (createdAt, updatedAt) → Never include
+- Calculated fields (counts, stats) → Never include
+
+### Input Attributes and Data Sanitization
+
+```php
+// Text fields - always trim whitespace
+#[Post]
+#[Setter(filter: 'trim')]
+public string $title = '';
+
+// Email fields - trim and lowercase
+#[Post]
+#[Setter(filter: 'trim')]
+#[Setter(filter: 'strtolower')]
+public string $email = '';
+
+// Boolean fields - handle checkbox behavior (HTML sends "1" or nothing)
+#[Post]
+#[Setter(filter: 'boolval')]  // Convert "1" string to true, empty to false
+public bool $visible = false;  // Default false for checkboxes
+
+// Field name mapping (when form field names differ from property names)
+#[Post(key: 'started_at')]    // Maps form field "started_at" to property $startedAt
+public string $startedAt = '';
+
+#[Post(key: 'finished_at')]   // Maps form field "finished_at" to property $finishedAt
+public ?string $finishedAt = null;
+
+// Optional fields - use nullable types
+#[Post]
+public ?string $optionalField = null;
+
+// Arrays - specify type hints
+#[Post]
+public array $tags = [];
+```
+
+### Form Field Naming Conventions
+
+**Important**: HTML form field names often use snake_case, but PHP properties use camelCase. Use the `key` parameter to map between them:
+
+```php
+// HTML form sends: started_at, finished_at, user_id
+// PHP properties use: $startedAt, $finishedAt, $userId
+
+#[Post(key: 'started_at')]
+public string $startedAt = '';
+
+#[Post(key: 'finished_at')]
+public string $finishedAt = '';
+
+#[Post(key: 'user_id')]
+public int $userId = 0;
+```
+
+### Controller Integration
+
+Update controller methods to use filters:
+
+```php
+#[Route(route: '/campaign/store', name: self::ROUTE_STORE, methods: ['POST'], group: 'backend')]
+public function store(CreateCampaign $filter): mixed
+{
+    // Filter automatically validates and populates (DateTimeImmutable objects are ready to use)
+    $campaign = $this->campaignService->createCampaign([
+        'title' => $filter->title,
+        'description' => $filter->description,
+        'visible' => $filter->visible,
+        'startedAt' => $filter->startedAt,  // Already DateTimeImmutable
+        'finishedAt' => $filter->finishedAt, // Already DateTimeImmutable or null
+    ]);
+
+    return $this->views->render('campaign:info', [
+        'campaign' => $campaign,
+    ]);
+}
+
+#[Route(route: '/campaign/update/<uuid>', name: self::ROUTE_UPDATE, methods: ['POST'], group: 'backend')]
+public function update(string $uuid, UpdateCampaign $filter): mixed
+{
+    // Filter handles validation automatically (DateTimeImmutable objects are ready to use)
+    $campaign = $this->campaignService->updateCampaign($uuid, [
+        'title' => $filter->title,
+        'description' => $filter->description,
+        'visible' => $filter->visible,
+        'startedAt' => $filter->startedAt,  // Already DateTimeImmutable
+        'finishedAt' => $filter->finishedAt, // Already DateTimeImmutable or null
+    ]);
+
+    return $this->views->render('campaign:info', [
+        'campaign' => $campaign,
+    ]);
+}
+```
+
+### Validation Error Handling
+
+Filters automatically handle validation. For custom error handling in templates:
+
+```php
+// In controller - check if validation failed
+public function store(CreateCampaign $filter): mixed
+{
+    if (!$filter->isValid()) {
+        return $this->views->render('campaign:form', [
+            'campaign' => null,
+            'errors' => $filter->getErrors(),
+        ]);
+    }
+
+    // Process valid data...
+}
+```
+
+```php
+// In template - display errors
+@if(isset($errors) && $errors->has('title'))
+    <div class="invalid-feedback d-block">
+        {{ $errors->first('title') }}
+    </div>
+@endif
+```
+
+### Key Differences Between Create and Update Filters
+
+#### Create Filter Characteristics:
+- **No UUID field** - auto-generated on creation
+- **Stricter validation** - e.g., `datetime::future` for event dates
+- **Default values** - for optional fields
+- **All required fields** must be present
+
+#### Update Filter Characteristics:
+- **Includes UUID field** - required for identifying record to update
+- **Relaxed validation** - e.g., allow past dates for started events
+- **Existing data preservation** - nullable fields may remain unchanged
+- **Validation focuses on data integrity** rather than business rules
+
+```php
+// CREATE: No UUID, stricter date validation
+final class CreateCampaign extends Filter
+{
+    // No UUID field
+    public ?\DateTimeImmutable $startedAt = null; // Must be future
+
+    public function filterDefinition(): FilterDefinitionInterface
+    {
+        return new FilterDefinition([
+            'startedAt' => ['required', 'datetime::valid', ['datetime::future', 'orNow' => false]]
+        ]);
+    }
+}
+
+// UPDATE: Has UUID, relaxed date validation
+final class UpdateCampaign extends Filter
+{
+    public ?\Ramsey\Uuid\UuidInterface $uuid = null; // Required for updates
+    public ?\DateTimeImmutable $startedAt = null; // Can be past date
+
+    public function filterDefinition(): FilterDefinitionInterface
+    {
+        return new FilterDefinition([
+            'uuid' => ['required', 'uuid'],
+            'startedAt' => ['required', 'datetime::valid'] // No future requirement
+        ]);
+    }
+}
+```
+
+### Best Practices for Filter Generation
+
+1. **Use inheritance for Update filters** - extend Create filter and add only UUID + overrides
+   ```php
+   final class UpdateCampaign extends CreateCampaign
+   {
+       #[Post] public ?UuidInterface $uuid = null;
+
+       public function filterDefinition(): FilterDefinitionInterface
+       {
+           $parentRules = parent::filterDefinition()->validationRules();
+           return new FilterDefinition(\array_merge([...], $parentRules, [...]));
+       }
+   }
+   ```
+
+2. **Create filters must NOT be final** - allow inheritance for Update filters
+3. **Use validationRules() method** - correct way to get parent validation rules
+4. **Prefer array_merge over spread** - more explicit merge order and readability
+5. **Always create both Create and Update filters** - different validation rules and field sets
+6. **Include UUID in Update filters** - required for record identification
+7. **Use meaningful validation rules** - match business requirements and use cases
+8. **Apply proper type hints** - `DateTimeImmutable`, `UuidInterface`, Enums
+9. **Apply data sanitization** - trim strings, convert checkboxes with `boolval`
+10. **Set appropriate defaults** - especially for boolean fields and nullable types
+11. **Never validate read-only fields in Create** - UUID, audit timestamps, calculated values
+12. **Use specific date validation** - future-only for new events, flexible for updates
+13. **Include length limits** - match database constraints
+14. **Follow naming convention** - `Create[Entity]`, `Update[Entity]`
+
+This ensures robust form handling with automatic validation and clean separation of concerns.
+
+### Composite Filters for Complex Forms
+
+For DTOs with nested objects or arrays, use Composite Filters with `#[NestedFilter]` and `#[NestedArray]` attributes:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Backend\Campaign\Form;
+
+use App\Backend\Repository\Form\RepositoryFilter;
+use Spiral\Filters\Attribute\Input\Post;
+use Spiral\Filters\Attribute\NestedArray;
+use Spiral\Filters\Attribute\NestedFilter;
+use Spiral\Filters\Attribute\Setter;
+use Spiral\Filters\Model\Filter;
+use Spiral\Filters\Model\FilterDefinitionInterface;
+use Spiral\Filters\Model\HasFilterDefinition;
+use Spiral\Validator\FilterDefinition;
+
+final class CreateCampaignWithRepositories extends Filter implements HasFilterDefinition
+{
+    #[Post]
+    #[Setter(filter: 'trim')]
+    public string $title = '';
+
+    #[Post]
+    #[Setter(filter: 'trim')]
+    public string $description = '';
+
+    #[Post]
+    public bool $visible = true;
+
+    // Single nested object
+    #[NestedFilter(class: CampaignSettingsFilter::class)]
+    public CampaignSettingsFilter $settings;
+
+    // Array of nested filters
+    #[NestedArray(class: RepositoryFilter::class, input: new Post)]
+    public array $repositories = [];
+
+    public function filterDefinition(): FilterDefinitionInterface
+    {
+        return new FilterDefinition([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['string', 'max:1000'],
+            'visible' => ['boolean'],
+            // Nested validations are handled by child filters
+        ]);
+    }
+}
+```
+
+```php
+// Child filter for nested objects
+final class CampaignSettingsFilter extends Filter implements HasFilterDefinition
+{
+    #[Post]
+    public bool $autoStart = false;
+
+    #[Post]
+    public int $maxParticipants = 100;
+
+    public function filterDefinition(): FilterDefinitionInterface
+    {
+        return new FilterDefinition([
+            'autoStart' => ['boolean'],
+            'maxParticipants' => ['required', 'integer', 'min:1', 'max:10000'],
+        ]);
+    }
+}
+```
+
+```php
+// Child filter for arrays
+final class RepositoryFilter extends Filter implements HasFilterDefinition
+{
+    #[Post]
+    public string $name = '';
+
+    #[Post]
+    public string $owner = '';
+
+    public function filterDefinition(): FilterDefinitionInterface
+    {
+        return new FilterDefinition([
+            'name' => ['required', 'string', 'max:100'],
+            'owner' => ['required', 'string', 'max:50'],
+        ]);
+    }
+}
+```
+
+#### Use Cases for Composite Filters:
+- **Campaign with multiple repositories**
+- **User profile with nested address**
+- **Order with line items array**
+- **Survey with multiple questions**
+- **Form with dynamic sections**
+
+### Complete Spiral Validation Rules Reference
+
+Based on the official Spiral documentation, here are all available validation rules:
+
+#### Core Validation Rules
+```php
+// Basic type validation
+'required'    // Value cannot be empty
+'notEmpty'    // Alternative to required
+'boolean'     // Must be boolean
+'integer'     // Must be integer
+'numeric'     // Must be numeric (int/float)
+'string'      // Must be string
+'array'       // Must be array
+'email'       // Valid email format
+'url'         // Valid URL format
+```
+
+#### String Validation Rules (prefix `string::`)
+```php
+['string::shorter', 255]                    // Length <= 255
+['string::longer', 10]                      // Length >= 10
+['string::length', 6]                       // Length exactly 6
+['string::range', 3, 20]                    // Length between 3-20
+['string::regexp', '/^pattern$/']           // Matches regex pattern
+```
+
+#### Numeric Validation Rules (prefix `number::`)
+```php
+['number::range', 1, 100]                   // Value between 1-100
+['number::higher', 0]                       // Value >= 0
+['number::lower', 50]                       // Value <= 50
+```
+
+#### Array Validation Rules (prefix `array::`)
+```php
+['array::count', 5]                         // Exactly 5 elements
+['array::shorter', 10]                      // Max 10 elements
+['array::longer', 1]                        // Min 1 element
+['array::range', 2, 5]                      // 2-5 elements
+['array::expectedValues', ['a', 'b', 'c']]  // Values must be in list
+'array::isList'                             // Numeric indexed array
+'array::isAssoc'                            // Associative array
+```
+
+#### DateTime Validation Rules (prefix `datetime::`)
+```php
+'datetime::valid'                           // Valid datetime
+'datetime::timezone'                        // Valid timezone
+['datetime::format', 'format' => 'Y-m-d']  // Matches specific format
+['datetime::future', 'orNow' => false]     // In future (options: orNow, useMicroSeconds)
+['datetime::past', 'orNow' => false]       // In past (same options)
+['datetime::before', 'field' => 'endDate'] // Before another field
+['datetime::after', 'field' => 'startDate'] // After another field
+```
+
+#### Parameter Examples for DateTime Rules
+```php
+// Future date with options
+['datetime::future', 'orNow' => true, 'useMicroSeconds' => false]
+
+// Before another field with options
+['datetime::before', 'field' => 'deadline', 'orEquals' => true, 'useMicroSeconds' => false]
+
+// Custom format validation
+['datetime::format', 'format' => 'd.m.Y H:i:s']
+```
 
 ## Template Generation Standards
 
