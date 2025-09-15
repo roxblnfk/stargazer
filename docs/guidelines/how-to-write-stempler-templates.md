@@ -49,14 +49,38 @@ This guide establishes standards for writing Stempler templates in the GitHub St
 {{ $data['key'] }}
 ```
 
-### Method Calls
+### Method Calls and Text Processing
 ```php
 <!-- DateTime formatting -->
 {{ $repository->createdAt->format('Y-m-d H:i:s') }}
 
-<!-- Filters -->
-{{ $repository->stargazersCount|number }}
-{{ $description|truncate:100 }}
+<!-- Text truncation using PHP functions -->
+{{ substr($description, 0, 80) }}{{ strlen($description) > 80 ? '...' : '' }}
+
+<!-- Or using a more elegant approach -->
+{{ mb_strlen($description) > 80 ? mb_substr($description, 0, 80) . '...' : $description }}
+
+<!-- Number formatting -->
+{{ number_format($repository->stargazersCount) }}
+
+<!-- IMPORTANT: The pipe "|" is for DEFAULT VALUES, not filters -->
+{{ $description | 'No description available' }}  <!-- Correct: default value -->
+{{ $count | 0 }}  <!-- Correct: default value -->
+```
+
+### Default Values vs Filters
+```php
+<!-- CORRECT: Using pipe for default values -->
+{{ $user->name | 'Anonymous' }}
+{{ $repository->description | 'No description' }}
+
+<!-- INCORRECT: Do NOT use pipe for filters -->
+{{ $text|truncate:100 }}  <!-- This is WRONG -->
+{{ $number|format }}       <!-- This is WRONG -->
+
+<!-- CORRECT: Use PHP functions for text manipulation -->
+{{ strlen($text) > 100 ? substr($text, 0, 100) . '...' : $text }}
+{{ number_format($number) }}
 ```
 
 ## Control Structures
@@ -92,8 +116,26 @@ This guide establishes standards for writing Stempler templates in the GitHub St
     <div data-index="{{ $key }}">{{ $repo->name }}</div>
 @endforeach
 
-<!-- Empty handling -->
-@forelse($items as $item)
+<!-- Empty handling - CORRECT way in Stempler -->
+@if(empty($items))
+    <p>No items found</p>
+@else
+    @foreach($items as $item)
+        {{ $item->name }}
+    @endforeach
+@endif
+
+<!-- Alternative empty handling -->
+@empty($items)
+    <p>No items found</p>
+@else
+    @foreach($items as $item)
+        {{ $item->name }}
+    @endforeach
+@endempty
+
+<!-- INCORRECT: @forelse is NOT supported in Stempler -->
+@forelse($items as $item)  <!-- WRONG - this doesn't work -->
     {{ $item->name }}
 @empty
     <p>No items found</p>
@@ -454,11 +496,17 @@ This i18n approach ensures the GitHub Stars application provides a seamless expe
 {{ date('Y-m-d', strtotime($repository->createdAt)) }}
 ```
 
-### Use Filters for Formatting
+### Use PHP Functions for Formatting
 ```php
-{{ $number|number }}
-{{ $text|truncate:100 }}
-{{ $date|date:'Y-m-d' }}
+<!-- CORRECT: Use PHP functions for text/number formatting -->
+{{ number_format($number) }}
+{{ mb_strlen($text) > 100 ? mb_substr($text, 0, 100) . '...' : $text }}
+{{ $date->format('Y-m-d') }}
+
+<!-- INCORRECT: Do NOT use pipe syntax for filters -->
+{{ $number|number }}        <!-- WRONG -->
+{{ $text|truncate:100 }}    <!-- WRONG -->
+{{ $date|date:'Y-m-d' }}    <!-- WRONG -->
 ```
 
 ## Code Quality Standards
@@ -506,7 +554,7 @@ This i18n approach ensures the GitHub Stars application provides a seamless expe
     <div class="col-md-3">
         <div class="d-flex align-items-center">
             <i class="bi bi-star-fill text-warning me-2"></i>
-            <strong>{{ $repository->stargazersCount|number }}</strong>
+            <strong>{{ number_format($repository->stargazersCount) }}</strong>
             <span class="text-muted ms-1">stars</span>
         </div>
     </div>
@@ -515,9 +563,8 @@ This i18n approach ensures the GitHub Stars application provides a seamless expe
 
 ### Empty States
 ```php
-@forelse($repositories as $repository)
-    <!-- Repository item -->
-@empty
+<!-- CORRECT: Using proper Stempler syntax for empty collections -->
+@if(empty($repositories))
     <div class="text-center py-5">
         <i class="bi bi-inbox display-1 text-muted"></i>
         <h3 class="mt-3">No repositories found</h3>
@@ -526,6 +573,30 @@ This i18n approach ensures the GitHub Stars application provides a seamless expe
             Add Repository
         </a>
     </div>
+@else
+    @foreach($repositories as $repository)
+        <!-- Repository item -->
+    @endforeach
+@endif
+
+<!-- Alternative using @empty directive -->
+@empty($repositories)
+    <div class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h3 class="mt-3">No repositories found</h3>
+        <p class="text-muted">Add your first repository to get started.</p>
+    </div>
+@else
+    @foreach($repositories as $repository)
+        <!-- Repository item -->
+    @endforeach
+@endempty
+
+<!-- INCORRECT: @forelse is NOT supported -->
+@forelse($repositories as $repository)  <!-- WRONG -->
+    <!-- Repository item -->
+@empty
+    <!-- Empty state -->
 @endforelse
 ```
 

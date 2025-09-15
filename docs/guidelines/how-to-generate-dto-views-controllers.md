@@ -199,7 +199,20 @@ public function toggleVisibility(string $uuid): array
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($campaigns as $campaign)
+                    @if(empty($campaigns))
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-inbox display-1 text-muted"></i>
+                                <h4 class="mt-3 text-muted">[[No campaigns found]]</h4>
+                                <p class="text-muted">[[Create your first campaign to get started]]</p>
+                                <a href="@route(\App\Backend\Campaign\Controller::ROUTE_CREATE)"
+                                   class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i> [[Add Campaign]]
+                                </a>
+                            </td>
+                        </tr>
+                    @else
+                        @foreach($campaigns as $campaign)
                         <tr>
                             <td>
                                 <a href="@route(\App\Backend\Campaign\Controller::ROUTE_INFO, ['uuid' => $campaign->uuid])"
@@ -207,7 +220,7 @@ public function toggleVisibility(string $uuid): array
                                     {{ $campaign->title }}
                                 </a>
                                 @if($campaign->description)
-                                    <br><small class="text-muted">{{ $campaign->description|truncate:80 }}</small>
+                                    <br><small class="text-muted">{{ mb_strlen($campaign->description) > 80 ? mb_substr($campaign->description, 0, 80) . '...' : $campaign->description }}</small>
                                 @endif
                             </td>
                             <td>
@@ -269,7 +282,7 @@ public function toggleVisibility(string $uuid): array
                                 </a>
                             </td>
                         </tr>
-                    @endforelse
+                    @endif
                 </tbody>
             </table>
         </div>
