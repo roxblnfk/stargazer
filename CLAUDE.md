@@ -39,6 +39,7 @@ This project has established guidelines that should be followed for all developm
 
 ### Data Transfer Objects (DTOs)
 - **[DTO Creation Guidelines](docs/guidelines/how-to-create-dto-from-entities.md)** - Complete guide for creating DTOs from domain entities, including immutable patterns, value object integration, mapping methods, and entity isolation principles. Follow when creating DTOs for any domain entities.
+- **[DTO Views and Controllers Generation](docs/guidelines/how-to-generate-dto-views-controllers.md)** - Systematic approach for generating complete CRUD interfaces for DTOs, including list views, detail views, optional edit forms, and corresponding controllers. Use when asked to generate views and controllers for specific DTOs.
 
 ## Domain-Specific Development Guidelines
 
