@@ -41,6 +41,8 @@ final class SyncStarsWorkflow
             # Sync new stars
             yield ActivityStub::activity(SyncStarsActivity::class, retryAttempts: 2, startToCloseTimeout: 10)
                 ->syncStars($syncId, $repository);
+        } catch (\Throwable $exception) {
+            // do nothing
         } finally {
             # Complete sync state and cleanup in parallel
             yield Workflow::asyncDetached(static function () use ($syncId, $starsCount) {
@@ -52,5 +54,7 @@ final class SyncStarsWorkflow
                 ]);
             });
         }
+
+        isset($exception) and throw $exception;
     }
 }
