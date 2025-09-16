@@ -23,7 +23,7 @@ final class License implements \JsonSerializable
         public readonly string $spdxId,
 
         /** @var non-empty-string */
-        public readonly string $url,
+        public readonly ?string $url,
 
         /** @var non-empty-string */
         #[MapName('node_id')]
