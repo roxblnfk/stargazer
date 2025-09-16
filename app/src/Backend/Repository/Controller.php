@@ -65,7 +65,7 @@ final class Controller
     #[Route(route: '/repository/activate', name: self::ROUTE_ACTIVATE, methods: ['POST'], group: 'backend')]
     public function activate(ServerRequestInterface $request): void
     {
-        $repository = GithubRepository::fromString($request->getParsedBody()['repository_name'] ?? '');
+        $repository = GithubRepository::fromString(\trim($request->getParsedBody()['repository_name'] ?? ''));
         $this->repositoryService->activateRepository($repository);
     }
 
