@@ -74,6 +74,46 @@
                             </div>
                         </div>
                     </div>
+
+                </div>
+
+                <!-- Campaigns Section -->
+                <div class="row g-4 mt-2">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-megaphone fs-4 text-info me-2"></i>
+                                        <h5 class="mb-0">[[Campaigns]]</h5>
+                                    </div>
+                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_LIST)" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-list-ul me-1"></i>[[View All]]
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                                    <i class="bi bi-graph-up fs-3 text-info"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h3 class="mb-1">{{ $dashboard->countCampaigns }}</h3>
+                                                <p class="text-muted mb-0">[[Active Campaigns]]</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                        <small class="text-muted">[[Manage promotional campaigns and events]]</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

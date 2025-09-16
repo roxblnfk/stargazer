@@ -7,6 +7,7 @@ namespace App\Application\Router;
 use App\Application\Router\Middleware\LocaleSelector;
 use App\Application\Router\Middleware\RedirectFirewall;
 use App\Backend\Home\Controller;
+use App\Frontend\Profile\Middleware\InviteCampaign;
 use Nyholm\Psr7\Uri;
 use Spiral\Auth\Middleware\AuthMiddleware;
 use Spiral\Bootloader\Http\RoutesBootloader as BaseRoutesBootloader;
@@ -49,6 +50,9 @@ final class RoutesBootloader extends BaseRoutesBootloader
     {
         return [
             'web' => [
+                CookiesMiddleware::class,
+                SessionMiddleware::class,
+                InviteCampaign::class,
                 ValidationHandlerMiddleware::class,
             ],
             'backend' => [

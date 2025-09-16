@@ -34,10 +34,10 @@
                                 <h1 class="hero-title mb-0">[[Stargazer]]</h1>
                                 <i class="bi bi-star-fill star-decoration star-right"></i>
                             </div>
+                            <p class="mb-3 text-muted">[[Open Source Support Platform]]</p>
 
                             <p class="hero-description">
-                                [[We create an open source code and really count on your stars!]]
-                                [[Evaluate our projects, and for this we will give you a measure.]]
+                                [[Open source developers need stars!]]
                             </p>
                         </div>
 
@@ -63,21 +63,21 @@
                                 <div class="feature-icon">
                                     <i class="bi bi-gift"></i>
                                 </div>
-                                <h3 class="feature-title">[[Merch as a gift]]</h3>
-                                <p class="feature-desc">[[Get prizes for project support]]</p>
+                                <h3 class="feature-title">[[Gifts]]</h3>
+                                <p class="feature-desc">[[Get rewards and prizes for participating in events]]</p>
                             </div>
                         </div>
 
                         <!-- CTA Section -->
                         <div class="cta-section">
-                            <h2 class="cta-title">[[Start now!]]</h2>
-                            <p class="cta-subtitle">[[Enter your GitHub username and see which projects you have backed]]</p>
+                            <h2 class="cta-title">[[Enter your GitHub username]]</h2>
 
-                            <form class="modern-form" action="@route(\App\Frontend\Profile\Controller::ROUTE_INDEX)">
+                            <form class="modern-form" action="@route(\App\Frontend\Profile\Controller::ROUTE_ENTER)">
                                 <div class="input-wrapper">
                                     <input type="text"
                                            name="username"
                                            class="modern-input"
+                                           value="{{ $username }}"
                                            placeholder="github-username">
                                 </div>
                                 <button class="cta-button" type="submit">

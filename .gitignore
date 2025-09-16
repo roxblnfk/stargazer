@@ -13,3 +13,6 @@
 
 /.env
 /*.cache
+
+# Data
+/data/postgres/*

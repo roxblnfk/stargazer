@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
+use App\Application\Bootloader\FormsBootloader;
 use App\Application\ORM\ORMBootloader;
 use Spiral\Boot\Bootloader\CoreBootloader;
 use Spiral\Bootloader as Framework;
@@ -107,6 +108,7 @@ class Kernel extends \Spiral\Framework\Kernel
             // Views
             ViewsBootloader::class,
             StemplerBootloader::class,
+            FormsBootloader::class,
 
             // Queue
             QueueBootloader::class,
@@ -156,6 +158,7 @@ class Kernel extends \Spiral\Framework\Kernel
             // Backend
             \App\Backend\Home\Bootloader::class,
             \App\Backend\Repository\Bootloader::class,
+            \App\Backend\Campaign\Bootloader::class,
 
             // Frontend
             \App\Frontend\Profile\Bootloader::class,

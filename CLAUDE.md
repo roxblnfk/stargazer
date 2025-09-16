@@ -37,6 +37,10 @@ This project has established guidelines that should be followed for all developm
 - **[Stempler Template Guidelines](docs/guidelines/how-to-write-stempler-templates.md)** - Comprehensive guide for writing Stempler templates including variable interpolation, control structures, Bootstrap 5 integration, security practices, and component patterns. Follow when creating or modifying any view templates.
 - **Bootstrap 5** - This project uses Bootstrap 5 for frontend styling and components. Always use Bootstrap 5 utility classes, grid system, and components when working with views and templates. Bootstrap CSS and JS are loaded from CDN in the layout files.
 
+### Data Transfer Objects (DTOs)
+- **[DTO Creation Guidelines](docs/guidelines/how-to-create-dto-from-entities.md)** - Complete guide for creating DTOs from domain entities, including immutable patterns, value object integration, mapping methods, and entity isolation principles. Follow when creating DTOs for any domain entities.
+- **[DTO Views and Controllers Generation](docs/guidelines/how-to-generate-dto-views-controllers.md)** - Systematic approach for generating complete CRUD interfaces for DTOs, including list views, detail views, optional edit forms, and corresponding controllers. Use when asked to generate views and controllers for specific DTOs.
+
 ## Domain-Specific Development Guidelines
 
 ### GitHub API Integration

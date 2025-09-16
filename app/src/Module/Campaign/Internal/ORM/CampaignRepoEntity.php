@@ -1,0 +1,74 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Campaign\Internal\ORM;
+
+use App\Application\ORM\ActiveRecord;
+use App\Module\Campaign\DTO\CampaignRepo;
+use App\Module\Github\Dto\GithubRepository;
+use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Entity;
+use Cycle\ORM\Entity\Behavior\CreatedAt;
+use Cycle\ORM\Entity\Behavior\UpdatedAt;
+use Ramsey\Uuid\UuidInterface;
+
+/**
+ * This entity represents a repository included in a campaign.
+ *
+ * It holds information about the repository's ID, name, associated campaign,
+ * and a score that might represent its importance or relevance within the campaign.
+ */
+#[Entity(
+    role: 'campaign_repo',
+    table: 'campaign_repo',
+)]
+#[CreatedAt(field: 'createdAt', column: 'created_at')]
+#[UpdatedAt(field: 'updatedAt', column: 'updated_at')]
+class CampaignRepoEntity extends ActiveRecord
+{
+    #[Column(type: 'uuid', name: 'campaign_uuid', primary: true, typecast: 'uuid')]
+    public UuidInterface $campaignUuid;
+
+    #[Column(type: 'bigInteger', name: 'repo_id', primary: true, typecast: 'int')]
+    public int $repoId;
+
+    #[Column(type: 'string', name: 'repo_name', typecast: [GithubRepository::class, 'fromString'])]
+    public GithubRepository $repoName;
+
+    #[Column(type: 'bigInteger', default: 1, typecast: 'int')]
+    public int $score = 1;
+
+    #[Column(type: 'datetime', typecast: 'datetime')]
+    public \DateTimeInterface $updatedAt;
+
+    #[Column(type: 'datetime', typecast: 'datetime')]
+    public \DateTimeInterface $createdAt;
+
+    public static function create(
+        int $repoId,
+        GithubRepository $repoName,
+        UuidInterface $campaignId,
+        \DateTimeInterface $startedAt,
+        int $score = 1,
+    ): self {
+        return self::make([
+            'campaignUuid' => $campaignId,
+            'repoId' => $repoId,
+            'repoName' => (string) $repoName,
+            'score' => $score,
+        ]);
+    }
+
+    public function toDTO(): CampaignRepo
+    {
+        return new CampaignRepo(
+            campaignUuid: $this->campaignUuid,
+            repoId: $this->repoId,
+            repoName: $this->repoName,
+            score: $this->score,
+            updatedAt: $this->updatedAt,
+            createdAt: $this->createdAt,
+        );
+    }
+}

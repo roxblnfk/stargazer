@@ -20,7 +20,7 @@ services:
   #     - /var/lib/elasticsearch/data
 
   postgresql:
-    container_name: stargazer-temporal-postgresql
+    container_name: stargazer-postgresql
     restart: on-failure
     environment:
       POSTGRES_PASSWORD: temporal
@@ -34,7 +34,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgresql_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
       - ./docker/postgresql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
   temporal:

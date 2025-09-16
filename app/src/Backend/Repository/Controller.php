@@ -8,10 +8,9 @@ use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Main\RepositoryService;
 use App\Module\Main\StargazerService;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Spiral\Prototype\Traits\PrototypeTrait;
 use Spiral\Router\Annotation\Route;
+use Spiral\Router\RouterInterface;
 use Spiral\Views\ViewsInterface;
 
 /**
@@ -19,8 +18,6 @@ use Spiral\Views\ViewsInterface;
  */
 final class Controller
 {
-    use PrototypeTrait;
-
     public const ROUTE_LIST = 'repository:list';
     public const ROUTE_INFO = 'repository:info';
     public const ROUTE_ACTIVATE = 'repository:activate';
@@ -31,6 +28,7 @@ final class Controller
     public const ROUTE_HIDE = 'repository:hide';
 
     public function __construct(
+        private readonly RouterInterface $router,
         private readonly ViewsInterface $views,
         private readonly RepositoryService $repositoryService,
         private readonly StargazerService $stargazerService,
@@ -97,13 +95,11 @@ final class Controller
     }
 
     #[Route(route: '/repository/chart/<owner>/<name>', name: self::ROUTE_CHART, methods: ['GET'], group: 'backend')]
-    public function chart(string $owner, string $name): ResponseInterface
+    public function chart(string $owner, string $name): array
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
         $repositoryInfo = $this->repositoryService->getRepository($repository);
 
-        $chartData = $this->stargazerService->getRepositoryStarChartData($repositoryInfo->id);
-
-        return $this->response->json($chartData);
+        return $this->stargazerService->getRepositoryStarChartData($repositoryInfo->id);
     }
 }

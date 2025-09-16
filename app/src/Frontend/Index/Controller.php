@@ -6,8 +6,10 @@ namespace App\Frontend\Index;
 
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
+use Psr\Http\Message\ServerRequestInterface;
 use Spiral\Prototype\Traits\PrototypeTrait;
 use Spiral\Router\Annotation\Route;
+use Spiral\Session\SessionInterface;
 use Spiral\Views\ViewsInterface;
 
 /**
@@ -24,15 +26,13 @@ final class Controller
     ) {}
 
     #[Route(route: '/', name: self::ROUTE_INDEX, methods: ['GET'])]
-    public function index(GithubService $service): mixed
+    public function index(SessionInterface $session): string
     {
-        // $repo = new GithubRepository(new GithubOrganization('spiral'), 'framework');
-        //
-        // $stargazers = $service->getStarsCount($repo);
-        // td($stargazers);
+        $username = $session->getSection('user')->get('name', '');
 
         return $this->views->render('index:home', [
             'router' => $this->router,
+            'username' => $username,
         ]);
     }
 }
