@@ -21,7 +21,7 @@ class CreateCampaign extends Filter implements HasFilterDefinition
     public string $description = '';
 
     #[Post(key: 'started_at')]
-    public ?\DateTimeImmutable $startedAt = null;
+    public \DateTimeImmutable $startedAt;
 
     #[Post(key: 'finished_at')]
     public ?\DateTimeImmutable $finishedAt = null;

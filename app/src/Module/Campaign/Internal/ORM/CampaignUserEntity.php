@@ -6,7 +6,6 @@ namespace App\Module\Campaign\Internal\ORM;
 
 use App\Application\ORM\ActiveRecord;
 use App\Module\Campaign\DTO\CampaignUser;
-use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Dto\GithubUser;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -16,6 +15,7 @@ use Ramsey\Uuid\UuidInterface;
 
 #[Entity(
     role: 'campaign_user',
+    repository: CampaignUserRepository::class,
     table: 'campaign_user',
 )]
 #[CreatedAt(field: 'createdAt', column: 'created_at')]
@@ -28,7 +28,7 @@ class CampaignUserEntity extends ActiveRecord
     #[Column(type: 'bigInteger', name: 'user_id', primary: true, typecast: 'int')]
     public int $userId;
 
-    #[Column(type: 'string', name: 'user_name', typecast: [GithubRepository::class, 'fromString'])]
+    #[Column(type: 'string', name: 'user_name', typecast: [GithubUser::class, 'fromString'])]
     public GithubUser $userName;
 
     #[Column(type: 'bigInteger', default: 0, typecast: 'int')]
@@ -48,7 +48,7 @@ class CampaignUserEntity extends ActiveRecord
         return self::make([
             'campaignUuid' => $campaignId,
             'userId' => $userId,
-            'userName' => (string) $userName,
+            'userName' => $userName,
         ]);
     }
 

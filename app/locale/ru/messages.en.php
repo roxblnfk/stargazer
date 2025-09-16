@@ -14,8 +14,7 @@ return [
     'Get rewards and prizes for participating in events' => 'Получайте награды и призы за участие в событиях',
     'Back' => 'Назад',
     'Points' => 'Баллы',
-    'Tracking repositories' => 'Отслеживаемые репозитории',
-    'Projects for which you can get points' => 'Проекты, за которые вы можете получить баллы',
+    'Projects that need support' => 'Проекты, нуждающиеся в поддержке',
     'More' => 'Перейти',
     'Put a star' => 'Поставить звезду',
     'Star set' => 'Поставлена звезда',
@@ -116,4 +115,11 @@ return [
     'No campaigns found' => 'Кампании не найдены',
     'Create your first campaign to get started' => 'Создайте свою первую кампанию для начала работы',
     'Are you sure you want to delete this campaign?' => 'Вы уверены, что хотите удалить эту кампанию?',
+
+    // Campaign Invitation & Profile
+    'Join Event' => 'Участвовать',
+    'Ends' => 'Завершается',
+    'Invite Code' => 'Код приглашения',
+    'Enter invite code for private access' => 'Введите код приглашения для частного доступа',
+    'Optional private access code for this campaign' => 'Необязательный код частного доступа для этой кампании',
 ];

@@ -18,6 +18,10 @@ final class UpdateCampaign extends CreateCampaign
     #[Setter(filter: 'boolval')]
     public bool $visible = false;
 
+    #[Post(key: 'invite_code')]
+    #[Setter(filter: 'trim')]
+    public ?string $inviteCode = null;
+
     public function filterDefinition(): FilterDefinition
     {
         $parentDefinition = parent::filterDefinition();
@@ -34,6 +38,10 @@ final class UpdateCampaign extends CreateCampaign
                         'required',
                         'datetime::valid',
                         // No 'datetime::future' for update - allow past dates
+                    ],
+                    'inviteCode' => [
+                        'string',
+                        ['string::shorter', 65], // Entity field has length 64, so max 64 characters
                     ],
                 ],
             ),

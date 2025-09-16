@@ -44,6 +44,9 @@ class CampaignEntity extends ActiveRecord
     #[Column(type: 'boolean', default: false)]
     public bool $visible = false;
 
+    #[Column(type: 'string', name: 'invite_code', nullable: true, length: 64)]
+    public ?string $inviteCode = null;
+
     /**
      * Start time of active campaign. This time stars will be harvested actively.
      */
@@ -94,10 +97,11 @@ class CampaignEntity extends ActiveRecord
             title: $this->title,
             description: $this->description,
             visible: $this->visible,
+            inviteCode: $this->inviteCode,
             startedAt: $this->startedAt,
             finishedAt: $this->finishedAt,
-            repositoryCount: $this->countUsers,
-            memberCount: $this->countRepositories,
+            repositoryCount: $this->countRepositories,
+            memberCount: $this->countUsers,
             updatedAt: $this->updatedAt,
             createdAt: $this->createdAt,
         );

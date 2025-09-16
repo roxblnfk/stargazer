@@ -13,6 +13,7 @@ final class Campaign implements \Stringable
         public readonly string $title,
         public readonly string $description,
         public readonly bool $visible,
+        public readonly ?string $inviteCode,
         public readonly \DateTimeInterface $startedAt,
         public readonly ?\DateTimeInterface $finishedAt,
         public readonly int $repositoryCount,

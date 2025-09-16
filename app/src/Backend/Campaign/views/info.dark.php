@@ -66,6 +66,18 @@
                             </div>
                         </div>
 
+                        @if($campaign->inviteCode)
+                        <!-- Invitation link -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <i class="bi bi-link-45deg"></i>
+                                    [[Invitation Link]]:
+                                    <a href="@route(\App\Frontend\Index\Controller::ROUTE_INDEX, [\App\Application\Router\Middleware\InviteCampaign::QUERY_PARAM => $campaign->inviteCode])">
+                                        {{ $campaign->inviteCode }}
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
