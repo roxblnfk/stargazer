@@ -27,11 +27,11 @@ final class LoggingBootloader extends Bootloader
 
     public function init(MonologBootloader $monolog, EnvironmentInterface $env): void
     {
-        $handler = new SocketHandler($env->get('MONOLOG_SOCKET_HOST'), chunkSize: 1);
-        $handler->setFormatter(new JsonFormatter(JsonFormatter::BATCH_MODE_NEWLINES));
-        $monolog->addHandler('socket', $handler);
-        if ($env->get('MONOLOG_DEFAULT_CHANNEL') !== 'socket') {
-            $handler = null;
+        $handler = null;
+        if ($env->get('MONOLOG_DEFAULT_CHANNEL') === 'socket' ?? $env->get('MONOLOG_SOCKET_HOST') !== null) {
+            $handler = new SocketHandler($env->get('MONOLOG_SOCKET_HOST'), chunkSize: 1);
+            $handler->setFormatter(new JsonFormatter(JsonFormatter::BATCH_MODE_NEWLINES));
+            $monolog->addHandler('socket', $handler);
         }
 
         // HTTP level errors

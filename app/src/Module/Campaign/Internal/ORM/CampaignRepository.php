@@ -17,4 +17,11 @@ final class CampaignRepository extends BaseRepository
         $clone->select->where(['visible' => $value]);
         return $clone;
     }
+
+    public function invitationCode(string $code): static
+    {
+        $clone = clone $this;
+        $clone->select->where(['inviteCode' => $code]);
+        return $clone;
+    }
 }

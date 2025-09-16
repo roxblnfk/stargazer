@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Router;
 
+use App\Application\Router\Middleware\InviteCampaign;
 use App\Application\Router\Middleware\LocaleSelector;
 use App\Application\Router\Middleware\RedirectFirewall;
 use App\Backend\Home\Controller;
-use App\Frontend\Profile\Middleware\InviteCampaign;
 use Nyholm\Psr7\Uri;
 use Spiral\Auth\Middleware\AuthMiddleware;
 use Spiral\Bootloader\Http\RoutesBootloader as BaseRoutesBootloader;

@@ -53,19 +53,37 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-folder text-primary me-2"></i>
-                                    <strong>{{ $campaign->repositoryCount }}</strong>
-                                    <span class="text-muted ms-1">[[repositories]]</span>
+                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_REPOS, ['uuid' => $campaign->uuid])"
+                                       class="text-decoration-none">
+                                        <strong>{{ $campaign->repositoryCount }}</strong>
+                                        <span class="text-muted ms-1">[[repositories]]</span>
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-people text-success me-2"></i>
-                                    <strong>{{ $campaign->memberCount }}</strong>
-                                    <span class="text-muted ms-1">[[members]]</span>
+                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_MEMBERS, ['uuid' => $campaign->uuid])"
+                                       class="text-decoration-none">
+                                        <strong>{{ $campaign->memberCount }}</strong>
+                                        <span class="text-muted ms-1">[[members]]</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
 
+                        @if($campaign->inviteCode)
+                        <!-- Invitation link -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <i class="bi bi-link-45deg"></i>
+                                    [[Invitation Link]]:
+                                    <a href="@route(\App\Frontend\Index\Controller::ROUTE_INDEX, [\App\Application\Router\Middleware\InviteCampaign::QUERY_PARAM => $campaign->inviteCode])">
+                                        {{ $campaign->inviteCode }}
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

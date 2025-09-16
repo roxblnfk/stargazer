@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Frontend\Profile\Middleware;
+namespace App\Application\Router\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,6 +13,13 @@ use Spiral\Framework\Spiral;
 use Spiral\Http\ResponseWrapper;
 use Spiral\Session\SessionInterface;
 
+/**
+ * Middleware to handle invite campaign codes in the URL.
+ *
+ * This middleware checks for an 'invite_code' query parameter in the incoming request.
+ * If found, it stores the code in the session and redirects the user to the same URL
+ * without the 'invite_code' parameter to keep the URL clean.
+ */
 #[Scope(Spiral::Http)]
 class InviteCampaign implements MiddlewareInterface
 {

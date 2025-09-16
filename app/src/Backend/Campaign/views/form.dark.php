@@ -79,6 +79,23 @@
                             </div>
 
                             @if(isset($campaign))
+                                <!-- Invite Code Field -->
+                                <div class="mb-3">
+                                    <label for="invite_code" class="form-label">[[Invite Code]]</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="invite_code"
+                                           name="invite_code"
+                                           value="{{ $campaign->inviteCode ?? '' }}"
+                                           maxlength="64"
+                                           placeholder="[[Enter invite code for private access]]">
+                                    <div class="form-text">
+                                        [[Optional private access code for this campaign]]
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(isset($campaign))
                                 <!-- Visibility Toggle -->
                                 <div class="mb-4">
                                     <div class="form-check form-switch">
