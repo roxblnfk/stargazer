@@ -18,6 +18,7 @@ final class Controller
 {
     public const ROUTE_LIST = 'campaign:list';
     public const ROUTE_INFO = 'campaign:info';
+    public const ROUTE_MEMBERS = 'campaign:members';
     public const ROUTE_CREATE = 'campaign:create';
     public const ROUTE_EDIT = 'campaign:edit';
     public const ROUTE_STORE = 'campaign:store';
@@ -48,6 +49,21 @@ final class Controller
 
         return $this->views->render('campaign:info', [
             'campaign' => $campaign,
+        ]);
+    }
+
+    #[Route(route: '/campaign/members/<uuid>', name: self::ROUTE_MEMBERS, methods: ['GET'], group: 'backend')]
+    public function members(string $uuid): string
+    {
+        $uuid = Uuid::fromString($uuid);
+        $campaign = $this->campaignService->getCampaign($uuid);
+
+        // TODO: Replace with actual service call
+        $members = $this->campaignService->getCampaignMembers($uuid);
+
+        return $this->views->render('campaign:members', [
+            'campaign' => $campaign,
+            'members' => $members,
         ]);
     }
 

@@ -14,6 +14,14 @@ final class GithubUser implements \Stringable
     ) {}
 
     /**
+     * @param non-empty-string $username
+     */
+    public static function fromString(string $username): self
+    {
+        return new self($username);
+    }
+
+    /**
      * @return non-empty-string
      */
     public function __toString(): string

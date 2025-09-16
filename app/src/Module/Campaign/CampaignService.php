@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Campaign;
 
 use App\Module\Campaign\DTO\Campaign;
+use App\Module\Campaign\DTO\CampaignUser;
 use App\Module\Campaign\Form\CreateCampaign;
 use App\Module\Campaign\Form\UpdateCampaign;
 use App\Module\Campaign\Internal\ORM\CampaignEntity;
@@ -130,5 +131,17 @@ final class CampaignService
 
             return $entity;
         });
+    }
+
+    /**
+     * @return array<int, CampaignUser>
+     */
+    public function getCampaignMembers(UuidInterface $uuid): array
+    {
+        $members = [];
+        foreach ($this->campaignUserRepository->withCampaignUuid($uuid)->findAll() as $e) {
+            $members[] = $e->toDTO();
+        }
+        return $members;
     }
 }

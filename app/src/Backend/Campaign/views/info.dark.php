@@ -60,8 +60,11 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-people text-success me-2"></i>
-                                    <strong>{{ $campaign->memberCount }}</strong>
-                                    <span class="text-muted ms-1">[[members]]</span>
+                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_MEMBERS, ['uuid' => $campaign->uuid])"
+                                       class="text-decoration-none">
+                                        <strong>{{ $campaign->memberCount }}</strong>
+                                        <span class="text-muted ms-1">[[members]]</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>

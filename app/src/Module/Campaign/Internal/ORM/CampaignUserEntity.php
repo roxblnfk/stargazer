@@ -34,6 +34,9 @@ class CampaignUserEntity extends ActiveRecord
     #[Column(type: 'bigInteger', default: 0, typecast: 'int')]
     public int $score = 0;
 
+    #[Column(type: 'bigInteger', default: 0, typecast: 'int')]
+    public int $stars = 0;
+
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $updatedAt;
 
@@ -59,6 +62,7 @@ class CampaignUserEntity extends ActiveRecord
             userId: $this->userId,
             userName: $this->userName,
             score: $this->score,
+            stars: $this->stars,
             updatedAt: $this->updatedAt,
             createdAt: $this->createdAt,
         );

@@ -14,6 +14,7 @@ final class CampaignUser implements \Stringable
         public readonly int $userId,
         public readonly GithubUser $userName,
         public readonly int $score,
+        public readonly int $stars,
         public readonly \DateTimeInterface $updatedAt,
         public readonly \DateTimeInterface $createdAt,
     ) {}
