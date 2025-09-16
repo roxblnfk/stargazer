@@ -29,7 +29,7 @@ http:
     supervisor:
       max_worker_memory: 256
 temporal:
-  address: '127.0.0.1:7233'
+  address: ${TEMPORAL_ADDRESS:-127.0.0.1:7233}
   activities:
     num_workers: 4
     debug: ${DEBUG:-false}

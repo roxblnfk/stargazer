@@ -53,8 +53,11 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-folder text-primary me-2"></i>
-                                    <strong>{{ $campaign->repositoryCount }}</strong>
-                                    <span class="text-muted ms-1">[[repositories]]</span>
+                                    <a href="@route(\App\Backend\Campaign\Controller::ROUTE_REPOS, ['uuid' => $campaign->uuid])"
+                                       class="text-decoration-none">
+                                        <strong>{{ $campaign->repositoryCount }}</strong>
+                                        <span class="text-muted ms-1">[[repositories]]</span>
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-6">

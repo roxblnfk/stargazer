@@ -19,6 +19,11 @@ final class Controller
     public const ROUTE_LIST = 'campaign:list';
     public const ROUTE_INFO = 'campaign:info';
     public const ROUTE_MEMBERS = 'campaign:members';
+    public const ROUTE_REPOS = 'campaign:repos';
+    public const ROUTE_REPOS_ADDED = 'campaign:repos-added';
+    public const ROUTE_REPOS_AVAILABLE = 'campaign:repos-available';
+    public const ROUTE_REPO_ADD = 'campaign:repo-add';
+    public const ROUTE_REPO_REMOVE = 'campaign:repo-remove';
     public const ROUTE_CREATE = 'campaign:create';
     public const ROUTE_EDIT = 'campaign:edit';
     public const ROUTE_STORE = 'campaign:store';
@@ -65,6 +70,69 @@ final class Controller
             'campaign' => $campaign,
             'members' => $members,
         ]);
+    }
+
+    #[Route(route: '/campaign/repos/<uuid>', name: self::ROUTE_REPOS, methods: ['GET'], group: 'backend')]
+    public function repos(string $uuid): string
+    {
+        $uuid = Uuid::fromString($uuid);
+        $campaign = $this->campaignService->getCampaign($uuid);
+
+        return $this->views->render('campaign:repos', [
+            'campaign' => $campaign,
+        ]);
+    }
+
+    #[Route(route: '/campaign/repos-added/<uuid>', name: self::ROUTE_REPOS_ADDED, methods: ['GET'], group: 'backend')]
+    public function reposAdded(string $uuid): string
+    {
+        $uuid = Uuid::fromString($uuid);
+        $campaign = $this->campaignService->getCampaign($uuid);
+
+        // TODO: Replace with actual service call
+        $addedRepos = []; // $this->campaignService->getCampaignRepos($uuid);
+
+        return $this->views->render('campaign:repos-added', [
+            'campaign' => $campaign,
+            'addedRepos' => $addedRepos,
+        ]);
+    }
+
+    #[Route(route: '/campaign/repos-available/<uuid>', name: self::ROUTE_REPOS_AVAILABLE, methods: ['GET'], group: 'backend')]
+    public function reposAvailable(string $uuid): string
+    {
+        $uuid = Uuid::fromString($uuid);
+        $campaign = $this->campaignService->getCampaign($uuid);
+
+        // TODO: Replace with actual service call
+        $availableRepos = []; // $this->campaignService->getAvailableRepos($uuid);
+
+        return $this->views->render('campaign:repos-available', [
+            'campaign' => $campaign,
+            'availableRepos' => $availableRepos,
+        ]);
+    }
+
+    #[Route(route: '/campaign/repo-add/<uuid>/<repoId>', name: self::ROUTE_REPO_ADD, methods: ['POST'], group: 'backend')]
+    public function repoAdd(string $uuid, string $repoId): string
+    {
+        $uuid = Uuid::fromString($uuid);
+
+        // TODO: Replace with actual service call
+        // $this->campaignService->addRepoToCampaign($uuid, (int)$repoId);
+
+        return '<tr><td colspan="4" class="text-center p-3 text-success"><i class="bi bi-check-circle"></i> [[Repository added successfully]]</td></tr>';
+    }
+
+    #[Route(route: '/campaign/repo-remove/<uuid>/<repoId>', name: self::ROUTE_REPO_REMOVE, methods: ['DELETE'], group: 'backend')]
+    public function repoRemove(string $uuid, string $repoId): string
+    {
+        $uuid = Uuid::fromString($uuid);
+
+        // TODO: Replace with actual service call
+        // $this->campaignService->removeRepoFromCampaign($uuid, (int)$repoId);
+
+        return '<tr><td colspan="5" class="text-center p-3 text-success"><i class="bi bi-check-circle"></i> [[Repository removed successfully]]</td></tr>';
     }
 
     #[Route(route: '/campaign/create', name: self::ROUTE_CREATE, methods: ['GET'], group: 'backend')]

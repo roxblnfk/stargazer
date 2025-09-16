@@ -50,7 +50,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-person"></i> [[User]]</th>
-                                <th><i class="bi bi-award"></i> [[Score]]</th>
+                                <th><i class="bi bi-award"></i> [[Points]]</th>
                                 <th><i class="bi bi-star"></i> [[Stars]]</th>
                                 <th><i class="bi bi-calendar-plus"></i> [[Joined]]</th>
                                 <th><i class="bi bi-gear"></i> [[Actions]]</th>
@@ -131,7 +131,7 @@
                     </div>
                     <div class="col-md-6 text-end">
                         <small>
-                            [[Total Score]]:
+                            [[Total Points]]:
                             <strong>{{ array_sum(array_column($members, 'score')) }}</strong>
                         </small>
                     </div>
