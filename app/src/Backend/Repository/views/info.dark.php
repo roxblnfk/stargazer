@@ -5,6 +5,7 @@
 
 <stack:push name="scripts">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <script>
         let starsChart;
 
@@ -22,9 +23,9 @@
                         data: [],
                         borderColor: '#007bff',
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         fill: true,
-                        tension: 0.4,
+                        tension: 0,
                         pointBackgroundColor: '#007bff',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
@@ -35,6 +36,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: false,
                     plugins: {
                         legend: {
                             display: false
@@ -47,6 +49,42 @@
                             bodyColor: '#fff',
                             borderColor: '#007bff',
                             borderWidth: 1
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                drag: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                    borderColor: '#007bff',
+                                    borderWidth: 1,
+                                    modifierKey: null
+                                },
+                                mode: 'x',
+                                onZoomComplete: function({chart}) {
+                                    adjustYScale(chart);
+                                    console.log('Zoom completed:', {
+                                        min: chart.scales.x.min,
+                                        max: chart.scales.x.max
+                                    });
+                                }
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x',
+                                onPanComplete: function({chart}) {
+                                    adjustYScale(chart);
+                                    console.log('Pan completed:', {
+                                        min: chart.scales.x.min,
+                                        max: chart.scales.x.max
+                                    });
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -66,7 +104,9 @@
                                 display: true,
                                 text: 'Total Stars'
                             },
-                            beginAtZero: true,
+                            beginAtZero: false, // Позволяет графику адаптироваться к данным
+                            min: 0, // Минимальное значение всегда 0 или больше
+                            grace: '5%', // Добавляет небольшой отступ сверху и снизу
                             ticks: {
                                 stepSize: 1,
                                 precision: 0
@@ -90,6 +130,88 @@
                 starsChart.data.labels = data.labels;
                 starsChart.data.datasets[0].data = data.data;
                 starsChart.update('none');
+            }
+        }
+
+        function adjustYScale(chart) {
+            if (!chart || !chart.data.datasets[0].data) return;
+
+            const xScale = chart.scales.x;
+            const data = chart.data.datasets[0].data;
+
+            // Получаем индексы видимого диапазона
+            const startIndex = Math.max(0, Math.floor(xScale.min) || 0);
+            const endIndex = Math.min(data.length - 1, Math.ceil(xScale.max) || data.length - 1);
+
+            // Находим мин/макс значения в видимом диапазоне
+            let minValue = Infinity;
+            let maxValue = -Infinity;
+
+            for (let i = startIndex; i <= endIndex; i++) {
+                const value = data[i];
+                if (value !== null && value !== undefined) {
+                    minValue = Math.min(minValue, value);
+                    maxValue = Math.max(maxValue, value);
+                }
+            }
+
+            if (minValue === Infinity || maxValue === -Infinity) return;
+
+            // Добавляем небольшой отступ (5% от диапазона)
+            const range = maxValue - minValue;
+            const padding = Math.max(1, range * 0.05);
+
+            // Устанавливаем новые границы Y-оси
+            chart.scales.y.options.min = Math.max(0, minValue - padding);
+            chart.scales.y.options.max = maxValue + padding;
+
+            // Обновляем график
+            chart.update('none');
+        }
+
+        function resetZoom() {
+            if (starsChart) {
+                // Сброс осей X и Y
+                starsChart.resetZoom();
+
+                // Возвращаем Y-ось к автоподстройке, но сохраняем минимум = 0
+                starsChart.scales.y.options.min = 0;
+                starsChart.scales.y.options.max = undefined;
+                starsChart.update('none');
+            }
+        }
+
+        function zoomToLast30Days() {
+            if (starsChart && starsChart.data.labels && starsChart.data.labels.length > 0) {
+                const labels = starsChart.data.labels;
+                const totalDays = labels.length;
+                const last30Days = Math.min(30, totalDays);
+                const startIndex = Math.max(0, totalDays - last30Days);
+
+                starsChart.zoomScale('x', {
+                    min: startIndex,
+                    max: totalDays - 1
+                });
+
+                // Подстраиваем Y-ось под выбранный период
+                setTimeout(() => adjustYScale(starsChart), 50);
+            }
+        }
+
+        function zoomToLast7Days() {
+            if (starsChart && starsChart.data.labels && starsChart.data.labels.length > 0) {
+                const labels = starsChart.data.labels;
+                const totalDays = labels.length;
+                const last7Days = Math.min(7, totalDays);
+                const startIndex = Math.max(0, totalDays - last7Days);
+
+                starsChart.zoomScale('x', {
+                    min: startIndex,
+                    max: totalDays - 1
+                });
+
+                // Подстраиваем Y-ось под выбранный период
+                setTimeout(() => adjustYScale(starsChart), 50);
             }
         }
 
@@ -230,12 +352,28 @@
                 </div>
 
                 <div class="card mb-4">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title mb-0">
                             <i class="bi bi-graph-up"></i> [[Stars Over Time]]
                         </h3>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-primary" onclick="zoomToLast7Days()" title="[[Last 7 days]]">
+                                7d
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" onclick="zoomToLast30Days()" title="[[Last 30 days]]">
+                                30d
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="resetZoom()" title="[[Reset zoom]]">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> [[Drag to select period, wheel to zoom, drag to pan]]
+                            </small>
+                        </div>
                         <div style="height: 400px;">
                             <canvas id="starsChart"></canvas>
                             <div id="chartDataFetcher"

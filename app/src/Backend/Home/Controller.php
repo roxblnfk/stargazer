@@ -56,6 +56,6 @@ final class Controller
     #[Route(route: '/add-github-token', name: self::ROUTE_ADD_TOKEN, methods: ['POST'], group: 'backend')]
     public function addToken(GithubTokenRequest $form, GithubService $github): void
     {
-        $github->addToken($form->token, $form->expiresAt);
+        $github->addToken(\trim($form->token), $form->expiresAt);
     }
 }
