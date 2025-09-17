@@ -40,7 +40,29 @@
                         </div>
                     </td>
                     <td>
-                        <strong>{{ $repo->score }}</strong>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-outline-secondary btn-sm me-1"
+                                    title="[[Decrease score]]"
+                                    hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_SCORE, ['uuid' => $repo->campaignUuid, 'repoId' => $repo->repoId])"
+                                    hx-vals='{"change": -1}'
+                                    hx-target="next .score-value"
+                                    hx-swap="innerHTML"
+                            >
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="score-value mx-2">
+                                <strong>{{ $repo->score }}</strong>
+                            </span>
+                            <button class="btn btn-outline-secondary btn-sm ms-1"
+                                    title="[[Increase score]]"
+                                    hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_SCORE, ['uuid' => $repo->campaignUuid, 'repoId' => $repo->repoId])"
+                                    hx-vals='{"change": 1}'
+                                    hx-target="previous .score-value"
+                                    hx-swap="innerHTML"
+                            >
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
                     </td>
                     <td>
                         <span class="text-muted">—</span>

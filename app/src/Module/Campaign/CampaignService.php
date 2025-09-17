@@ -242,4 +242,21 @@ final class CampaignService
 
         return $this->repositoryService->getRepositories(exclude: $ids);
     }
+
+    public function changeRepoScore(UuidInterface $campaignUuid, int $repoId, int $change): CampaignRepo {
+        return CampaignRepoEntity::transact(function () use ($campaignUuid, $repoId, $change): CampaignRepo {
+            $e = $this->campaignRepoRepository
+                ->forUpdate()
+                ->withCampaignUuid($campaignUuid)
+                ->withRepoId($repoId)
+                ->findOne() ?? throw new \RuntimeException('Repository not found in campaign.');
+
+            if ($change !== 0) {
+                $e->score += $change;
+                $e->saveOrFail();
+            }
+
+            return $e->toDTO();
+        });
+    }
 }

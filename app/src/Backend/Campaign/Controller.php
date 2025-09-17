@@ -10,6 +10,7 @@ use App\Module\Campaign\Form\UpdateCampaign;
 use App\Module\Github\Dto\GithubOwner;
 use App\Module\Github\Dto\GithubRepository;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Spiral\Http\ResponseWrapper;
 use Spiral\Router\Annotation\Route;
@@ -26,6 +27,7 @@ final class Controller
     public const ROUTE_REPOS_AVAILABLE = 'campaign:repos-available';
     public const ROUTE_REPO_ADD = 'campaign:repo-add';
     public const ROUTE_REPO_REMOVE = 'campaign:repo-remove';
+    public const ROUTE_REPO_SCORE = 'campaign:repo-score';
     public const ROUTE_CREATE = 'campaign:create';
     public const ROUTE_EDIT = 'campaign:edit';
     public const ROUTE_STORE = 'campaign:store';
@@ -129,6 +131,18 @@ final class Controller
         $repository = new GithubRepository(new GithubOwner($owner), $name);
 
         $this->campaignService->removeRepoFromCampaign($uuid, $repository);
+    }
+
+    #[Route(route: '/campaign/repo-score/<uuid>/<repoId>', name: self::ROUTE_REPO_SCORE, methods: ['POST'], group: 'backend')]
+    public function repoScore(string $uuid, string $repoId, ServerRequestInterface $request): string
+    {
+        $uuid = Uuid::fromString($uuid);
+        $repoId = (int) $repoId;
+        $change = \intval($request->getParsedBody()['change'] ?? 0);
+
+        $newScore = $this->campaignService->changeRepoScore($uuid, $repoId, $change)->score;
+
+        return '<strong>' . $newScore . '</strong>';
     }
 
     #[Route(route: '/campaign/create', name: self::ROUTE_CREATE, methods: ['GET'], group: 'backend')]
