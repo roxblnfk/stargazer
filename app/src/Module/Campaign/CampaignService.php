@@ -317,7 +317,7 @@ final class CampaignService
         $campaign = $this->campaignRepository->withLoadedMembers([$userId])->findByPK($campaignUuid)
             ?? throw new \RuntimeException('Campaign not found.');
         $member = \reset($campaign->members) ?: null;
-        if ($member === null && !$campaign->visible || $member?->userId !== $userId) {
+        if ($member === null && !$campaign->visible || $member !== null && $member->userId !== $userId) {
             throw new \RuntimeException('Campaign not found.');
         }
 

@@ -123,6 +123,11 @@
                     <div class="campaign-header">
                         <h1 class="campaign-title">{{ $campaign->title }}</h1>
 
+                        @if($campaign->description)
+                            <div class="markdown-content mb-4" style="color: var(--text-gray-100); line-height: 1.6;"
+                            >{{ $campaign->description }}</div>
+                        @endif
+
                         <div class="campaign-meta">
                             <div class="campaign-stat">
                                 <i class="bi bi-folder"></i>
@@ -145,11 +150,32 @@
                                 </span>
                             </div>
 
-                            @if($userCampaign?->user !== null)
-<!--                                <div class="user-score-badge">-->
-<!--                                    <i class="bi bi-star-fill"></i>-->
-<!--                                    <span>[[Your score]]: {{ $userCampaign->user->score }}</span>-->
-<!--                                </div>-->
+                            @if($userCampaign->user !== null && $userCampaign->finished)
+                                <div class="user-score-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>[[Your score]]: {{ $userCampaign->user->score }}</span>
+                                </div>
+                            @elseif($userCampaign->user === null && !$userCampaign->finished)
+                                <div class="text-center mt-3">
+                                    <form method="POST"
+                                          action="@route(\App\Frontend\Profile\Controller::ROUTE_JOIN_CAMPAIGN)"
+                                          class="d-inline"
+                                    >
+                                        <input type="hidden" name="campaign_uuid" value="{{ $campaign->uuid }}">
+                                        <input type="hidden" name="username" value="{{ $user->login }}">
+                                        <button type="submit" class="btn btn-lg px-4 py-2"
+                                                style="background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+                                                       border: none;
+                                                       color: var(--text-white);
+                                                       font-weight: 600;
+                                                       border-radius: 12px;
+                                                       box-shadow: 0 4px 15px var(--shadow-glow);
+                                                       transition: all 0.3s ease;">
+                                            <i class="bi bi-rocket-takeoff me-2"></i>
+                                            [[Join Event]]
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                         </div>
                     </div>
