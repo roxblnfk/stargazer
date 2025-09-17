@@ -24,6 +24,19 @@ final class RepoRepository extends BaseRepository
         return $clone;
     }
 
+    /**
+     * Exclude repositories by their IDs.
+     *
+     * @param int[] $ids Array of repository IDs to exclude.
+     * @return static A new instance of the repository with the applied exclusion filter.
+     */
+    public function exclude(array $ids): static
+    {
+        $clone = clone $this;
+        $clone->select->where('id', 'not in', $ids);
+        return $clone;
+    }
+
     public function active(bool $value = true): static
     {
         $clone = clone $this;

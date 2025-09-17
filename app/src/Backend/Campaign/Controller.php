@@ -7,6 +7,8 @@ namespace App\Backend\Campaign;
 use App\Module\Campaign\CampaignService;
 use App\Module\Campaign\Form\CreateCampaign;
 use App\Module\Campaign\Form\UpdateCampaign;
+use App\Module\Github\Dto\GithubOwner;
+use App\Module\Github\Dto\GithubRepository;
 use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
 use Spiral\Http\ResponseWrapper;
@@ -89,8 +91,7 @@ final class Controller
         $uuid = Uuid::fromString($uuid);
         $campaign = $this->campaignService->getCampaign($uuid);
 
-        // TODO: Replace with actual service call
-        $addedRepos = []; // $this->campaignService->getCampaignRepos($uuid);
+        $addedRepos = $this->campaignService->getAddedRepos($uuid);
 
         return $this->views->render('campaign:repos-added', [
             'campaign' => $campaign,
@@ -104,8 +105,7 @@ final class Controller
         $uuid = Uuid::fromString($uuid);
         $campaign = $this->campaignService->getCampaign($uuid);
 
-        // TODO: Replace with actual service call
-        $availableRepos = []; // $this->campaignService->getAvailableRepos($uuid);
+        $availableRepos = \iterator_to_array($this->campaignService->getNotAddedRepos($uuid));
 
         return $this->views->render('campaign:repos-available', [
             'campaign' => $campaign,
@@ -113,26 +113,22 @@ final class Controller
         ]);
     }
 
-    #[Route(route: '/campaign/repo-add/<uuid>/<repoId>', name: self::ROUTE_REPO_ADD, methods: ['POST'], group: 'backend')]
-    public function repoAdd(string $uuid, string $repoId): string
+    #[Route(route: '/campaign/repo-add/<uuid>/<owner>/<name>', name: self::ROUTE_REPO_ADD, methods: ['POST'], group: 'backend')]
+    public function repoAdd(string $uuid, string $owner, string $name): void
     {
         $uuid = Uuid::fromString($uuid);
+        $repository = new GithubRepository(new GithubOwner($owner), $name);
 
-        // TODO: Replace with actual service call
-        // $this->campaignService->addRepoToCampaign($uuid, (int)$repoId);
-
-        return '<tr><td colspan="4" class="text-center p-3 text-success"><i class="bi bi-check-circle"></i> [[Repository added successfully]]</td></tr>';
+        $this->campaignService->addRepoToCampaign($uuid, $repository);
     }
 
-    #[Route(route: '/campaign/repo-remove/<uuid>/<repoId>', name: self::ROUTE_REPO_REMOVE, methods: ['DELETE'], group: 'backend')]
-    public function repoRemove(string $uuid, string $repoId): string
+    #[Route(route: '/campaign/repo-remove/<uuid>/<owner>/<name>', name: self::ROUTE_REPO_REMOVE, methods: ['DELETE'], group: 'backend')]
+    public function repoRemove(string $uuid, string $owner, string $name): void
     {
         $uuid = Uuid::fromString($uuid);
+        $repository = new GithubRepository(new GithubOwner($owner), $name);
 
-        // TODO: Replace with actual service call
-        // $this->campaignService->removeRepoFromCampaign($uuid, (int)$repoId);
-
-        return '<tr><td colspan="5" class="text-center p-3 text-success"><i class="bi bi-check-circle"></i> [[Repository removed successfully]]</td></tr>';
+        $this->campaignService->removeRepoFromCampaign($uuid, $repository);
     }
 
     #[Route(route: '/campaign/create', name: self::ROUTE_CREATE, methods: ['GET'], group: 'backend')]

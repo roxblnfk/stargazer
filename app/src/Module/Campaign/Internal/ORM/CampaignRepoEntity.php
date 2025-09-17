@@ -21,6 +21,7 @@ use Ramsey\Uuid\UuidInterface;
  */
 #[Entity(
     role: 'campaign_repo',
+    repository: CampaignRepoRepository::class,
     table: 'campaign_repo',
 )]
 #[CreatedAt(field: 'createdAt', column: 'created_at')]
@@ -49,13 +50,12 @@ class CampaignRepoEntity extends ActiveRecord
         int $repoId,
         GithubRepository $repoName,
         UuidInterface $campaignId,
-        \DateTimeInterface $startedAt,
         int $score = 1,
     ): self {
         return self::make([
             'campaignUuid' => $campaignId,
             'repoId' => $repoId,
-            'repoName' => (string) $repoName,
+            'repoName' => $repoName,
             'score' => $score,
         ]);
     }

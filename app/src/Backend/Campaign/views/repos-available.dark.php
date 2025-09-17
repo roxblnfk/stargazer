@@ -27,42 +27,38 @@
                             </div>
                             <div>
                                 <div class="fw-bold">
-                                    <a href="{{ $repo->htmlUrl }}"
-                                       target="_blank"
-                                       class="text-decoration-none"
-                                    >
+                                    @if($repo->info)
+                                        <a href="{{ $repo->info->htmlUrl }}"
+                                           target="_blank"
+                                           class="text-decoration-none"
+                                        >
+                                            <i class="bi bi-github"></i>
+                                        </a>
+                                    @else
                                         <i class="bi bi-github"></i>
-                                    </a>
+                                    @endif
                                     {{ $repo->fullName }}
                                 </div>
-                                @if($repo->description)
-                                    <small class="text-muted">{{ mb_strlen($repo->description) > 80 ? mb_substr($repo->description, 0, 80) . '...' : $repo->description }}</small>
-                                @endif
                             </div>
                         </div>
                     </td>
                     <td>
-                        <strong>{{ number_format($repo->stargazersCount) }}</strong>
+                        <strong>{{ $repo->info ? number_format($repo->info->stargazersCount) : '—' }}</strong>
                     </td>
                     <td>
                         <small class="text-muted">
                             <i class="bi bi-calendar-event"></i>
-                            {{ $repo->createdAt->format('M j, Y') }}
+                            {{ $repo->info ? $repo->info->createdAt->format('M j, Y') : $repo->createdAt->format('M j, Y') }}
                         </small>
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ $repo->htmlUrl }}"
-                               target="_blank"
-                               class="btn btn-outline-primary"
-                               title="[[View Repository]]">
-                                <i class="bi bi-github"></i>
-                            </a>
                             <button class="btn btn-outline-success"
                                     title="[[Add to Campaign]]"
-                                    hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_ADD, ['uuid' => $campaign->uuid, 'repoId' => $repo->id])"
+                                    hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_ADD, ['uuid' => $campaign->uuid, 'owner' => $repo->fullName->owner, 'name' => $repo->fullName->name])"
                                     hx-target="closest tr"
-                                    hx-swap="outerHTML">
+                                    hx-swap="outerHTML"
+                            >
                                 <i class="bi bi-plus-circle"></i>
                             </button>
                         </div>
@@ -86,7 +82,7 @@
         <div class="col-md-6 text-end">
             <small>
                 [[Total Stars]]:
-                <strong>{{ number_format(array_sum(array_column($availableRepos, 'stargazersCount'))) }}</strong>
+                <strong>{{ number_format(array_sum(array_map(fn($repo) => $repo->info?->stargazersCount ?? 0, $availableRepos))) }}</strong>
             </small>
         </div>
     </div>

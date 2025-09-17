@@ -28,17 +28,14 @@
                             </div>
                             <div>
                                 <div class="fw-bold">
-                                    <a href="{{ $repo->repoName->htmlUrl }}"
+                                    <a href="https://github.com/{{ $repo->repoName }}"
                                        target="_blank"
                                        class="text-decoration-none"
                                     >
                                         <i class="bi bi-github"></i>
                                     </a>
-                                    {{ $repo->repoName->fullName }}
+                                    {{ $repo->repoName }}
                                 </div>
-                                @if($repo->repoName->description)
-                                    <small class="text-muted">{{ mb_strlen($repo->repoName->description) > 80 ? mb_substr($repo->repoName->description, 0, 80) . '...' : $repo->repoName->description }}</small>
-                                @endif
                             </div>
                         </div>
                     </td>
@@ -46,7 +43,7 @@
                         <strong>{{ $repo->score }}</strong>
                     </td>
                     <td>
-                        <strong>{{ number_format($repo->repoName->stargazersCount) }}</strong>
+                        <span class="text-muted">—</span>
                     </td>
                     <td>
                         <small class="text-muted">
@@ -56,18 +53,12 @@
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ $repo->repoName->htmlUrl }}"
-                               target="_blank"
-                               class="btn btn-outline-primary"
-                               title="[[View Repository]]">
-                                <i class="bi bi-github"></i>
-                            </a>
                             <button class="btn btn-outline-danger"
                                     title="[[Remove from Campaign]]"
-                                    hx-delete="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_REMOVE, ['uuid' => $repo->campaignUuid, 'repoId' => $repo->repoId])"
-                                    hx-confirm="[[Are you sure you want to remove this repository from the campaign?]]"
+                                    hx-delete="@route(\App\Backend\Campaign\Controller::ROUTE_REPO_REMOVE, ['uuid' => $repo->campaignUuid, 'owner' => $repo->repoName->owner, 'name' => $repo->repoName->name])"
                                     hx-target="closest tr"
-                                    hx-swap="outerHTML">
+                                    hx-swap="outerHTML"
+                            >
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>

@@ -47,7 +47,7 @@ final class Controller
     public function info(string $owner, string $name): mixed
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
-        $repositoryInfo = $this->repositoryService->getRepository($repository);
+        $repositoryInfo = $this->repositoryService->getRepository($repository)->info;
 
         return $this->views->render('repository:info', [
             'repository' => $repositoryInfo,
@@ -98,8 +98,8 @@ final class Controller
     public function chart(string $owner, string $name): array
     {
         $repository = new GithubRepository(new GithubOwner($owner), $name);
-        $repositoryInfo = $this->repositoryService->getRepository($repository);
+        $repo = $this->repositoryService->getRepository($repository);
 
-        return $this->stargazerService->getRepositoryStarChartData($repositoryInfo->id);
+        return $this->stargazerService->getRepositoryStarChartData($repo->id);
     }
 }

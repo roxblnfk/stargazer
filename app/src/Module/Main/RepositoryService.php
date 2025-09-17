@@ -26,12 +26,15 @@ class RepositoryService
     ) {}
 
     /**
+     * @param array<int, int> $exclude List of repository IDs to exclude
+     *
      * @return \Iterator<int, Repository>
      */
-    public function getRepositories(?bool $active = null): \Iterator
+    public function getRepositories(?bool $active = null, array $exclude = []): \Iterator
     {
         $q = $this->repoRepository;
         $active === null or $q = $q->active($active);
+        $exclude === [] or $q = $q->exclude($exclude);
         foreach ($q->findAll() as $repo) {
             yield $repo->toDTO();
         }
@@ -47,11 +50,11 @@ class RepositoryService
         }
     }
 
-    public function getRepository(GithubRepository $repository): RepositoryInfo
+    public function getRepository(GithubRepository $repository): Repository
     {
         return $this->repoRepository
             ->whereFullName($repository)
-            ->findOne()?->info ?? throw new \RuntimeException('Repository for found.');
+            ->findOne()?->toDTO() ?? throw new \RuntimeException('Repository for found.');
     }
 
     public function activateRepository(GithubRepository $repository): void
