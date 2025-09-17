@@ -26,7 +26,7 @@ final class GithubTokenRequest extends Filter implements HasFilterDefinition
             'token' => [
                 'required',
                 'string',
-                ['string::longer', 64],
+                ['string::longer', 36],
             ],
             'expiresAt' => [
                 'datetime::valid',
