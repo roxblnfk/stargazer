@@ -78,7 +78,9 @@
                     <!-- Repository Grid -->
                     <div class="repo-grid">
                         @foreach($repositories as $repository)
-                        <div class="repo-card">
+                        <a href="{{ $repository->htmlUrl }}" target="_blank" class="repo-card d-flex flex-column text-decoration-none position-relative overflow-hidden"
+                           style="color: inherit;">
+
                             <div class="repo-header">
                                 <img src="{{ $repository->owner->avatarUrl }}" alt="{{ $repository->fullName }}" class="repo-avatar">
                                 <div>
@@ -89,7 +91,7 @@
                             <p class="repo-description">
                                 {{ $repository->description }}
                             </p>
-                            <div class="repo-footer">
+                            <div class="repo-footer mt-auto">
                                 <div class="repo-stats">
                                     <div class="stat-item">
                                         <i class="bi bi-star"></i>
@@ -100,17 +102,13 @@
                                         {{ $repository->forksCount }}
                                     </div>
                                 </div>
-                            </div>
 
-                            @if($repository->homepage)
-                            <div class="mt-3">
-                                <a href="{{ $repository->homepage }}" target="_blank" class="visit-btn">
-                                    <i class="bi bi-box-arrow-up-right"></i>
-                                    [[More]]
-                                </a>
+                                <div class="star-status not-starred">
+                                    <i class="bi bi-star"></i>
+                                    [[Put a star]]
+                                </div>
                             </div>
-                            @endif
-                        </div>
+                        </a>
                         @endforeach
                     </div>
                 </div>

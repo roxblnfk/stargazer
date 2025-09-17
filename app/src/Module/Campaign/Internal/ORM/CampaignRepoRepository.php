@@ -19,6 +19,14 @@ final class CampaignRepoRepository extends BaseRepository
         return $clone;
     }
 
+    public function loadRepository(): static
+    {
+        $clone = clone $this;
+        /** @see CampaignRepoEntity::$repository */
+        $clone->select->load('repository');
+        return $clone;
+    }
+
     public function withRepoId(int $id): static
     {
         $clone = clone $this;

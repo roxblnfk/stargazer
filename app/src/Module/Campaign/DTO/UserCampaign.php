@@ -10,6 +10,7 @@ namespace App\Module\Campaign\DTO;
 final class UserCampaign
 {
     public readonly bool $finished;
+
     public function __construct(
         public readonly Campaign $campaign,
         /** Null if the user is not a member of the campaign */

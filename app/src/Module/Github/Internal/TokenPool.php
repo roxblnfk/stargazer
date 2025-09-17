@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Internal;
 
-use Cycle\Database\Query\SelectQuery;
 use Cycle\ORM\Select\QueryBuilder;
 
 /**

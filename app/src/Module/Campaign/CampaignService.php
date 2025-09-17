@@ -8,6 +8,7 @@ use App\Module\Campaign\DTO\Campaign;
 use App\Module\Campaign\DTO\CampaignRepo;
 use App\Module\Campaign\DTO\CampaignUser;
 use App\Module\Campaign\DTO\UserCampaign;
+use App\Module\Campaign\DTO\UserRepositoryDetails;
 use App\Module\Campaign\Form\CreateCampaign;
 use App\Module\Campaign\Form\UpdateCampaign;
 use App\Module\Campaign\Internal\ORM\CampaignEntity;
@@ -21,6 +22,7 @@ use App\Module\Github\Dto\GithubUser;
 use App\Module\Main\DTO\Repository;
 use App\Module\Main\DTO\User;
 use App\Module\Main\RepositoryService;
+use App\Module\Main\StargazerService;
 use App\Module\Main\UserService;
 use Ramsey\Uuid\UuidInterface;
 use Spiral\Core\Attribute\Singleton;
@@ -34,6 +36,7 @@ final class CampaignService
         private readonly CampaignRepoRepository $campaignRepoRepository,
         private readonly UserService $userService,
         private readonly RepositoryService $repositoryService,
+        private readonly StargazerService $stargazerService,
     ) {}
 
     /**
@@ -152,6 +155,30 @@ final class CampaignService
             $members[] = $e->toDTO();
         }
         return $members;
+    }
+
+    /**
+     * @return array<int, UserRepositoryDetails>
+     */
+    public function getCampaignUserRepositories(UuidInterface $campaignUuid, int $userId): array
+    {
+        $repos = $this
+            ->campaignRepoRepository
+            ->loadRepository()
+            ->withCampaignUuid($campaignUuid)->findAll();
+
+        # todo optimize
+        $stars = $this->stargazerService->getRepositoryIdsByUserId($userId);
+
+        $result = [];
+        foreach ($repos as $e) {
+            $result[] = new UserRepositoryDetails(
+                campaignRepo: $e->toDTO(),
+                repository: $e->repository->toDTO(),
+                starred: \array_key_exists($e->repository->id, $stars),
+            );
+        }
+        return $result;
     }
 
     public function addRepoToCampaign(UuidInterface $campaignUuid, GithubRepository $repository): CampaignRepo
@@ -283,5 +310,17 @@ final class CampaignService
                 yield new UserCampaign($e->toDTO(), $member?->toDTO());
             }
         }
+    }
+
+    public function getUserCampaign(int $userId, UuidInterface $campaignUuid): UserCampaign
+    {
+        $campaign = $this->campaignRepository->withLoadedMembers([$userId])->findByPK($campaignUuid)
+            ?? throw new \RuntimeException('Campaign not found.');
+        $member = \reset($campaign->members) ?: null;
+        if ($member === null && !$campaign->visible || $member?->userId !== $userId) {
+            throw new \RuntimeException('Campaign not found.');
+        }
+
+        return new UserCampaign($campaign->toDTO(), $member?->toDTO());
     }
 }

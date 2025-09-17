@@ -251,12 +251,12 @@
                             <div class="col-md flex-grow-1 text-center text-md-start mt-3 mt-md-0">
                                 <h1 class="profile-name">{{ $user->login }}</h1>
                             </div>
-                            <div class="col-md-auto">
-                                <div class="stats-card">
-                                    <span class="stats-number">{{$points}}</span>
-                                    <span class="stats-label">[[Points]]</span>
-                                </div>
-                            </div>
+<!--                            <div class="col-md-auto">-->
+<!--                                <div class="stats-card">-->
+<!--                                    <span class="stats-number">{{$points}}</span>-->
+<!--                                    <span class="stats-label">[[Points]]</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
                     </div>
 
@@ -321,7 +321,10 @@
                         <div class="campaigns-scroll-container">
                             <div class="campaigns-track">
                                 @foreach($campaigns as $userCampaign)
-                                <div class="campaign-card">
+                                <a href="@route(\App\Frontend\Profile\Controller::ROUTE_CAMPAIGN, ['name' => $user->login, 'uuid' => $userCampaign->campaign->uuid])"
+                                   class="campaign-card"
+                                   style="text-decoration: none; color: inherit;"
+                                >
                                     @if($userCampaign->user !== null)
                                         <div class="member-score">
                                             <i class="bi bi-star-fill me-1"></i>{{ $userCampaign->user->score }}
@@ -371,7 +374,7 @@
                                         @endif
                                         </span>
                                     </div>
-                                </div>
+                                </a>
                                 @endforeach
                             </div>
                         </div>
@@ -391,8 +394,8 @@
                 <!-- Repository Grid -->
                 <div class="repo-grid">
                     @foreach($repositories as $repository)
-                    <a href="{{ $repository->htmlUrl }}" target="_blank" class="repo-card {{ isset($stars[$repository->id]) ? 'starred' : '' }}"
-                       style="text-decoration: none; color: inherit; position: relative; overflow: hidden; display: block;">
+                    <a href="{{ $repository->htmlUrl }}" target="_blank" class="repo-card d-flex flex-column text-decoration-none position-relative overflow-hidden {{ isset($stars[$repository->id]) ? 'starred' : '' }}"
+                       style="color: inherit;">
 
                         @if(isset($stars[$repository->id]))
                         <div class="star-badge">
@@ -410,7 +413,7 @@
                         <p class="repo-description">
                             {{ $repository->description }}
                         </p>
-                        <div class="repo-footer">
+                        <div class="repo-footer mt-auto">
                             <div class="repo-stats">
                                 <div class="stat-item">
                                     <i class="bi bi-star"></i>

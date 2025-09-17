@@ -210,4 +210,6 @@ return [
     'Events' => 'События',
     'NEW' => 'НОВОЕ',
     'Member' => 'Участник',
+    'Your score' => 'Ваши очки',
+    'Event Repositories' => 'Репозитории события',
 ];

@@ -27,6 +27,7 @@ final class Controller
     public const ROUTE_ENTER = 'profile:enter';
     public const ROUTE_INDEX = 'profile:index';
     public const ROUTE_JOIN_CAMPAIGN = 'profile:join-campaign';
+    public const ROUTE_CAMPAIGN = 'profile:campaign';
 
     public function __construct(
         private readonly ViewsInterface $views,
@@ -97,5 +98,29 @@ final class Controller
         }
 
         return $this->response->redirect($this->router->uri(self::ROUTE_INDEX, ['name' => $username]));
+    }
+
+    #[Route(route: '/profile/<name>/campaign/<uuid>', name: self::ROUTE_CAMPAIGN, methods: ['GET'])]
+    public function campaign(string $name, string $uuid): mixed
+    {
+        $username = new GithubUser($name);
+        $user = $this->userService->getByUsername($username);
+        $campaignUuid = Uuid::fromString($uuid);
+
+        if ($user instanceof UnknownUser) {
+            return $this->response->redirect($this->router->uri(self::ROUTE_INDEX, ['name' => $name]));
+        }
+
+        $userCampaign = $this->campaignService->getUserCampaign($user->id, $campaignUuid);
+        $repositories = $this->campaignService->getCampaignUserRepositories($campaignUuid, $user->id);
+        $stars = $this->stargazerService->getRepositoryIdsByUserId($user->id);
+
+        return $this->views->render('profile:campaign', [
+            'user' => $user,
+            'campaign' => $userCampaign->campaign,
+            'userCampaign' => $userCampaign,
+            'repositories' => $repositories,
+            'stars' => $stars,
+        ]);
     }
 }

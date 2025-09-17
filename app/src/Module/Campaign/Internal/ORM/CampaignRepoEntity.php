@@ -7,8 +7,10 @@ namespace App\Module\Campaign\Internal\ORM;
 use App\Application\ORM\ActiveRecord;
 use App\Module\Campaign\DTO\CampaignRepo;
 use App\Module\Github\Dto\GithubRepository;
+use App\Module\Main\Internal\ORM\RepoEntity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Cycle\ORM\Entity\Behavior\CreatedAt;
 use Cycle\ORM\Entity\Behavior\UpdatedAt;
 use Ramsey\Uuid\UuidInterface;
@@ -45,6 +47,9 @@ class CampaignRepoEntity extends ActiveRecord
 
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $createdAt;
+
+    #[BelongsTo(target: RepoEntity::class, innerKey: 'repoId', outerKey: 'id', cascade: false, nullable: true)]
+    public ?RepoEntity $repository;
 
     public static function create(
         int $repoId,
