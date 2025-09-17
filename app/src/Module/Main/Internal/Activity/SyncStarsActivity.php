@@ -104,6 +104,7 @@ final class SyncStarsActivity
                         $generator->next();
                     }
 
+                    tr($s);
                     return $s;
                 });
 
@@ -210,13 +211,19 @@ final class SyncStarsActivity
 
     private function getOrCreateUser(UserInfo $info): UserEntity
     {
+        $attempts = 2;
+        begin:
+        --$attempts;
         $found = UserEntity::getRepository()->findByPK($info->id);
         if ($found !== null) {
             return $found;
         }
 
         $user = UserEntity::createFromOwnerInfo($info);
-        $user->saveOrFail();
+        if (!$user->save() && $attempts > 0) {
+            goto begin;
+        }
+
         return $user;
     }
 }
