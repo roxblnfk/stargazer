@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Backend\Home;
 
-use App\Backend\Home\Form\TokenRequest;
+use App\Backend\Home\Form\AuthTokenRequest;
+use App\Backend\Home\Form\GithubTokenRequest;
+use App\Module\Github\GithubService;
 use App\Module\Main\StatsService;
 use Psr\Http\Message\ResponseInterface;
 use Spiral\Auth\AuthContextInterface;
@@ -21,6 +23,7 @@ final class Controller
 {
     public const ROUTE_AUTH = 'home:auth';
     public const ROUTE_INDEX = 'home:index';
+    public const ROUTE_ADD_TOKEN = 'home:add-github-token';
 
     public function __construct(
         private readonly ResponseWrapper $response,
@@ -30,7 +33,7 @@ final class Controller
     ) {}
 
     #[Route(route: '/auth', name: self::ROUTE_AUTH, methods: ['GET'], group: 'backend')]
-    public function auth(AuthContextInterface $auth, TokenRequest $form): ResponseInterface
+    public function auth(AuthContextInterface $auth, AuthTokenRequest $form): ResponseInterface
     {
         $token = $this->tokenStorage->load($form->token);
         if ($token === null) {
@@ -48,5 +51,11 @@ final class Controller
             'router' => $this->router,
             'dashboard' => $stats->dashboard(),
         ]);
+    }
+
+    #[Route(route: '/add-github-token', name: self::ROUTE_ADD_TOKEN, methods: ['POST'], group: 'backend')]
+    public function addToken(GithubTokenRequest $form, GithubService $github): void
+    {
+        $github->addToken($form->token, $form->expiresAt);
     }
 }

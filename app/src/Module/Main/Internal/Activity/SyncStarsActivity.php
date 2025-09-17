@@ -104,7 +104,6 @@ final class SyncStarsActivity
                         $generator->next();
                     }
 
-                    tr($s);
                     return $s;
                 });
 

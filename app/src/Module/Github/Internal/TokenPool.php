@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Module\Github\Internal;
 
+use Cycle\Database\Query\SelectQuery;
+use Cycle\ORM\Select\QueryBuilder;
+
 /**
  * Github token pool.
  *
@@ -16,14 +19,21 @@ final class TokenPool
      *
      * @return \Stringable|non-empty-string A GitHub token
      */
-    public function getToken(): \Stringable|string
+    public function getNextToken(): \Stringable|string
     {
-        $envToken = \getenv('GITHUB_TOKEN');
-        if (\is_string($envToken) && $envToken !== '') {
-            return $envToken;
-        }
+        # Get most recently used token
+        $token = GithubTokenEntity::query()
+            ->where(static function (QueryBuilder $select): void {
+                $select
+                    ->where('expiresAt', '>', new \DateTimeImmutable())
+                    ->orWhere('expiresAt', '=', null);
+            })
+            ->orderBy('usedAt', 'ASC')
+            ->fetchOne();
 
-        // TODO: Implement token rotation logic.
-        return GithubToken::findOne();
+        $token->usedAt = new \DateTimeImmutable();
+        $token->save();
+
+        return $token;
     }
 }

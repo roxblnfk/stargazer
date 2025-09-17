@@ -40,6 +40,18 @@ return [
     'Admin Dashboard' => 'Панель администратора',
     'Total Stars' => 'Всего звезд',
     'Repositories' => 'Репозитории',
+    'Stargazers' => 'Звездочёты',
+    'Campaigns' => 'Кампании',
+    'Active Campaigns' => 'Активные кампании',
+    'Manage promotional campaigns and events' => 'Управляйте рекламными кампаниями и событиями',
+    'View All' => 'Посмотреть всё',
+
+    // GitHub Tokens
+    'GitHub Tokens' => 'GitHub токены',
+    'GitHub Personal Access Token' => 'Персональный токен доступа GitHub',
+    'Expiration Date' => 'Дата истечения',
+    'Add GitHub personal access tokens for API rate limiting' => 'Добавьте персональные токены доступа GitHub для ограничения скорости API',
+    'Add GitHub personal access tokens for API rate limiting. Leave expiration empty for unlimited tokens.' => 'Добавьте персональные токены доступа GitHub для ограничения скорости API. Оставьте дату истечения пустой для безлимитных токенов.',
 
     // Campaign Management
     'Campaign List' => 'Список кампаний',

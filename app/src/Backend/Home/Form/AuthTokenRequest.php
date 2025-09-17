@@ -10,7 +10,7 @@ use Spiral\Filters\Model\FilterDefinitionInterface;
 use Spiral\Filters\Model\HasFilterDefinition;
 use Spiral\Validator\FilterDefinition;
 
-final class TokenRequest extends Filter implements HasFilterDefinition
+final class AuthTokenRequest extends Filter implements HasFilterDefinition
 {
     #[Query]
     public string $token;

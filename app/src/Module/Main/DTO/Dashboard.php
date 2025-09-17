@@ -11,5 +11,6 @@ final class Dashboard
         public readonly int $countRepositories,
         public readonly int $countUsers,
         public readonly int $countStars,
+        public readonly int $countTokens,
     ) {}
 }

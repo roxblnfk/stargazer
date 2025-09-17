@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Github;
 
 use App\Module\Github\Dto\GithubRepository;
+use App\Module\Github\Internal\GithubTokenEntity;
 use App\Module\Github\Internal\TokenPool;
 use App\Module\Github\Result\RepositoryInfo;
 use App\Module\Github\Result\StargazerInfo;
@@ -28,13 +29,14 @@ final class GithubService
 {
     private const BASE_URI = 'https://api.github.com/';
 
-    private readonly string|\Stringable $token;
-
     public function __construct(
-        TokenPool $tokenPool,
+        private readonly TokenPool $tokenPool,
         private readonly Mapper $mapper,
-    ) {
-        $this->token = $tokenPool->getToken();
+    ) {}
+
+    public function addToken(string $token, ?\DateTimeImmutable $expiresAt): void
+    {
+        GithubTokenEntity::create($token, $expiresAt)->saveOrFail();
     }
 
     /**
@@ -117,7 +119,7 @@ final class GithubService
         return new \GuzzleHttp\Client([
             'base_uri' => self::BASE_URI,
             'headers' => [
-                'Authorization' => "token {$this->token}",
+                'Authorization' => "token {$this->tokenPool->getNextToken()}",
                 'Accept' => 'application/vnd.github.v3+json',
                 'User-Agent' => 'GitHub-Stars-App',
             ],

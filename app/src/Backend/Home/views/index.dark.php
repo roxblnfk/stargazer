@@ -115,6 +115,53 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- GitHub Tokens Section -->
+                <div class="row g-4 mt-2">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-key fs-4 text-warning me-2"></i>
+                                        <h5 class="mb-0">
+                                            [[GitHub Tokens]]
+                                            <span class="badge bg-secondary ms-2">{{ $dashboard->countTokens }}</span>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form hx-post="@route(\App\Backend\Home\Controller::ROUTE_ADD_TOKEN)"
+                                      hx-on::after-request="if(event.detail.xhr.status === 200) location.reload()"
+                                      hx-indicator="#token-spinner">
+                                    <div class="input-group">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="token"
+                                               placeholder="[[GitHub Personal Access Token]]"
+                                               pattern="[A-Za-z0-9_]{36,255}"
+                                               required>
+                                        <input type="date"
+                                               class="form-control"
+                                               name="expires_at"
+                                               style="max-width: 160px;"
+                                               title="[[Expiration Date]] ([[Optional]])">
+                                        <button class="btn btn-primary" type="submit">
+                                            <span id="token-spinner" class="spinner-border spinner-border-sm me-2 htmx-indicator" role="status" aria-hidden="true"></span>
+                                            <i class="bi bi-plus-circle me-1"></i>
+                                            [[Add]]
+                                        </button>
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        [[Add GitHub personal access tokens for API rate limiting. Leave expiration empty for unlimited tokens.]]
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

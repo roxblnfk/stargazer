@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Main;
 
 use App\Module\Campaign\CampaignService;
+use App\Module\Github\Internal\GithubTokenEntity;
 use App\Module\Main\DTO\Dashboard;
 use App\Module\Main\Internal\ORM\RepoEntity;
 use App\Module\Main\Internal\ORM\StarEntity;
@@ -28,6 +29,7 @@ class StatsService
             countRepositories: RepoEntity::query()->count(),
             countUsers: UserEntity::query()->count(),
             countStars: StarEntity::query()->count(),
+            countTokens: GithubTokenEntity::query()->count(),
         );
     }
 }
