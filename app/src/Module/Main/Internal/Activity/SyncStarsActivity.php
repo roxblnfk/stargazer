@@ -12,10 +12,10 @@ use App\Module\Main\Internal\ORM\SyncEntity;
 use App\Module\Main\Internal\ORM\SyncStarEntity;
 use App\Module\Main\Internal\ORM\UserEntity;
 use App\Module\Main\RepositoryService;
-use App\Module\Main\UserService;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\GithubService;
 use Cycle\Database\DatabaseInterface;
+use Cycle\ORM\Heap\HeapInterface;
 use Cycle\ORM\ORMInterface;
 use React\Promise\PromiseInterface;
 use Spiral\TemporalBridge\Attribute\AssignWorker;
@@ -31,7 +31,6 @@ final class SyncStarsActivity
         private readonly GithubService $githubService,
         private readonly RepositoryService $repositoryService,
         private readonly DatabaseInterface $db,
-        private readonly UserService $userService,
         private readonly StarRepository $starRepository,
         private readonly ORMInterface $orm,
     ) {}
@@ -86,19 +85,32 @@ final class SyncStarsActivity
         # Get stargazers iterator from GitHub
         $stargazers = $this->githubService->getStargazers($repository);
 
-        # todo batch insert
-        return ActiveRecord::transact(static function () use ($stargazers, $syncId): int {
-            # Map stargazers to temporary storage
-            return ActiveRecord::groupActions(static function () use ($stargazers, $syncId): int {
-                $stars = 0;
-                foreach ($stargazers as $stargazer) {
-                    $star = SyncStarEntity::create($syncId, $stargazer);
-                    $star->save();
-                    ++$stars;
-                }
+        return ActiveRecord::transact(static function (HeapInterface $heap) use ($stargazers, $syncId): int {
+            $generator = (static function (iterable $stargazers): \Generator {
+                yield from $stargazers;
+            })($stargazers);
 
-                return $stars;
-            });
+            # Batch insert
+            $stars = 0;
+            do {
+                # Map stargazers to temporary storage
+                $stars += ActiveRecord::groupActions(static function () use ($generator, $syncId): int {
+                    $s = 0;
+                    while ($s < 100 and $generator->valid()) {
+                        $stargazer = $generator->current();
+                        $star = SyncStarEntity::create($syncId, $stargazer);
+                        $star->save();
+                        ++$s;
+                        $generator->next();
+                    }
+
+                    return $s;
+                });
+
+                $heap->clean();
+            } while ($generator->valid());
+
+            return $stars;
         });
     }
 
