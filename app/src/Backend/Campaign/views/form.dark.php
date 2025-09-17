@@ -155,6 +155,38 @@
                                 </div>
                             </div>
 
+                            <!-- Scoring Configuration Section -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-calculator"></i> [[Scoring Configuration]]
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Old Stars Coefficient -->
+                                    <div class="mb-3">
+                                        <label for="old_stars_coefficient" class="form-label">
+                                            [[Old Stars Coefficient]]
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="old_stars_coefficient"
+                                                   name="old_stars_coefficient"
+                                                   value="{{ $campaign->oldStarsCoefficient ?? 1.0 }}"
+                                                   step="0.01"
+                                                   min="0"
+                                                   max="99.99"
+                                                   placeholder="1.0">
+                                            <span class="input-group-text">×</span>
+                                        </div>
+                                        <div class="form-text">
+                                            [[Coefficient for calculating points from stars set before campaign start. Default: 1.0]]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Read-only Information (for editing) -->
                             @if(isset($campaign))
                                 <div class="card mb-4">

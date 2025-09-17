@@ -22,6 +22,9 @@ final class UpdateCampaign extends CreateCampaign
     #[Setter(filter: 'trim')]
     public ?string $inviteCode = null;
 
+    #[Post(key: 'old_stars_coefficient')]
+    public float $oldStarsCoefficient = 1.0;
+
     public function filterDefinition(): FilterDefinition
     {
         $parentDefinition = parent::filterDefinition();
@@ -42,6 +45,12 @@ final class UpdateCampaign extends CreateCampaign
                     'inviteCode' => [
                         'string',
                         ['string::shorter', 65], // Entity field has length 64, so max 64 characters
+                    ],
+                    'oldStarsCoefficient' => [
+                        'required',
+                        'numeric',
+                        ['number::higher', -100], // Must be positive
+                        ['number::lower', 100], // Max 99.99 as per form constraint
                     ],
                 ],
             ),

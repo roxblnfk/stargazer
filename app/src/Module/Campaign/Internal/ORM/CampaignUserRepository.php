@@ -25,4 +25,11 @@ final class CampaignUserRepository extends BaseRepository
         $clone->select->where(['userId' => $id]);
         return $clone;
     }
+
+    public function sortByScore($direction = 'DESC'): static
+    {
+        $clone = clone $this;
+        $clone->select->orderBy(['score' => $direction]);
+        return $clone;
+    }
 }

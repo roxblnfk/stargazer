@@ -150,10 +150,10 @@
                                 </span>
                             </div>
 
-                            @if($userCampaign->user !== null && $userCampaign->finished)
+                            @if($userCampaign->user !== null)
                                 <div class="user-score-badge">
                                     <i class="bi bi-star-fill"></i>
-                                    <span>[[Your score]]: {{ $userCampaign->user->score }}</span>
+                                    <span><i class="bi bi-gem"></i> {{ $userCampaign->user->score }}</span>
                                 </div>
                             @elseif($userCampaign->user === null && !$userCampaign->finished)
                                 <div class="text-center mt-3">

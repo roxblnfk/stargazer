@@ -212,4 +212,9 @@ return [
     'Member' => 'Участник',
     'Your score' => 'Ваши очки',
     'Event Repositories' => 'Репозитории события',
+
+    // Scoring Configuration
+    'Scoring Configuration' => 'Настройка подсчета очков',
+    'Old Stars Coefficient' => 'Коэффициент для старых звезд',
+    'Coefficient for calculating points from stars set before campaign start. Default: 1.0' => 'Коэффициент для расчета очков за звезды, поставленные до начала кампании. По умолчанию: 1.0',
 ];

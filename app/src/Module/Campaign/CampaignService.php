@@ -17,6 +17,7 @@ use App\Module\Campaign\Internal\ORM\CampaignRepoRepository;
 use App\Module\Campaign\Internal\ORM\CampaignRepository;
 use App\Module\Campaign\Internal\ORM\CampaignUserEntity;
 use App\Module\Campaign\Internal\ORM\CampaignUserRepository;
+use App\Module\Campaign\Internal\Scoring;
 use App\Module\Github\Dto\GithubRepository;
 use App\Module\Github\Dto\GithubUser;
 use App\Module\Main\DTO\Repository;
@@ -37,6 +38,7 @@ final class CampaignService
         private readonly UserService $userService,
         private readonly RepositoryService $repositoryService,
         private readonly StargazerService $stargazerService,
+        private readonly Scoring $scoring,
     ) {}
 
     /**
@@ -84,6 +86,7 @@ final class CampaignService
         $e->finishedAt = $form->finishedAt;
         $e->visible = $form->visible;
         $e->inviteCode = $form->inviteCode ?: null;
+        $e->oldStarsCoefficient = $form->oldStarsCoefficient;
         $e->saveOrFail();
         return $e->toDTO();
     }
@@ -151,7 +154,7 @@ final class CampaignService
     public function getCampaignMembers(UuidInterface $uuid): array
     {
         $members = [];
-        foreach ($this->campaignUserRepository->withCampaignUuid($uuid)->findAll() as $e) {
+        foreach ($this->campaignUserRepository->withCampaignUuid($uuid)->sortByScore()->findAll() as $e) {
             $members[] = $e->toDTO();
         }
         return $members;
@@ -322,5 +325,13 @@ final class CampaignService
         }
 
         return new UserCampaign($campaign->toDTO(), $member?->toDTO());
+    }
+
+    /**
+     * Recalculate scores for all repositories in the campaign.
+     */
+    public function calculateScores(UuidInterface $campaignUuid): void
+    {
+        $this->scoring->calculateScores($campaignUuid);
     }
 }

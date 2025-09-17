@@ -68,6 +68,12 @@ class CampaignEntity extends ActiveRecord
     #[Column(type: 'bigInteger', name: 'count_repos', default: 0, typecast: 'int')]
     public int $countRepositories = 0;
 
+    #[Column(type: 'bigInteger', name: 'count_stars', default: 0, typecast: 'int')]
+    public int $countStars = 0;
+
+    #[Column(type: 'decimal(4,2)', name: 'old_stars_coefficient', default: 1.0, typecast: 'float')]
+    public float $oldStarsCoefficient = 1.0;
+
     /** @var list<CampaignRepoEntity> */
     #[HasMany(target: CampaignRepoEntity::class, innerKey: 'uuid', outerKey: 'campaignUuid')]
     public array $repositories = [];
@@ -102,6 +108,7 @@ class CampaignEntity extends ActiveRecord
             inviteCode: $this->inviteCode,
             startedAt: $this->startedAt,
             finishedAt: $this->finishedAt,
+            oldStarsCoefficient: $this->oldStarsCoefficient,
             repositoryCount: $this->countRepositories,
             memberCount: $this->countUsers,
             updatedAt: $this->updatedAt,

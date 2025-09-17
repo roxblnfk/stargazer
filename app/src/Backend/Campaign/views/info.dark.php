@@ -46,6 +46,13 @@
                                 {{ $campaign->visible ? '[[Visible]]' : '[[Hidden]]' }}
                             </span>
                         </h2>
+                        <button class="btn btn-outline-primary btn-sm"
+                                title="Refresh"
+                                hx-post="@route(\App\Backend\Campaign\Controller::ROUTE_RECALCULATE, ['uuid' => $campaign->uuid])"
+                                hx-vals='{"uuid": "{{ $campaign->uuid }}"}'
+                                hx-swap="none">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         <!-- Stats Row -->

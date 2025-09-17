@@ -16,6 +16,7 @@ class OrmDefaultF7ef48759250f6efed07a5f2ef2e7d88 extends Migration
             ->addColumn('uuid', 'uuid', ['nullable' => false, 'defaultValue' => null, 'size' => 36])
             ->addColumn('created_at', 'datetime', ['nullable' => false, 'defaultValue' => 'CURRENT_TIMESTAMP'])
             ->addColumn('value', 'string', ['nullable' => false, 'defaultValue' => null, 'size' => 255])
+            ->setPrimaryKeys(['uuid'])
             ->create();
         $this->table('repository')
             ->addColumn('id', 'bigInteger', ['nullable' => false, 'defaultValue' => null])

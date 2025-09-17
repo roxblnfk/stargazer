@@ -16,6 +16,7 @@ final class Campaign implements \Stringable
         public readonly ?string $inviteCode,
         public readonly \DateTimeInterface $startedAt,
         public readonly ?\DateTimeInterface $finishedAt,
+        public readonly float $oldStarsCoefficient,
         public readonly int $repositoryCount,
         public readonly int $memberCount,
         public readonly \DateTimeInterface $updatedAt,

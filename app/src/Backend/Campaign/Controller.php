@@ -34,6 +34,7 @@ final class Controller
     public const ROUTE_UPDATE = 'campaign:update';
     public const ROUTE_DELETE = 'campaign:delete';
     public const ROUTE_TOGGLE_VISIBILITY = 'campaign:toggle-visibility';
+    public const ROUTE_RECALCULATE = 'campaign:recalculate';
 
     public function __construct(
         private readonly ViewsInterface $views,
@@ -67,7 +68,6 @@ final class Controller
         $uuid = Uuid::fromString($uuid);
         $campaign = $this->campaignService->getCampaign($uuid);
 
-        // TODO: Replace with actual service call
         $members = $this->campaignService->getCampaignMembers($uuid);
 
         return $this->views->render('campaign:members', [
@@ -196,5 +196,12 @@ final class Controller
         $visible = $this->campaignService->toggleVisibility($uuid);
 
         return $this->response->redirect($this->router->uri(self::ROUTE_INFO, ['uuid' => $uuid]));
+    }
+
+    #[Route(route: '/campaign/recalculate/<uuid>', name: self::ROUTE_RECALCULATE, methods: ['POST'], group: 'backend')]
+    public function recalculate(string $uuid): void
+    {
+        $uuid = Uuid::fromString($uuid);
+        $this->campaignService->calculateScores($uuid);
     }
 }

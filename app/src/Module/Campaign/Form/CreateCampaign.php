@@ -26,6 +26,9 @@ class CreateCampaign extends Filter implements HasFilterDefinition
     #[Post(key: 'finished_at')]
     public ?\DateTimeImmutable $finishedAt = null;
 
+    #[Post(key: 'old_stars_coefficient')]
+    public float $oldStarsCoefficient = 1.0;
+
     public function filterDefinition(): FilterDefinition
     {
         return new FilterDefinition([
@@ -45,6 +48,12 @@ class CreateCampaign extends Filter implements HasFilterDefinition
             ],
             'finishedAt' => [
                 'datetime::valid',
+            ],
+            'oldStarsCoefficient' => [
+                'required',
+                'numeric',
+                ['number::higher', -100], // Must be positive
+                ['number::lower', 100], // Max 99.99 as per form constraint
             ],
         ]);
     }
