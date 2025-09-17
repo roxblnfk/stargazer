@@ -61,6 +61,9 @@ final class Controller
             ]);
         }
 
+        # Get all campaigns the user is participating in
+        $campaigns = \iterator_to_array($this->campaignService->getUserCampaigns($user->id, null));
+
         # Check for an invitation code in the session to suggest a campaign
         $invite = $session->getSection(InviteCampaign::SECTION_NAME)->get(InviteCampaign::QUERY_PARAM);
         $suggestCampaign = $invite === null ? null : $this->campaignService->findCampaignByInvite($invite);
@@ -69,6 +72,7 @@ final class Controller
         return $this->views->render('profile:index-known', [
             'user' => $user,
             'stars' => $stars,
+            'campaigns' => $campaigns,
             'points' => $this->pointsService->calculate($stars),
             'repositories' => $this->repositoryService->getTrackedRepositoriesInfo(),
             'suggestCampaign' => $suggestCampaign,

@@ -7,6 +7,7 @@ namespace App\Module\Campaign;
 use App\Module\Campaign\DTO\Campaign;
 use App\Module\Campaign\DTO\CampaignRepo;
 use App\Module\Campaign\DTO\CampaignUser;
+use App\Module\Campaign\DTO\UserCampaign;
 use App\Module\Campaign\Form\CreateCampaign;
 use App\Module\Campaign\Form\UpdateCampaign;
 use App\Module\Campaign\Internal\ORM\CampaignEntity;
@@ -238,12 +239,13 @@ final class CampaignService
     {
         $data = $this->campaignRepoRepository->withCampaignUuid($campaignUuid)->select()->fetchData();
         /** @see CampaignRepoEntity::repoId */
-        $ids = \array_map(fn(array $record): int => (int) $record['repoId'], $data);
+        $ids = \array_map(static fn(array $record): int => (int) $record['repoId'], $data);
 
         return $this->repositoryService->getRepositories(exclude: $ids);
     }
 
-    public function changeRepoScore(UuidInterface $campaignUuid, int $repoId, int $change): CampaignRepo {
+    public function changeRepoScore(UuidInterface $campaignUuid, int $repoId, int $change): CampaignRepo
+    {
         return CampaignRepoEntity::transact(function () use ($campaignUuid, $repoId, $change): CampaignRepo {
             $e = $this->campaignRepoRepository
                 ->forUpdate()
@@ -258,5 +260,28 @@ final class CampaignService
 
             return $e->toDTO();
         });
+    }
+
+    /**
+     * @param bool|null $joined If true, only campaigns the user has joined will be returned.
+     *        If false, only campaigns the user has not joined will be returned.
+     *        If null, all campaigns will be returned.
+     * @return \Iterator<int, UserCampaign>
+     */
+    public function getUserCampaigns(int $userId, ?bool $joined = null): \Iterator
+    {
+        $campaigns = match ($joined) {
+            null => $this->campaignRepository->withLoadedMembers([$userId])->findAll(),
+            true => $this->campaignRepository->forMember($userId, true)->withLoadedMembers([$userId])->findAll(),
+            false => $this->campaignRepository->forMember($userId, false)->findAll(),
+        };
+
+        foreach ($campaigns as $e) {
+            /** @var CampaignUserEntity|null $member */
+            $member = \reset($e->members) ?: null;
+            if ($member === null && $e->visible || $member?->userId === $userId) {
+                yield new UserCampaign($e->toDTO(), $member?->toDTO());
+            }
+        }
     }
 }

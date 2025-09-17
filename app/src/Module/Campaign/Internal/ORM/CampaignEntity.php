@@ -68,9 +68,11 @@ class CampaignEntity extends ActiveRecord
     #[Column(type: 'bigInteger', name: 'count_repos', default: 0, typecast: 'int')]
     public int $countRepositories = 0;
 
+    /** @var list<CampaignRepoEntity> */
     #[HasMany(target: CampaignRepoEntity::class, innerKey: 'uuid', outerKey: 'campaignUuid')]
     public array $repositories = [];
 
+    /** @var list<CampaignUserEntity> */
     #[HasMany(target: CampaignUserEntity::class, innerKey: 'uuid', outerKey: 'campaignUuid')]
     public array $members = [];
 

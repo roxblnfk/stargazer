@@ -205,4 +205,9 @@ return [
     'Default Branch' => 'Основная ветка',
     'Size' => 'Размер',
     'Visibility' => 'Видимость',
+
+    // Events/Campaigns Profile Section
+    'Events' => 'События',
+    'NEW' => 'НОВОЕ',
+    'Member' => 'Участник',
 ];

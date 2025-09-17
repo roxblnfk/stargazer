@@ -65,6 +65,169 @@
         font-size: 14px;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
+
+    /* Campaign carousel styling */
+    .campaigns-carousel {
+        position: relative;
+        margin-bottom: 3rem;
+    }
+
+    .campaigns-scroll-container {
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--glass-border) transparent;
+        padding-bottom: 10px;
+    }
+
+    .campaigns-scroll-container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .campaigns-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .campaigns-scroll-container::-webkit-scrollbar-thumb {
+        background: var(--glass-border);
+        border-radius: 3px;
+    }
+
+    .campaigns-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .campaigns-track {
+        display: flex;
+        gap: 1.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .campaign-card {
+        flex: 0 0 320px;
+        max-width: 320px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .campaign-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border-color: var(--accent-purple);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .campaign-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .campaign-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-white);
+        margin: 0;
+        line-height: 1.3;
+        padding-right: 1rem;
+        flex: 1;
+    }
+
+    .campaign-card-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .campaign-status-active {
+        background: linear-gradient(135deg, var(--accent-green), #059669);
+        color: white;
+    }
+
+    .campaign-status-member {
+        background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+        color: white;
+    }
+
+    .campaign-status-ended {
+        background: linear-gradient(135deg, var(--text-gray-500), #4b5563);
+        color: white;
+    }
+
+    .campaign-card-description {
+        color: var(--text-gray-400);
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .campaign-card-stats {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .campaign-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-gray-400);
+        font-size: 0.85rem;
+    }
+
+    .campaign-stat i {
+        color: var(--accent-cyan);
+    }
+
+    .campaign-stat-value {
+        color: var(--text-white);
+        font-weight: 500;
+    }
+
+    .campaign-card-period {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-gray-500);
+        font-size: 0.8rem;
+        margin-top: auto;
+    }
+
+    .campaign-card-period i {
+        color: var(--accent-orange);
+    }
+
+    .member-score {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        z-index: 2;
+    }
 </style>
 <link href="/styles/profile.css" rel="stylesheet" type="text/css" />
 </stack:push>
@@ -141,6 +304,75 @@
                                         </button>
                                     </form>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Campaigns Carousel -->
+                    @if(!empty($campaigns))
+                    <div class="campaigns-carousel">
+                        <div class="section-header mb-4 text-center">
+                            <h2 style="color: var(--text-white); font-size: 1.5rem; font-weight: 600;">
+                                <i class="bi bi-trophy me-2"></i>[[Events]]
+                            </h2>
+                        </div>
+
+                        <div class="campaigns-scroll-container">
+                            <div class="campaigns-track">
+                                @foreach($campaigns as $userCampaign)
+                                <div class="campaign-card">
+                                    @if($userCampaign->user !== null)
+                                        <div class="member-score">
+                                            <i class="bi bi-star-fill me-1"></i>{{ $userCampaign->user->score }}
+                                        </div>
+                                    @endif
+
+                                    <div class="campaign-card-header">
+                                        <h3 class="campaign-card-title">{{ $userCampaign->campaign->title }}</h3>
+                                        @if($userCampaign->user === null)
+                                            <div class="campaign-card-status
+                                                @if($userCampaign->finished)
+                                                    campaign-status-ended
+                                                @else
+                                                    campaign-status-active
+                                                @endif
+                                            ">
+                                                @if($userCampaign->finished)
+                                                    [[Ended]]
+                                                @else
+                                                    [[NEW]]
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+
+
+                                    <div class="campaign-card-stats">
+                                        <div class="campaign-stat">
+                                            <i class="bi bi-folder"></i>
+                                            <span class="campaign-stat-value">{{ $userCampaign->campaign->repositoryCount }}</span>
+                                            <span>[[repos]]</span>
+                                        </div>
+                                        <div class="campaign-stat">
+                                            <i class="bi bi-people"></i>
+                                            <span class="campaign-stat-value">{{ $userCampaign->campaign->memberCount }}</span>
+                                            <span>[[members]]</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="campaign-card-period">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>{{ $userCampaign->campaign->startedAt->format('M j') }}
+                                        @if($userCampaign->campaign->finishedAt)
+                                            - {{ $userCampaign->campaign->finishedAt->format('M j, Y') }}
+                                        @else
+                                            - [[Ongoing]]
+                                        @endif
+                                        </span>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
