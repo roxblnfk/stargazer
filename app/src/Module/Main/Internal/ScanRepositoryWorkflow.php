@@ -23,13 +23,9 @@ use Temporal\Workflow\WorkflowMethod;
 final class ScanRepositoryWorkflow
 {
     private bool $now = true;
-
-    /**
-     * @var true
-     */
-    private bool $exit = false;
-
     private Workflow\Mutex $alive;
+
+    public static string $period = '1 hour';
 
     #[Workflow\WorkflowInit]
     public function __construct(
@@ -47,7 +43,7 @@ final class ScanRepositoryWorkflow
     public function handle(GithubRepository $repository, bool $active = true)
     {
         do {
-            yield Workflow::awaitWithTimeout('3 hours', fn(): bool => $this->now, $this->alive);
+            yield Workflow::awaitWithTimeout(self::$period, fn(): bool => $this->now, $this->alive);
             yield Workflow::await(fn(): bool => $this->active || $this->now, $this->alive);
             $this->now = false;
 

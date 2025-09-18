@@ -97,18 +97,18 @@ final class Controller
             $session->getSection(InviteCampaign::SECTION_NAME)->clear();
         }
 
-        return $this->response->redirect($this->router->uri(self::ROUTE_INDEX, ['name' => $username]));
+        return $this->response->redirect($this->router->uri(self::ROUTE_CAMPAIGN, ['name' => $username, 'uuid' => $campaignUuid]));
     }
 
     #[Route(route: '/profile/<name>/campaign/<uuid>', name: self::ROUTE_CAMPAIGN, methods: ['GET'])]
-    public function campaign(string $name, string $uuid): mixed
+    public function campaign(string $name, string $uuid): string|ResponseInterface
     {
         $username = new GithubUser($name);
         $user = $this->userService->getByUsername($username);
         $campaignUuid = Uuid::fromString($uuid);
 
         if ($user instanceof UnknownUser) {
-            return $this->response->redirect($this->router->uri(self::ROUTE_INDEX, ['name' => $name]));
+            return $this->response->redirect($this->router->uri(self::ROUTE_INDEX));
         }
 
         $userCampaign = $this->campaignService->getUserCampaign($user->id, $campaignUuid);
