@@ -42,6 +42,14 @@ class CampaignRepoEntity extends ActiveRecord
     #[Column(type: 'bigInteger', default: 1, typecast: 'int')]
     public int $score = 1;
 
+    /** Stars harvested during the campaign from participants only */
+    #[Column(type: 'bigInteger', name: 'count_stars', default: 0, typecast: 'int')]
+    public int $countStars = 0;
+
+    /** All the Stars harvested during the campaign */
+    #[Column(type: 'bigInteger', name: 'count_stars_at_all', default: 0, typecast: 'int')]
+    public int $countStarsAtAll = 0;
+
     #[Column(type: 'datetime', typecast: 'datetime')]
     public \DateTimeInterface $updatedAt;
 
@@ -72,6 +80,8 @@ class CampaignRepoEntity extends ActiveRecord
             repoId: $this->repoId,
             repoName: $this->repoName,
             score: $this->score,
+            countStars: $this->countStars,
+            countStarsAtAll: $this->countStarsAtAll,
             updatedAt: $this->updatedAt,
             createdAt: $this->createdAt,
         );

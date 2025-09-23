@@ -22,10 +22,9 @@ use Temporal\Workflow\WorkflowMethod;
 #[TaskQueue('stargazer-github')]
 final class ScanRepositoryWorkflow
 {
+    public static string $period = '4 hour';
     private bool $now = true;
     private Workflow\Mutex $alive;
-
-    public static string $period = '1 hour';
 
     #[Workflow\WorkflowInit]
     public function __construct(

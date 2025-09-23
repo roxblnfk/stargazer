@@ -33,7 +33,8 @@ final class Scoring
             # Only counts stars with non-null starred_at timestamp within campaign timeframe
             $db->execute(<<<SQL
                 UPDATE $tCampaignUsers
-                SET score = COALESCE(user_scores.total_score, 0)
+                SET score = COALESCE(user_stats.total_score, 0),
+                    stars = COALESCE(user_stats.total_stars, 0)
                 FROM (
                     SELECT
                         cu.campaign_uuid,
@@ -43,24 +44,59 @@ final class Scoring
                                 WHEN s.starred_at < c.started_at THEN cr.score * c.old_stars_coefficient
                                 ELSE cr.score * 1.0
                             END
-                        ) as total_score
+                        ) as total_score,
+                        COUNT(
+                            CASE
+                                WHEN s.starred_at >= c.started_at THEN 1
+                                ELSE NULL
+                            END
+                        ) as total_stars
                     FROM $tCampaignUsers cu
                     JOIN $tCampaign c ON c.uuid = cu.campaign_uuid
                     JOIN $tStargazer s ON s.user_id = cu.user_id
                     JOIN $tCampaignRepos cr ON cr.repo_id = s.repo_id AND cr.campaign_uuid = cu.campaign_uuid
                     WHERE
                         s.starred_at IS NOT NULL
+                        AND ( c.finished_at IS NULL OR s.starred_at <= c.finished_at )
+                    GROUP BY cu.campaign_uuid, cu.user_id
+                ) user_stats
+                WHERE
+                    $tCampaignUsers.campaign_uuid = user_stats.campaign_uuid
+                    AND $tCampaignUsers.user_id = user_stats.user_id;
+                SQL);
+
+            # Update repository stats
+            $db->execute(<<<SQL
+                UPDATE campaign_repo
+                SET
+                    count_stars_at_all = COALESCE(repo_stats.stars_all, 0),
+                    count_stars = COALESCE(repo_stats.stars_members, 0)
+                FROM (
+                    SELECT
+                        cr.campaign_uuid,
+                        cr.repo_id,
+                        -- Все звёзды репозитория за период кампании
+                        COUNT(s.user_id) as stars_all,
+                        -- Звёзды только от участников кампании
+                        COUNT(cu.user_id) as stars_members
+                    FROM campaign_repo cr
+                    JOIN campaign c ON c.uuid = cr.campaign_uuid
+                    JOIN stargazer s ON s.repo_id = cr.repo_id
+                    LEFT JOIN campaign_user cu ON cu.campaign_uuid = cr.campaign_uuid
+                                               AND cu.user_id = s.user_id
+                    WHERE
+                        s.starred_at IS NOT NULL
+                        AND s.starred_at >= c.started_at
                         AND (
                             c.finished_at IS NULL
                             OR s.starred_at <= c.finished_at
                         )
-                    GROUP BY cu.campaign_uuid, cu.user_id
-                ) user_scores
+                    GROUP BY cr.campaign_uuid, cr.repo_id
+                ) repo_stats
                 WHERE
-                    $tCampaignUsers.campaign_uuid = user_scores.campaign_uuid
-                    AND $tCampaignUsers.user_id = user_scores.user_id;
+                    campaign_repo.campaign_uuid = repo_stats.campaign_uuid
+                    AND campaign_repo.repo_id = repo_stats.repo_id
                 SQL);
-
 
             # Updates campaign statistics:
             # count_users: number of unique users participating in the campaign

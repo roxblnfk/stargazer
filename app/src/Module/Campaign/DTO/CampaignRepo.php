@@ -14,6 +14,8 @@ final class CampaignRepo implements \Stringable
         public readonly int $repoId,
         public readonly GithubRepository $repoName,
         public readonly int $score,
+        public readonly int $countStars,
+        public readonly int $countStarsAtAll,
         public readonly \DateTimeInterface $updatedAt,
         public readonly \DateTimeInterface $createdAt,
     ) {}
