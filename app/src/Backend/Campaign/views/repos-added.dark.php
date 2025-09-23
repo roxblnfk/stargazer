@@ -65,7 +65,9 @@
                         </div>
                     </td>
                     <td>
-                        <span class="text-muted">—</span>
+                        <span class="text-muted">{{ $repo->countStars }}</span>
+                        /
+                        <span class="text-muted">{{ $repo->countStarsAtAll }}</span>
                     </td>
                     <td>
                         <small class="text-muted">
