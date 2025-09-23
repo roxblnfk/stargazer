@@ -67,7 +67,7 @@ final class Scoring
 
             # Update repository stats
             $db->execute(<<<SQL
-                UPDATE campaign_repo
+                UPDATE $tCampaignRepos
                 SET
                     count_stars_at_all = COALESCE(repo_stats.stars_all, 0),
                     count_stars = COALESCE(repo_stats.stars_members, 0)
@@ -79,10 +79,10 @@ final class Scoring
                         COUNT(s.user_id) as stars_all,
                         -- Звёзды только от участников кампании
                         COUNT(cu.user_id) as stars_members
-                    FROM campaign_repo cr
-                    JOIN campaign c ON c.uuid = cr.campaign_uuid
-                    JOIN stargazer s ON s.repo_id = cr.repo_id
-                    LEFT JOIN campaign_user cu ON cu.campaign_uuid = cr.campaign_uuid
+                    FROM $tCampaignRepos cr
+                    JOIN $tCampaign c ON c.uuid = cr.campaign_uuid
+                    JOIN $tStargazer s ON s.repo_id = cr.repo_id
+                    LEFT JOIN $tCampaignUsers cu ON cu.campaign_uuid = cr.campaign_uuid
                                                AND cu.user_id = s.user_id
                     WHERE
                         s.starred_at IS NOT NULL
@@ -94,8 +94,8 @@ final class Scoring
                     GROUP BY cr.campaign_uuid, cr.repo_id
                 ) repo_stats
                 WHERE
-                    campaign_repo.campaign_uuid = repo_stats.campaign_uuid
-                    AND campaign_repo.repo_id = repo_stats.repo_id
+                    $tCampaignRepos.campaign_uuid = repo_stats.campaign_uuid
+                    AND $tCampaignRepos.repo_id = repo_stats.repo_id
                 SQL);
 
             # Updates campaign statistics:
