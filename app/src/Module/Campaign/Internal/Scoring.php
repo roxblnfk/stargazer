@@ -33,7 +33,8 @@ final class Scoring
             # Only counts stars with non-null starred_at timestamp within campaign timeframe
             $db->execute(<<<SQL
                 UPDATE $tCampaignUsers
-                SET score = COALESCE(user_scores.total_score, 0)
+                SET score = COALESCE(user_stats.total_score, 0),
+                    stars = COALESCE(user_stats.total_stars, 0)
                 FROM (
                     SELECT
                         cu.campaign_uuid,
@@ -43,7 +44,13 @@ final class Scoring
                                 WHEN s.starred_at < c.started_at THEN cr.score * c.old_stars_coefficient
                                 ELSE cr.score * 1.0
                             END
-                        ) as total_score
+                        ) as total_score,
+                        COUNT(
+                            CASE
+                                WHEN s.starred_at >= c.started_at THEN 1
+                                ELSE NULL
+                            END
+                        ) as total_stars
                     FROM $tCampaignUsers cu
                     JOIN $tCampaign c ON c.uuid = cu.campaign_uuid
                     JOIN $tStargazer s ON s.user_id = cu.user_id
@@ -55,10 +62,10 @@ final class Scoring
                             OR s.starred_at <= c.finished_at
                         )
                     GROUP BY cu.campaign_uuid, cu.user_id
-                ) user_scores
+                ) user_stats
                 WHERE
-                    $tCampaignUsers.campaign_uuid = user_scores.campaign_uuid
-                    AND $tCampaignUsers.user_id = user_scores.user_id;
+                    $tCampaignUsers.campaign_uuid = user_stats.campaign_uuid
+                    AND $tCampaignUsers.user_id = user_stats.user_id;
                 SQL);
 
 

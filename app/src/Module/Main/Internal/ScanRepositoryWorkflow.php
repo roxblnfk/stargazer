@@ -25,7 +25,7 @@ final class ScanRepositoryWorkflow
     private bool $now = true;
     private Workflow\Mutex $alive;
 
-    public static string $period = '1 hour';
+    public static string $period = '4 hour';
 
     #[Workflow\WorkflowInit]
     public function __construct(
