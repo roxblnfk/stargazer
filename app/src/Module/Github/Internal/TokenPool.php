@@ -33,6 +33,6 @@ final class TokenPool
         $token->usedAt = new \DateTimeImmutable();
         $token->save();
 
-        return $token;
+        return $token->value;
     }
 }

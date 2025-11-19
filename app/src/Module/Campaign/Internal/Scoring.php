@@ -82,8 +82,7 @@ final class Scoring
                     FROM $tCampaignRepos cr
                     JOIN $tCampaign c ON c.uuid = cr.campaign_uuid
                     JOIN $tStargazer s ON s.repo_id = cr.repo_id
-                    LEFT JOIN $tCampaignUsers cu ON cu.campaign_uuid = cr.campaign_uuid
-                                               AND cu.user_id = s.user_id
+                    LEFT JOIN $tCampaignUsers cu ON cu.campaign_uuid = cr.campaign_uuid AND cu.user_id = s.user_id
                     WHERE
                         s.starred_at IS NOT NULL
                         AND s.starred_at >= c.started_at
